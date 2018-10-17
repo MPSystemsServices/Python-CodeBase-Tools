@@ -29,4 +29,8 @@ For all functionality see the HTML documentation of this module.
 # Support for Python Versions
 The .PY files in Python-CodeBase-Tools package are designed to be cross platform, functional on all versions of Python from 2.7 and up.  However the compiled library .pyd file is specific to the Python version you are using.  Currently, Python 2.7, 3.6, and 3.7 are supported.  Support for earlier Python versions can be made available if interest is strong enough.
 # Python-CodeBase-Tools Licensing
+<<<<<<< HEAD
 This package is copyright M-P Systems Services, Inc., and is released to Open Source under the GNU Lesser GPL V.3.0 license, a copy of which is found in this repository.  The CodeBase-for-DBF module, is covered by this same license.  The CodeBase package, including the core library c4dll.dll is copyright Sequiter, Inc., and is licensed under the GNU Lesser GPL v.3.0.
+=======
+This package is copyright M-P Systems Services, Inc., and is released to Open Source under the GNU Lesser GPL V.3.0 license, a copy of which is found in this repository.  The CodeBase-for-DBF module, is covered by this same license.
+>>>>>>> 7aa1ff82fc56fb54a6ff54b3b495b221faac1bde
