@@ -1,0 +1,537 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>DBFXLStools2 &mdash; MPSS Common Modules 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../MPSSCommon Module Docs.html" class="icon icon-home"> MPSS Common Modules
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">DBFXLStools2</span></code></a><ul>
+<li><a class="reference internal" href="#classes">Classes</a></li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../MPSSCommon Module Docs.html">MPSS Common Modules</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../MPSSCommon Module Docs.html">Docs</a> &raquo;</li>
+        
+      <li><code class="docutils literal notranslate"><span class="pre">DBFXLStools2</span></code></li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/DBFXLStools2/DBFXLStools2.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-DBFXLStools2">
+<span id="dbfxlstools2"></span><h1><code class="docutils literal notranslate"><span class="pre">DBFXLStools2</span></code><a class="headerlink" href="#module-DBFXLStools2" title="Permalink to this headline">¶</a></h1>
+<p>DBFtools.py created by M-P System Services, Inc. to provide access to the CodeBaseTools
+and ExcelTools modules in an integrated package.</p>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><a class="reference internal" href="#classes" id="id1">Classes</a></li>
+</ul>
+</div>
+<div class="section" id="classes">
+<h2><a class="toc-backref" href="#id1">Classes</a><a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="#DBFXLStools2.DbfXlsEngine" title="DBFXLStools2.DbfXlsEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">DbfXlsEngine</span></code></a>:
+DbfXlsEngine provides a suite of methods to copy data from DBF tables to Excel files and the reverse.  It requires</li>
+<li><a class="reference internal" href="#DBFXLStools2.dbfxlTools" title="DBFXLStools2.dbfxlTools"><code class="xref py py-class docutils literal notranslate"><span class="pre">dbfxlTools</span></code></a>:
+This is a COM wrapper around the DbfXlsEngine object above.  It is a bit of a hybrid, as it can be called stand-alone</li>
+</ul>
+<dl class="class">
+<dt id="DBFXLStools2.DbfXlsEngine">
+<em class="property">class </em><code class="descclassname">DBFXLStools2.</code><code class="descname">DbfXlsEngine</code><span class="sig-paren">(</span><em>oVFP=None</em><span class="sig-paren">)</span><a class="headerlink" href="#DBFXLStools2.DbfXlsEngine" title="Permalink to this definition">¶</a></dt>
+<dd><p>DbfXlsEngine provides a suite of methods to copy data from DBF tables to Excel files and the reverse.  It requires
+the installation of the ExcelTools module and the CodeBaseTools module.  Note that the ExcelTools module requires
+a licensed version of LibXL and the LibXLWrapper.dll.  LibXLWrapper.dll is an open source module that is part
+of the ExcelTools distribution, but LibXL is a commercial product requiring a user name and license code to
+be stored in a libXLLicenseInfo.txt file.  See the documentation for ExcelTools for more details.</p>
+<p>The normal usage for this object is to pass it an object reference to an instance of cbTools() from the
+CodeBaseTools module:</p>
+<blockquote>
+<div>oEngine = DbfXlsEngine(cbTools())</div></blockquote>
+<p>But, if no cbTools instance is supplied, one will be created if possible, providing this is invoked via the
+“with” mechanism.  See the dtTest() function for an example of this usage.</p>
+<dl class="method">
+<dt id="DBFXLStools2.DbfXlsEngine.bizobj2excel">
+<code class="descname">bizobj2excel</code><span class="sig-paren">(</span><em>oBiz=None</em>, <em>cExcelName=''</em>, <em>xHeaderList=None</em>, <em>cTitleOne=''</em>, <em>cTitleTwo=''</em>, <em>bHiddenNames=False</em>, <em>bNoClose=False</em>, <em>cFieldList=''</em>, <em>cForExpr=''</em>, <em>cSortOrder=''</em><span class="sig-paren">)</span><a class="headerlink" href="#DBFXLStools2.DbfXlsEngine.bizobj2excel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Similar to dbf2excel except that takes as input a fully configured biz object with a table attached.  This
+can be a Biz Object for either a DBF or a MongoDB table.  This pulls all the data out with a copytoarray()
+call, then stringifies the data for storing into the cells and outputs the specified Excel.  Outputs ONLY
+.XLSX files, although that may be slower than .XLS.
+:param oBiz: Object reference to the BizObject which will be the source of the records
+:param cExcelName: Fully qualified path name for the Excel output file.  Will be forced to ext of .XLSX
+:param xHeaderList: List() object with one text string for each column of output
+:param cTitleOne: Optional title for first row
+:param cTitleTwo: Optional title for second row
+:param bHiddenNames: If True, then we’ll output a hidden row with the field names directly after the title row.
+:param bNoClose: Ignored
+:param cFieldList: Comma separated list of field names that will be output and in the order listed.
+:param cForExpr: If not all records are to be output, specify a legal “for” expression here.  This will be</p>
+<blockquote>
+<div>passed to the Biz Object to restrict the list of records in the copytoarray() call</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cSortOrder</strong> – Pass the name of a DBF index TAG or the name of a MongoDB field to control the sort order.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">True on Success, otherwise False, and set the error message.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="DBFXLStools2.DbfXlsEngine.dbf2excel">
+<code class="descname">dbf2excel</code><span class="sig-paren">(</span><em>lcDbfName</em>, <em>lcExcelName</em>, <em>headerlist=None</em>, <em>titleone=''</em>, <em>titletwo=''</em>, <em>rawcopy=False</em>, <em>hiddenNames=False</em>, <em>noclose=False</em>, <em>fieldList=''</em><span class="sig-paren">)</span><a class="headerlink" href="#DBFXLStools2.DbfXlsEngine.dbf2excel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copies the contents of the specific DBF file into the spreadsheet named lcExcelName.
+If the spreadsheet already exists, it is overwritten.  Otherwise it is created.  There
+will be a header row containing field names and one row following that for each table
+record (row).</p>
+<p>If headerlist is of type list(), it should contain one text value for each column in the table/sheet.
+These text values will replace the field names in the top row. (In that case, the output can’t be used
+for import back into dbf via excel2dbf().</p>
+<p>If titleone and/or titletwo are non-empty strings, they will be placed in A1 and A2 respectively
+in 12 point Bold, and all content will be moved down accordingly.</p>
+<p>Data table fields will be properly converted to Excel value types.</p>
+<p>Fields such as General will not be converted.  Memo will be included.</p>
+<p>If you are confident you know that all fields in the table are convertable to Excel types (for example
+that there are no “General” or “Memo-Binary” fields in the table), then you can use the rawcopy option
+which does no type or content checking other than the standard conversions from VFP to Excel formats
+for dates, etc.  Pass the optional parameter rawcopy=True in that case.</p>
+<p>Table ordering is by record.</p>
+<p>If hiddenNames == True, then inserts a row directly below the title row (either containing the
+field names or the values in headerlist) which will be filled with the field names AND be set to
+hidden.</p>
+<p>Returns True on success.  False on Failure.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="DBFXLStools2.DbfXlsEngine.excel2dbf">
+<code class="descname">excel2dbf</code><span class="sig-paren">(</span><em>lcExcelName</em>, <em>lcDbfName</em>, <em>sheetname=''</em>, <em>appendflag=False</em>, <em>templatedbf=''</em>, <em>fieldlist=None</em>, <em>columnsonly=False</em>, <em>showErrors=False</em><span class="sig-paren">)</span><a class="headerlink" href="#DBFXLStools2.DbfXlsEngine.excel2dbf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes the contents of the specified Excel file (xls or xlsx) into the target DBF type table.  The existence of the
+lcDbfName table and the appendflag value determine the action taken:</p>
+<dl class="docutils">
+<dt>lcDbfName exists, appendflag = False:</dt>
+<dd><ul class="first last simple">
+<li>lcDbfName records are removed (zapped), all records are replaced with newly imported records.  Any value in templatedbf
+is ingnored.</li>
+</ul>
+</dd>
+<dt>lcDbfName exists, appendflag = True:</dt>
+<dd><ul class="first last simple">
+<li>Records from the spreadsheet are appended into the table after the existing records.  Any value in templatedbf
+is ignored.</li>
+</ul>
+</dd>
+<dt>lcDbfName doesn’t exist – appendflag has no meaning:</dt>
+<dd>If templatedbf contains the name of a valid DBF table, then uses the structure of that table to create a new table
+and imports data into it.
+If templatedbf == “” or None, then inspects the contents of the spreadsheet and creates a table the best way it can
+from the cell information.</dd>
+</dl>
+<p>Takes the data from the first worksheet in the workbook.  You can pass a worksheet name to use instead in the
+sheetname optional parameter.  Note that in Excel, worksheet names are case sensitive.</p>
+<p>If the templatedbf parameter contains the name of an existing DBF type table, then appendflag is ignored and
+a new table is created (overwriting any existing one by that name) using the identical structure of the template
+DBF table.</p>
+<p>You can supply a list() of field names to include in the output DBF table.  In that case, the fields in the output
+table consist of those that are BOTH in the spreadsheet AND in the fieldlist.  If appendflag == True, the fieldlist
+will be respected – records will be appended to the lcDbfName table, but only the fields specified will be populated.</p>
+<p>The first row of the spreadsheet must contain text values that are valid field names.  No more than 255 are permitted.
+Field names may be upper or lower case but MUST start with a letter or underscore.  They may be no longer than 10 characters
+and may NOT include blanks.  No two field names may be the same.  Any violation of these rules will result in an error flag
+being returned.</p>
+<p>Returns the number of records stored or appended.  Returns -1 on error, however if 0 is returned, you likely should investigate
+the source of the problem.</p>
+<p>NOTE: The CodeBase utilities are fairly slow in creating new DBF tables.  Not sure why.  At least the first one they create
+seems to take around 0.45 seconds on a very fast machine.  The second and third are faster, however.  So… for simple things
+just let this method write into an existing table, for much better performance.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="DBFXLStools2.DbfXlsEngine.makeBodyDecimalFormat">
+<code class="descname">makeBodyDecimalFormat</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DBFXLStools2.DbfXlsEngine.makeBodyDecimalFormat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Format creator for the standard body cells containing data in numeric format.  Defaults to 2 decimal places
+and the standard thousands separator character.
+:return: Format Object</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="DBFXLStools2.DbfXlsEngine.makeBodyDecimalFormatXLSX">
+<code class="descname">makeBodyDecimalFormatXLSX</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DBFXLStools2.DbfXlsEngine.makeBodyDecimalFormatXLSX" title="Permalink to this definition">¶</a></dt>
+<dd><p>Format creator for the standard body cells containing data in numeric format.  Defaults to 2 decimal places
+and the standard thousands separator character.  This version uses font types standard for XLSX files.
+:return: Format Object</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="DBFXLStools2.DbfXlsEngine.makeBodyFormat">
+<code class="descname">makeBodyFormat</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DBFXLStools2.DbfXlsEngine.makeBodyFormat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Format creator for the standard body cells containing data displayed in text format (including dates)
+:return: Format Object</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="DBFXLStools2.DbfXlsEngine.makeBodyFormatXLSX">
+<code class="descname">makeBodyFormatXLSX</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DBFXLStools2.DbfXlsEngine.makeBodyFormatXLSX" title="Permalink to this definition">¶</a></dt>
+<dd><p>Format creator for the standard body cells containing data displayed in text format (including dates).
+This version uses font types standard for XLSX files.
+:return: Format Object</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="DBFXLStools2.DbfXlsEngine.makeBodyHiddenFormat">
+<code class="descname">makeBodyHiddenFormat</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DBFXLStools2.DbfXlsEngine.makeBodyHiddenFormat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Format creator for the cells in a hidden row.  The hidden row option allows the raw DBF field names to
+be included in the XLS file without actually displaying them – the column headings can then display
+human readable names.
+:return: Format Object</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="DBFXLStools2.DbfXlsEngine.makeHeaderFormat">
+<code class="descname">makeHeaderFormat</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DBFXLStools2.DbfXlsEngine.makeHeaderFormat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Format creator for the column header cells containing the field names.
+:return: Format Object</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="DBFXLStools2.DbfXlsEngine.makeHeaderFormatXLSX">
+<code class="descname">makeHeaderFormatXLSX</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DBFXLStools2.DbfXlsEngine.makeHeaderFormatXLSX" title="Permalink to this definition">¶</a></dt>
+<dd><p>Format creator for the column header cells containing the field names.  Uses default fonts from
+XLSX type files.
+:return: Format Object</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="DBFXLStools2.DbfXlsEngine.makeTitleFormat">
+<code class="descname">makeTitleFormat</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DBFXLStools2.DbfXlsEngine.makeTitleFormat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Format creator for the top-of-the-page title if one is to be displayed.
+:return: Format Object</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="DBFXLStools2.dbfxlTools">
+<em class="property">class </em><code class="descclassname">DBFXLStools2.</code><code class="descname">dbfxlTools</code><span class="sig-paren">(</span><em>oVFP=None</em>, <em>oCfg=None</em>, <em>bIsCOM=False</em><span class="sig-paren">)</span><a class="headerlink" href="#DBFXLStools2.dbfxlTools" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is a COM wrapper around the DbfXlsEngine object above.  It is a bit of a hybrid, as it can be called stand-alone
+as a COM object, OR it can be launched by the PlanToolsPythonsService manager as a COM service object.</p>
+<p>The conversion tools in this module are somewhat simpler than for the main DbfXlsEngine class, but all the
+same functionality is available by setting properties of the class after creating the instance.  In Python
+this can be done directly.  In VFP via COM, it can be done by calling the set_property() method.</p>
+<p>Note that this class is no longer intended to be a stand alone COM object but is to be created and delivered
+to COM clients by an object factory dispatcher.  To make this a COM object, see the documentation in the
+book Python Programming on Win32 for details.</p>
+<dl class="method">
+<dt id="DBFXLStools2.dbfxlTools.dbftoexcel">
+<code class="descname">dbftoexcel</code><span class="sig-paren">(</span><em>lcDbf</em>, <em>lcExcel</em>, <em>rawcopy=False</em>, <em>addHiddenNames=False</em><span class="sig-paren">)</span><a class="headerlink" href="#DBFXLStools2.dbfxlTools.dbftoexcel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts the DBF table specified into an Excel spreadsheet specified.  Both must be provided as fully
+qualified path names.  The file name extension for the Excel sheet tells the engine whether to produce
+an XLS ro an XLSX output.  XLS outputs are faster, but the result files are considerably larger than the
+XLSX version.  Also XLS sheets are limited to about 64,000 rows, while XLSX sheets are limited to a bit over
+1 million rows.</p>
+<p>The sheet name applied will be the alias name of the DBF table.  If you want a different sheet name, you’l
+need to set the value of the class property cSheetName prior to running this method.  By default, this
+process will create a new spreadsheet file, overwriting any existing file by that name.  If you set the
+property lAppendSheet to True, then if the Excel file exists, the engine will attempt to add the specified
+sheet to the end of the sheets collection in the existing file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>lcDbf</strong> – Fully qualified path name of the DBF table.  Must be able to be opened in shared mode.</li>
+<li><strong>lcExcel</strong> – Fully qualified path name of the Excel spreadsheet</li>
+<li><strong>rawcopy</strong> – Set to True (default is False) to gain speed but give up some output error checking and data</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>format control.
+This is relatively safe if all the data is standard string or simple numeric values.
+:param addHiddenNames: If True (default is False), then a hidden row will be added right after the column
+header row which will contain the actual field names in each column.  May be needed for loading an Excel
+sheet back into a DBF table when the column headings must contain human readable, meaningful captions.
+:return: Value &gt;= 1 on success, 0 on failure.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="DBFXLStools2.dbfxlTools.exceltodbf">
+<code class="descname">exceltodbf</code><span class="sig-paren">(</span><em>lcExcel</em>, <em>lcDbf</em>, <em>lcSheetName</em><span class="sig-paren">)</span><a class="headerlink" href="#DBFXLStools2.dbfxlTools.exceltodbf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes the contents of the specified Excel spreadsheet into the specified table.  By default, the contents
+of the DBF file are deleted (Zapped) and replaced with the contents of the Excel spreadsheet.  If the
+lcSheetName is not provided, then the first sheet in the XLS(X) file will be used.  Each column heading
+must contain the name of a field found in the table.  Column headings with unrecognized field names will
+be ignored.</p>
+<p>If the 2nd row of the sheet is hidden, then an attempt will be made to read the field names from that row.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>lcExcel</strong> – Fully qualified path name to the spreadsheet file</li>
+<li><strong>lcDbf</strong> – Fully qualified path name to the DBF table.</li>
+<li><strong>lcSheetName</strong> – Optional sheet name from which to read the data.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Positive integer on success, negative integer on error.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="DBFXLStools2.dbfxlTools.geterrormessage">
+<code class="descname">geterrormessage</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DBFXLStools2.dbfxlTools.geterrormessage" title="Permalink to this definition">¶</a></dt>
+<dd><p>If this object is used by a Python module, all error information is available.  However COM clients will
+need to use this method to determine what when wrong when an error condition is reported by a method.
+:return: Text of the error message.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="DBFXLStools2.dbfxlTools.getexcelcolumns">
+<code class="descname">getexcelcolumns</code><span class="sig-paren">(</span><em>lcExcel</em>, <em>lcSheetName</em><span class="sig-paren">)</span><a class="headerlink" href="#DBFXLStools2.dbfxlTools.getexcelcolumns" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method opens a spreadsheet and reads the first row of cells to get the column headers, which should
+normally be the field names defined for each column.  No data is read.
+:param lcExcel: Fully qualified path name of the XLS(X) file.
+:param lcSheetName: Name of the sheet to read if not the first one.
+:return: List of field names on success, and empty string on failure.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="DBFXLStools2.dbfxlTools.setfielddefault">
+<code class="descname">setfielddefault</code><span class="sig-paren">(</span><em>lpcFieldName</em>, <em>lpcDefaultValue</em><span class="sig-paren">)</span><a class="headerlink" href="#DBFXLStools2.dbfxlTools.setfielddefault" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function allows you to set default values for data table fields which may be empty or missing in the
+source XLS file, but for which there must be a value in the DBF table.
+:param lpcFieldName: Field name for the default value
+:param lpcDefaultValue: Value to supply if the XLS(X) source doesn’t have a value.
+:return: 1 always</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="DBFXLStools2.dbfxlTools.setheaderlist">
+<code class="descname">setheaderlist</code><span class="sig-paren">(</span><em>cTheList=''</em><span class="sig-paren">)</span><a class="headerlink" href="#DBFXLStools2.dbfxlTools.setheaderlist" title="Permalink to this definition">¶</a></dt>
+<dd><p>To override the standard column header values (the field names from the DBF table), pass a comma separated
+list of column captions. The number of items in the list should equal the number of fields to be output.
+:param cTheList: The list string
+:return: True, always.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="DBFXLStools2.dbfxlTools.setoneproperty">
+<code class="descname">setoneproperty</code><span class="sig-paren">(</span><em>cTheProp=''</em>, <em>xTheValue=None</em><span class="sig-paren">)</span><a class="headerlink" href="#DBFXLStools2.dbfxlTools.setoneproperty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method used by a COM client to set the property value required to be changed.  Note that this value
+IS case sensitive
+:param cTheProp: String containing the name of the property to set
+:param xTheValue: Value to set it to
+:return: Nothing</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="DBFXLStools2.dbfxlTools.setwidthlist">
+<code class="descname">setwidthlist</code><span class="sig-paren">(</span><em>cTheList=''</em><span class="sig-paren">)</span><a class="headerlink" href="#DBFXLStools2.dbfxlTools.setwidthlist" title="Permalink to this definition">¶</a></dt>
+<dd><p>The engine will attempt to set Excel column widths appropriate to the content of each field.  To override this
+behavior pass a comma separated list of number values specifying the widths of all the columns.  These values
+must be in Excel width units which are approximately 8.4 pixels each.  Widths may be specified by floating
+point decimal values like “5.5”.
+:param cTheList: Comma separated list of width numbers.
+:return: True</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="DBFXLStools2.dbfxlTools.unpackWidths">
+<code class="descname">unpackWidths</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#DBFXLStools2.dbfxlTools.unpackWidths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Internal Use
+:return: tuple of width information</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, M-P Systems Services, Inc.
+
+    </p>
+	<p>
+        Licensed under GNU Lesser GPL version 3.0</p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

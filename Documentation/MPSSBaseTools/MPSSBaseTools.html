@@ -1,0 +1,1138 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>MPSSBaseTools &mdash; MPSS Common Modules 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../MPSSCommon Module Docs.html" class="icon icon-home"> MPSS Common Modules
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">MPSSBaseTools</span></code></a><ul>
+<li><a class="reference internal" href="#functions">Functions</a></li>
+<li><a class="reference internal" href="#classes">Classes</a></li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../MPSSCommon Module Docs.html">MPSS Common Modules</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../MPSSCommon Module Docs.html">Docs</a> &raquo;</li>
+        
+      <li><code class="docutils literal notranslate"><span class="pre">MPSSBaseTools</span></code></li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/MPSSBaseTools/MPSSBaseTools.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-MPSSBaseTools">
+<span id="mpssbasetools"></span><h1><code class="docutils literal notranslate"><span class="pre">MPSSBaseTools</span></code><a class="headerlink" href="#module-MPSSBaseTools" title="Permalink to this headline">¶</a></h1>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><a class="reference internal" href="#functions" id="id1">Functions</a></li>
+<li><a class="reference internal" href="#classes" id="id2">Classes</a></li>
+</ul>
+</div>
+<div class="section" id="functions">
+<h2><a class="toc-backref" href="#id1">Functions</a><a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="#MPSSBaseTools.ADDBS" title="MPSSBaseTools.ADDBS"><code class="xref py py-func docutils literal notranslate"><span class="pre">ADDBS()</span></code></a>:
+Undocumented.</li>
+<li><a class="reference internal" href="#MPSSBaseTools.ADDFS" title="MPSSBaseTools.ADDFS"><code class="xref py py-func docutils literal notranslate"><span class="pre">ADDFS()</span></code></a>:
+Undocumented.</li>
+<li><a class="reference internal" href="#MPSSBaseTools.cleanFileName" title="MPSSBaseTools.cleanFileName"><code class="xref py py-func docutils literal notranslate"><span class="pre">cleanFileName()</span></code></a>:
+Expects as a parm a base file name (no path) and an optional extension.  This typically would be a file</li>
+<li><a class="reference internal" href="#MPSSBaseTools.clearHTMLCode" title="MPSSBaseTools.clearHTMLCode"><code class="xref py py-func docutils literal notranslate"><span class="pre">clearHTMLCode()</span></code></a>:
+Takes any string with some HTML tags and removes them leaving only the base code. Very simple logic looking</li>
+<li><a class="reference internal" href="#MPSSBaseTools.cleanUnicodeString" title="MPSSBaseTools.cleanUnicodeString"><code class="xref py py-func docutils literal notranslate"><span class="pre">cleanUnicodeString()</span></code></a>:
+Applies transformations to strings where it may be possible to have higher-order unicode values embedded</li>
+<li><a class="reference internal" href="#MPSSBaseTools.confirmPath" title="MPSSBaseTools.confirmPath"><code class="xref py py-func docutils literal notranslate"><span class="pre">confirmPath()</span></code></a>:
+Undocumented.</li>
+<li><a class="reference internal" href="#MPSSBaseTools.convertUnits" title="MPSSBaseTools.convertUnits"><code class="xref py py-func docutils literal notranslate"><span class="pre">convertUnits()</span></code></a>:
+Converts the nFromNumber (converted to float if necessary) into the specified output value with units conversion:</li>
+<li><a class="reference internal" href="#MPSSBaseTools.CTOD" title="MPSSBaseTools.CTOD"><code class="xref py py-func docutils literal notranslate"><span class="pre">CTOD()</span></code></a>:
+Pass a simple date string, and this returns a Python datetime.date() value representing the string.  This is like</li>
+<li><a class="reference internal" href="#MPSSBaseTools.CTOT" title="MPSSBaseTools.CTOT"><code class="xref py py-func docutils literal notranslate"><span class="pre">CTOT()</span></code></a>:
+The reverse of the TTOC() function below.  It auto-detects which of the datetime formats (not including</li>
+<li><a class="reference internal" href="#MPSSBaseTools.CTOTX" title="MPSSBaseTools.CTOTX"><code class="xref py py-func docutils literal notranslate"><span class="pre">CTOTX()</span></code></a>:
+Addresses some of the shortcomings of CTOT for parsing datetimes in the form of 08/01/2018 10:30AM which</li>
+<li><a class="reference internal" href="#MPSSBaseTools.deleteByAge" title="MPSSBaseTools.deleteByAge"><code class="xref py py-func docutils literal notranslate"><span class="pre">deleteByAge()</span></code></a>:
+Pass a file name skeleton (fully qualified path name) which may or may not match some files in the</li>
+<li><a class="reference internal" href="#MPSSBaseTools.DELETEFILE" title="MPSSBaseTools.DELETEFILE"><code class="xref py py-func docutils literal notranslate"><span class="pre">DELETEFILE()</span></code></a>:
+Clean removal of a single file named by the fully qualified name.</li>
+<li><a class="reference internal" href="#MPSSBaseTools.dict2lower" title="MPSSBaseTools.dict2lower"><code class="xref py py-func docutils literal notranslate"><span class="pre">dict2lower()</span></code></a>:
+Takes a dictionary keyed by text strings and converts all those text strings to lower case</li>
+<li><a class="reference internal" href="#MPSSBaseTools.diffInMinutes" title="MPSSBaseTools.diffInMinutes"><code class="xref py py-func docutils literal notranslate"><span class="pre">diffInMinutes()</span></code></a>:
+Undocumented.</li>
+<li><a class="reference internal" href="#MPSSBaseTools.DOW" title="MPSSBaseTools.DOW"><code class="xref py py-func docutils literal notranslate"><span class="pre">DOW()</span></code></a>:
+Pass this a datetime value and returns the Visual FoxPro Day of week value as returned by the DOW() function.</li>
+<li><a class="reference internal" href="#MPSSBaseTools.dtFromDateAndTime" title="MPSSBaseTools.dtFromDateAndTime"><code class="xref py py-func docutils literal notranslate"><span class="pre">dtFromDateAndTime()</span></code></a>:
+Undocumented.</li>
+<li><a class="reference internal" href="#MPSSBaseTools.DTOR" title="MPSSBaseTools.DTOR"><code class="xref py py-func docutils literal notranslate"><span class="pre">DTOR()</span></code></a>:
+Converts a decimal float value in degrees to radians</li>
+<li><a class="reference internal" href="#MPSSBaseTools.DTOT" title="MPSSBaseTools.DTOT"><code class="xref py py-func docutils literal notranslate"><span class="pre">DTOT()</span></code></a>:
+Quick conversion utility to convert a Python datetime.date() object to a datetime.datetime() object,</li>
+<li><a class="reference internal" href="#MPSSBaseTools.fDiv" title="MPSSBaseTools.fDiv"><code class="xref py py-func docutils literal notranslate"><span class="pre">fDiv()</span></code></a>:
+In Python 2.x the division of two integers results in an integer result.  If instead you want a floating result</li>
+<li><a class="reference internal" href="#MPSSBaseTools.FILETOSTR" title="MPSSBaseTools.FILETOSTR"><code class="xref py py-func docutils literal notranslate"><span class="pre">FILETOSTR()</span></code></a>:
+To emulate the VFP function this MUST be a type ‘rb’, since VFP does NO transformations in a</li>
+<li><a class="reference internal" href="#MPSSBaseTools.findAllFiles" title="MPSSBaseTools.findAllFiles"><code class="xref py py-func docutils literal notranslate"><span class="pre">findAllFiles()</span></code></a>:
+Finds all files matching the standard OS file wildcard pattern in cSkel and returns them in a list</li>
+<li><a class="reference internal" href="#MPSSBaseTools.FORCEEXT" title="MPSSBaseTools.FORCEEXT"><code class="xref py py-func docutils literal notranslate"><span class="pre">FORCEEXT()</span></code></a>:
+Pass any file name as lpcFile and an extension (less any ‘.’) in lpcExt and this</li>
+<li><a class="reference internal" href="#MPSSBaseTools.FormatDateString" title="MPSSBaseTools.FormatDateString"><code class="xref py py-func docutils literal notranslate"><span class="pre">FormatDateString()</span></code></a>:
+Takes a time() type date value or a datetime() type date (date or datetime) value and transforms it into</li>
+<li><a class="reference internal" href="#MPSSBaseTools.FormatDateTimeString" title="MPSSBaseTools.FormatDateTimeString"><code class="xref py py-func docutils literal notranslate"><span class="pre">FormatDateTimeString()</span></code></a>:
+See the FormatDateString() function for details of formatting options.</li>
+<li><a class="reference internal" href="#MPSSBaseTools.FSacquire" title="MPSSBaseTools.FSacquire"><code class="xref py py-func docutils literal notranslate"><span class="pre">FSacquire()</span></code></a>:
+Find a directory or file here or higher in the directory structure.</li>
+<li><a class="reference internal" href="#MPSSBaseTools.get" title="MPSSBaseTools.get"><code class="xref py py-func docutils literal notranslate"><span class="pre">get()</span></code></a>:
+Undocumented.</li>
+<li><a class="reference internal" href="#MPSSBaseTools.getconfig" title="MPSSBaseTools.getconfig"><code class="xref py py-func docutils literal notranslate"><span class="pre">getconfig()</span></code></a>:
+return a default configobj or pass a different name to read that file</li>
+<li><a class="reference internal" href="#MPSSBaseTools.getCSSCalDateFormat" title="MPSSBaseTools.getCSSCalDateFormat"><code class="xref py py-func docutils literal notranslate"><span class="pre">getCSSCalDateFormat()</span></code></a>:
+Converts one of the 4 EVOS/MPSS standard date format codes used in our apps to the appropriate code used</li>
+<li><a class="reference internal" href="#MPSSBaseTools.getCustomDateRange" title="MPSSBaseTools.getCustomDateRange"><code class="xref py py-func docutils literal notranslate"><span class="pre">getCustomDateRange()</span></code></a>:
+Generic tool to get specific date ranges from user selections from typical drop-down selectors.</li>
+<li><a class="reference internal" href="#MPSSBaseTools.getDateRangeTypeText" title="MPSSBaseTools.getDateRangeTypeText"><code class="xref py py-func docutils literal notranslate"><span class="pre">getDateRangeTypeText()</span></code></a>:
+Returns a text string which contains the explanatory text for the cRangeType values as required for</li>
+<li><a class="reference internal" href="#MPSSBaseTools.getExcelColumn" title="MPSSBaseTools.getExcelColumn"><code class="xref py py-func docutils literal notranslate"><span class="pre">getExcelColumn()</span></code></a>:
+Converts a left-to-right columns number for a spreadsheet (starting with 1) to an alphabetic Excel Column</li>
+<li><a class="reference internal" href="#MPSSBaseTools.getfilechanged" title="MPSSBaseTools.getfilechanged"><code class="xref py py-func docutils literal notranslate"><span class="pre">getfilechanged()</span></code></a>:
+Simple utility that returns the datetime value of the last modification date for any file.</li>
+<li><a class="reference internal" href="#MPSSBaseTools.getJQueryDateFormat" title="MPSSBaseTools.getJQueryDateFormat"><code class="xref py py-func docutils literal notranslate"><span class="pre">getJQueryDateFormat()</span></code></a>:
+Returns a format string as used by the jQuery datepicker widget which can then adapt to the current standard</li>
+<li><a class="reference internal" href="#MPSSBaseTools.getlasterrormessage" title="MPSSBaseTools.getlasterrormessage"><code class="xref py py-func docutils literal notranslate"><span class="pre">getlasterrormessage()</span></code></a>:
+Undocumented.</li>
+<li><a class="reference internal" href="#MPSSBaseTools.getMIMEType" title="MPSSBaseTools.getMIMEType"><code class="xref py py-func docutils literal notranslate"><span class="pre">getMIMEType()</span></code></a>:
+Undocumented.</li>
+<li><a class="reference internal" href="#MPSSBaseTools.getrandomseed" title="MPSSBaseTools.getrandomseed"><code class="xref py py-func docutils literal notranslate"><span class="pre">getrandomseed()</span></code></a>:
+Returns a seed that can be used by any randomizer, which is not dependant on the system clock.  Use</li>
+<li><a class="reference internal" href="#MPSSBaseTools.getTempFileName" title="MPSSBaseTools.getTempFileName"><code class="xref py py-func docutils literal notranslate"><span class="pre">getTempFileName()</span></code></a>:
+Returns a fully qualified path name for a temporary file that can be used as needed.  The file will NOT</li>
+<li><a class="reference internal" href="#MPSSBaseTools.handleError" title="MPSSBaseTools.handleError"><code class="xref py py-func docutils literal notranslate"><span class="pre">handleError()</span></code></a>:
+decorator that will wrap error detection around a method</li>
+<li><a class="reference internal" href="#MPSSBaseTools.HexToStr" title="MPSSBaseTools.HexToStr"><code class="xref py py-func docutils literal notranslate"><span class="pre">HexToStr()</span></code></a>:
+Takes a string coded as hexadecimal (one 2 character hex expression per output string character)</li>
+<li><a class="reference internal" href="#MPSSBaseTools.isBetween" title="MPSSBaseTools.isBetween"><code class="xref py py-func docutils literal notranslate"><span class="pre">isBetween()</span></code></a>:
+Pass any three values of the same type in the parameters.  If the lpnTest</li>
+<li><a class="reference internal" href="#MPSSBaseTools.IsCanada" title="MPSSBaseTools.IsCanada"><code class="xref py py-func docutils literal notranslate"><span class="pre">IsCanada()</span></code></a>:
+Undocumented.</li>
+<li><a class="reference internal" href="#MPSSBaseTools.isDateBetween" title="MPSSBaseTools.isDateBetween"><code class="xref py py-func docutils literal notranslate"><span class="pre">isDateBetween()</span></code></a>:
+Simple test of whether a datetime or date value tTest is between the datetime or date values</li>
+<li><a class="reference internal" href="#MPSSBaseTools.isDigits" title="MPSSBaseTools.isDigits"><code class="xref py py-func docutils literal notranslate"><span class="pre">isDigits()</span></code></a>:
+examines every character in lpcStr and returns True if all are in the range from 0 to 9, else False</li>
+<li><a class="reference internal" href="#MPSSBaseTools.isstr" title="MPSSBaseTools.isstr"><code class="xref py py-func docutils literal notranslate"><span class="pre">isstr()</span></code></a>:
+Undocumented.</li>
+<li><a class="reference internal" href="#MPSSBaseTools.isunicode" title="MPSSBaseTools.isunicode"><code class="xref py py-func docutils literal notranslate"><span class="pre">isunicode()</span></code></a>:
+Undocumented.</li>
+<li><a class="reference internal" href="#MPSSBaseTools.IsValidNumber" title="MPSSBaseTools.IsValidNumber"><code class="xref py py-func docutils literal notranslate"><span class="pre">IsValidNumber()</span></code></a>:
+Pass any string that purports to be a representation of a number (like a value passed back by</li>
+<li><a class="reference internal" href="#MPSSBaseTools.JUSTFNAME" title="MPSSBaseTools.JUSTFNAME"><code class="xref py py-func docutils literal notranslate"><span class="pre">JUSTFNAME()</span></code></a>:
+pass any fully qualified file or path name and this returns just the file name itself, including the extension</li>
+<li><a class="reference internal" href="#MPSSBaseTools.JUSTSTEM" title="MPSSBaseTools.JUSTSTEM"><code class="xref py py-func docutils literal notranslate"><span class="pre">JUSTSTEM()</span></code></a>:
+Pass any fully or partially qualified file name and this returns just the base name.  So for example, if</li>
+<li><a class="reference internal" href="#MPSSBaseTools.makeNewCSSDateFormat" title="MPSSBaseTools.makeNewCSSDateFormat"><code class="xref py py-func docutils literal notranslate"><span class="pre">makeNewCSSDateFormat()</span></code></a>:
+For most calendar lookups in data entry, we use the www.rainforest.com NewCSSCal() function in</li>
+<li><a class="reference internal" href="#MPSSBaseTools.MPConfirm" title="MPSSBaseTools.MPConfirm"><code class="xref py py-func docutils literal notranslate"><span class="pre">MPConfirm()</span></code></a>:
+Like MPMsgBox except expects a “Yes” or “No” answer</li>
+<li><a class="reference internal" href="#MPSSBaseTools.MPlocal_except_handler" title="MPSSBaseTools.MPlocal_except_handler"><code class="xref py py-func docutils literal notranslate"><span class="pre">MPlocal_except_handler()</span></code></a>:
+Undocumented.</li>
+<li><a class="reference internal" href="#MPSSBaseTools.MPMsgBox" title="MPSSBaseTools.MPMsgBox"><code class="xref py py-func docutils literal notranslate"><span class="pre">MPMsgBox()</span></code></a>:
+Undocumented.</li>
+<li><a class="reference internal" href="#MPSSBaseTools.MPshow_variables" title="MPSSBaseTools.MPshow_variables"><code class="xref py py-func docutils literal notranslate"><span class="pre">MPshow_variables()</span></code></a>:
+helper function to show variables in order</li>
+<li><a class="reference internal" href="#MPSSBaseTools.multiItemFieldToList" title="MPSSBaseTools.multiItemFieldToList"><code class="xref py py-func docutils literal notranslate"><span class="pre">multiItemFieldToList()</span></code></a>:
+In DBF files where multiple values are stored in a Memo field either as json, comma delimited or line delmited</li>
+<li><a class="reference internal" href="#MPSSBaseTools.PADRIGHT" title="MPSSBaseTools.PADRIGHT"><code class="xref py py-func docutils literal notranslate"><span class="pre">PADRIGHT()</span></code></a>:
+Returns a text string padded at the right with a specified character to a specified length.</li>
+<li><a class="reference internal" href="#MPSSBaseTools.PyTime2datetime" title="MPSSBaseTools.PyTime2datetime"><code class="xref py py-func docutils literal notranslate"><span class="pre">PyTime2datetime()</span></code></a>:
+Undocumented.</li>
+<li><a class="reference internal" href="#MPSSBaseTools.rad2mile" title="MPSSBaseTools.rad2mile"><code class="xref py py-func docutils literal notranslate"><span class="pre">rad2mile()</span></code></a>:
+Undocumented.</li>
+<li><a class="reference internal" href="#MPSSBaseTools.rawReplace" title="MPSSBaseTools.rawReplace"><code class="xref py py-func docutils literal notranslate"><span class="pre">rawReplace()</span></code></a>:
+Undocumented.</li>
+<li><a class="reference internal" href="#MPSSBaseTools.removeNonPrint" title="MPSSBaseTools.removeNonPrint"><code class="xref py py-func docutils literal notranslate"><span class="pre">removeNonPrint()</span></code></a>:
+Pass this any string or bytearray and will remove all the ascii characters below the space.</li>
+<li><a class="reference internal" href="#MPSSBaseTools.RemoveTextBlock" title="MPSSBaseTools.RemoveTextBlock"><code class="xref py py-func docutils literal notranslate"><span class="pre">RemoveTextBlock()</span></code></a>:
+Like the same named tool in MPSS/Evos MPSSLib.PRG.  It removes all text found in the cSource block between</li>
+<li><a class="reference internal" href="#MPSSBaseTools.RIGHT" title="MPSSBaseTools.RIGHT"><code class="xref py py-func docutils literal notranslate"><span class="pre">RIGHT()</span></code></a>:
+Quick way to extract the nLen characters of cStr counting from the right-most end of the string.  So for example,</li>
+<li><a class="reference internal" href="#MPSSBaseTools.RTOD" title="MPSSBaseTools.RTOD"><code class="xref py py-func docutils literal notranslate"><span class="pre">RTOD()</span></code></a>:
+Converts an angle (or lat or lon) from radians to degrees)</li>
+<li><a class="reference internal" href="#MPSSBaseTools.runPythonApp" title="MPSSBaseTools.runPythonApp"><code class="xref py py-func docutils literal notranslate"><span class="pre">runPythonApp()</span></code></a>:
+Determines where python.exe is and then runs it with the specified .py program and parms.  Looks first for</li>
+<li><a class="reference internal" href="#MPSSBaseTools.safeHTMLcoding" title="MPSSBaseTools.safeHTMLcoding"><code class="xref py py-func docutils literal notranslate"><span class="pre">safeHTMLcoding()</span></code></a>:
+Replaces unsafe characters in a text string with their HTML codes to allow strings to be embedded</li>
+<li><a class="reference internal" href="#MPSSBaseTools.sanitizeHtml" title="MPSSBaseTools.sanitizeHtml"><code class="xref py py-func docutils literal notranslate"><span class="pre">sanitizeHtml()</span></code></a>:
+Undocumented.</li>
+<li><a class="reference internal" href="#MPSSBaseTools.setCommonErrorPath" title="MPSSBaseTools.setCommonErrorPath"><code class="xref py py-func docutils literal notranslate"><span class="pre">setCommonErrorPath()</span></code></a>:
+Undocumented.</li>
+<li><a class="reference internal" href="#MPSSBaseTools.StartOfWeek" title="MPSSBaseTools.StartOfWeek"><code class="xref py py-func docutils literal notranslate"><span class="pre">StartOfWeek()</span></code></a>:
+Pass this any date/datetime value and it returns the date() value for the Monday of the week into which the</li>
+<li><a class="reference internal" href="#MPSSBaseTools.STR" title="MPSSBaseTools.STR"><code class="xref py py-func docutils literal notranslate"><span class="pre">STR()</span></code></a>:
+Function that works like the VFP STR() function.  It transforms any numeric value into a string</li>
+<li><a class="reference internal" href="#MPSSBaseTools.STREXTRACT" title="MPSSBaseTools.STREXTRACT"><code class="xref py py-func docutils literal notranslate"><span class="pre">STREXTRACT()</span></code></a>:
+function like VFP STREXTRACT() which returns the text string contained between two delimiters within a</li>
+<li><a class="reference internal" href="#MPSSBaseTools.strRand" title="MPSSBaseTools.strRand"><code class="xref py py-func docutils literal notranslate"><span class="pre">strRand()</span></code></a>:
+This returns a string of random characters being either uppercase alpha letters</li>
+<li><a class="reference internal" href="#MPSSBaseTools.STRTOFILE" title="MPSSBaseTools.STRTOFILE"><code class="xref py py-func docutils literal notranslate"><span class="pre">STRTOFILE()</span></code></a>:
+Added optional 3rd parm to cause the string contents to be appended to an existing file rather than creating a new file.</li>
+<li><a class="reference internal" href="#MPSSBaseTools.StrToHex" title="MPSSBaseTools.StrToHex"><code class="xref py py-func docutils literal notranslate"><span class="pre">StrToHex()</span></code></a>:
+Function that converts any text string to a string of hex values.  Each</li>
+<li><a class="reference internal" href="#MPSSBaseTools.TestTimeEntry" title="MPSSBaseTools.TestTimeEntry"><code class="xref py py-func docutils literal notranslate"><span class="pre">TestTimeEntry()</span></code></a>:
+Re-creation of the Evos/MPSS Time validator function that checks that a time is in the range from 0000 (midnight)</li>
+<li><a class="reference internal" href="#MPSSBaseTools.thispath" title="MPSSBaseTools.thispath"><code class="xref py py-func docutils literal notranslate"><span class="pre">thispath()</span></code></a>:
+returns full path name of the file ‘name’ in the same folder as the calling program</li>
+<li><a class="reference internal" href="#MPSSBaseTools.toAscii" title="MPSSBaseTools.toAscii"><code class="xref py py-func docutils literal notranslate"><span class="pre">toAscii()</span></code></a>:
+Brute force removal of non-ascii characters from a string.  Returns a standard string, NOT unicode.</li>
+<li><a class="reference internal" href="#MPSSBaseTools.TTOC" title="MPSSBaseTools.TTOC"><code class="xref py py-func docutils literal notranslate"><span class="pre">TTOC()</span></code></a>:
+Pass a datetime value and an optional value of nHow and this creates a text string</li>
+<li><a class="reference internal" href="#MPSSBaseTools.TTOD" title="MPSSBaseTools.TTOD"><code class="xref py py-func docutils literal notranslate"><span class="pre">TTOD()</span></code></a>:
+Like the VFP TTOD() function, converts a datetime type value to a date type value.</li>
+<li><a class="reference internal" href="#MPSSBaseTools.WEEK" title="MPSSBaseTools.WEEK"><code class="xref py py-func docutils literal notranslate"><span class="pre">WEEK()</span></code></a>:
+Works similar the VFP WEEK() function.  Pass it a datetime value and it returns the week number within the current</li>
+</ul>
+<dl class="function">
+<dt id="MPSSBaseTools.ADDBS">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">ADDBS</code><span class="sig-paren">(</span><em>lcPath</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.ADDBS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.ADDFS">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">ADDFS</code><span class="sig-paren">(</span><em>lcPath</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.ADDFS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.cleanFileName">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">cleanFileName</code><span class="sig-paren">(</span><em>cName</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.cleanFileName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Expects as a parm a base file name (no path) and an optional extension.  This typically would be a file
+name as supplied by a user who will put just about anything into a file name.  This removes non-printing
+characters and replaces illegal characters with spaces.
+:param cName: File Name
+:return: Cleaned name</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.clearHTMLCode">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">clearHTMLCode</code><span class="sig-paren">(</span><em>cSource</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.clearHTMLCode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes any string with some HTML tags and removes them leaving only the base code. Very simple logic looking
+for “&lt;” and “&gt;” tag delimiters.
+:param cSource: String to clean
+:return: cSource less the HTML markeup</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.cleanUnicodeString">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">cleanUnicodeString</code><span class="sig-paren">(</span><em>cSource</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.cleanUnicodeString" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies transformations to strings where it may be possible to have higher-order unicode values embedded
+in a standard ascii or UTF8 string.
+:param cSource: Source string to be transformed.  Must be a string or a error will be triggered.
+:return: Clean-up string, or None on error condition
+NOTE: May not work reliably when utf-16 source is passed or 2 or 3 byte unicode characters are embedded
+in a UTF-8 string.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.confirmPath">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">confirmPath</code><span class="sig-paren">(</span><em>thepath</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.confirmPath" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.convertUnits">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">convertUnits</code><span class="sig-paren">(</span><em>cConvCode=''</em>, <em>nFromNumber=0.0</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.convertUnits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts the nFromNumber (converted to float if necessary) into the specified output value with units conversion:
+:param cConvCode: Specifies the from and to units:</p>
+<blockquote>
+<div>LB2KG = Pounds to Kilograms: specify nFromNumber in pounds.
+KG2LB = Kilograms to Pounds: specify nFromNumber in kilograms
+CM2IN = Centimeters to Inches: specify nFromNumber in centimeters
+IN2CM = Inches to Centimeters: specify nFromNumber in inches
+IN2MT = Inches to Meters: specify from Number in inches
+FT2MT = Feet to Meters: specify nFromNumber in Feet
+MT2FT = Meters to Feet: specify nFromNumber in Meters
+CF2CM = Cubic Feet to Cubic Meters: specify nFromNumber in Cubic Feet
+CM2CF = Cubic Meters to Cubic Feet: specify nFromNumber in Cubic Meters
+MT2IN = Meters to Inches: specify nFromNumber in Meters
+IN2FT = Inches to Feet: specify nFromNumber in Inches
+FT2IN = Feet to Inches: specify nFromNumber in Feet
+MT2CM = Meters to Centimeters: specify nFromNumber in Meters
+CM2MT = Centimeters to Meters: specify nFromNumber in Centimeters
+Identities are also supported:
+CM2CM, IN2IN, FT2FT, CF2CF, MT2MT, LB2LB, KT2KG</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>nFromNumber</strong> – The value you are converting FROM, see above.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the converted value or None on error.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.CTOD">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">CTOD</code><span class="sig-paren">(</span><em>cDateString</em>, <em>cPattern='mm/dd/yy'</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.CTOD" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pass a simple date string, and this returns a Python datetime.date() value representing the string.  This is like
+the VFP CTOD() function.  The difference is that in VFP, the way the date is parsed is based on the setting
+of SET DATE TO, which has values like mdy or dmy, etc.  In this version, if you are starting with a non-US type
+date string, you’ll need to pass the cPattern value where mm == the month number, yy = the year number, and
+dd = the day number separated by delimiters (required).</p>
+<p>Changed 08/26/2015 by addition of accepting the Evos/MPSS standard codes for dates: MDY, MDYY, DMY, DMYY, DMMY, and YYMD
+See FormatDateString() for details on their meaning. JSH.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.CTOT">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">CTOT</code><span class="sig-paren">(</span><em>cDateStr</em>, <em>cDateFmat=None</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.CTOT" title="Permalink to this definition">¶</a></dt>
+<dd><p>The reverse of the TTOC() function below.  It auto-detects which of the datetime formats (not including
+the one which is “time only”) has been passed, and interprets it accordingly.  If it doesn’t recognize the
+format, or the date/time is otherwise not valid, returns None, otherwise returns a datetime.datetime value.</p>
+<p>08/21/2014 - Added a parser for MercuryGate XML date/time values of the form: 08/21/2014 10:23</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.CTOTX">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">CTOTX</code><span class="sig-paren">(</span><em>cDateStr=''</em>, <em>cDateFmat=None</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.CTOTX" title="Permalink to this definition">¶</a></dt>
+<dd><p>Addresses some of the shortcomings of CTOT for parsing datetimes in the form of 08/01/2018 10:30AM which
+CTOT struggles with.  Uses the Python dateutil object to do the parsing
+:param cDateStr: In one of many possible formats.  dateutil parser is clever about this
+:param cDateFmat: MDY, MDYY, YYDM, YYMD, DMY, DMYY, YDM, YMD
+:return: datetime.datetime object or None on error
+Added 03/01/2018. JSH.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.deleteByAge">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">deleteByAge</code><span class="sig-paren">(</span><em>cSkel</em>, <em>nDays</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.deleteByAge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pass a file name skeleton (fully qualified path name) which may or may not match some files in the
+specified directory.  Any matching files older than nDays in age will be deleted.  Uses glob() for the
+file matching so ? and * are recognized in the skeleton.  Returns the number of files deleted.  Does
+not raise an error if no matching files are found, just returns 0.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.DELETEFILE">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">DELETEFILE</code><span class="sig-paren">(</span><em>lpcFileName</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.DELETEFILE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clean removal of a single file named by the fully qualified name.
+Returns True if removal was successful, else False.  Does NOT generate an
+error like the native Python stuff does, as often you just don’t care if it fails.
+Works more like VFP DELETE FILE command.</p>
+<p>08/22/2015 - Add ability to delete multiple files based on a wild-card type skeleton using glob().</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.dict2lower">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">dict2lower</code><span class="sig-paren">(</span><em>xDict</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.dict2lower" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes a dictionary keyed by text strings and converts all those text strings to lower case
+:param xDict: source dict
+:return: copy of the source dict</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.diffInMinutes">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">diffInMinutes</code><span class="sig-paren">(</span><em>tDateTime1</em>, <em>tDateTime2</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.diffInMinutes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.DOW">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">DOW</code><span class="sig-paren">(</span><em>ltDate</em>, <em>VFPstyle=True</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.DOW" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pass this a datetime value and returns the Visual FoxPro Day of week value as returned by the DOW() function.
+By default, VFP treats Sunday as day 1, Monday as 2, etc. through Saturday as 7.  Python considers Monday
+to be 1.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.dtFromDateAndTime">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">dtFromDateAndTime</code><span class="sig-paren">(</span><em>xDate</em>, <em>cTime</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.dtFromDateAndTime" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.DTOR">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">DTOR</code><span class="sig-paren">(</span><em>nDegrees=0.0</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.DTOR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a decimal float value in degrees to radians
+:param nDegrees: for example 45.3495 degrees
+:return: the angle in radians.
+NOTE: Differs from the result from Visual Foxpro DTOR() in the 7th or 8th decimal place.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.DTOT">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">DTOT</code><span class="sig-paren">(</span><em>dTheDate</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.DTOT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Quick conversion utility to convert a Python datetime.date() object to a datetime.datetime() object,
+like the corresponding VFP DTOT() function.  Returns the datetime value or None on error</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.fDiv">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">fDiv</code><span class="sig-paren">(</span><em>nDividend</em>, <em>nDivisor</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.fDiv" title="Permalink to this definition">¶</a></dt>
+<dd><p>In Python 2.x the division of two integers results in an integer result.  If instead you want a floating result
+with the appropriate fractional part, you have to convert one of the values to float first.  This function simplifies
+that process and in addition protects against divide by zero errors.  In DBZ situations, it returns 0.0.  Always
+returns a float value.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.FILETOSTR">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">FILETOSTR</code><span class="sig-paren">(</span><em>lcFile</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.FILETOSTR" title="Permalink to this definition">¶</a></dt>
+<dd><p>To emulate the VFP function this MUST be a type ‘rb’, since VFP does NO transformations in a
+FILETOSTR() function.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.findAllFiles">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">findAllFiles</code><span class="sig-paren">(</span><em>cDirPath</em>, <em>cSkel=''</em>, <em>cExcl=''</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.findAllFiles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds all files matching the standard OS file wildcard pattern in cSkel and returns them in a list
+of fully qualified path names.
+:param cDirPath:
+:param cSkel: Include ‘?’ or ‘*’ to match multiple file names.  Do NOT include the path, just the file name.
+:param cExcl: Reverse of cSkel – exclude files with matching this wild-card file-name string.
+:return: List of matching files or None on error.  List may be empty if there aren’t any files there.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.FORCEEXT">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">FORCEEXT</code><span class="sig-paren">(</span><em>lpcFile</em>, <em>lpcExt</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.FORCEEXT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pass any file name as lpcFile and an extension (less any ‘.’) in lpcExt and this
+returns the full file name with the extension set as the lpcExt value.  Like the VFP FORCEEXT() function.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.FormatDateString">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">FormatDateString</code><span class="sig-paren">(</span><em>lpdDate</em>, <em>fmatType='A'</em>, <em>cSep='/'</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.FormatDateString" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes a time() type date value or a datetime() type date (date or datetime) value and transforms it into
+a text string in one of six forms as specified by the type parm:
+A &gt;&gt; “Mar. 15, 2012”
+F &gt;&gt; “March 15, 2012”
+C &gt;&gt; “03/15/2012” # Note the US date notation
+M &gt;&gt; “15 Mar 2012”
+G &gt;&gt; “031512” # Poor practice but required for some external applications.  Uses US MDY sequence. Added 01/09/2014. JSH.
+R &gt;&gt; “20100315” simple YYYYMMDD format.</p>
+<p>Now recognizes the following standard PlanTools/BidTools date format codes. Added 08/23/2015. JSH.
+MDY = This is the ‘American’ standard, e.g. 03/28/07 – deprecated
+MDYY = American, but 4-digit year: 03/28/2007 – same as ‘C’ above
+DMY = European and Canadian standard: 28/03/07 – deprecated
+DMYY = European standard but 4-digit year: 28/03/2007
+DMMY = “Military Date”: 28 Mar 2007 – same as ‘M’ above.
+YYMD = ISO type date like 2007/12/31</p>
+<p>For outputs with a separator character like “/”, you can specify an alternative character like “-” or “.”
+with the cSep parameter.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.FormatDateTimeString">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">FormatDateTimeString</code><span class="sig-paren">(</span><em>lpdDate</em>, <em>fmatType='A'</em>, <em>hourType='12'</em>, <em>bOmitComma=False</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.FormatDateTimeString" title="Permalink to this definition">¶</a></dt>
+<dd><p>See the FormatDateString() function for details of formatting options.</p>
+<p>There are 4 variations of values for the hourType parm, governing the formatting of the time portion:
+12 &gt;&gt; 3:45pm
+12S &gt;&gt; 3:45:29 pm – Shows the seconds
+24 &gt;&gt; 15:45 – Military or 24 hour clock time
+24S &gt;&gt; 15:45:29 – 24 hour time with seconds.</p>
+<p>See Also TTOC(), which outputs coded text versions of the datetime value.
+Added bOmitComma June 17, 2017. JSH.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.FSacquire">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">FSacquire</code><span class="sig-paren">(</span><em>name</em>, <em>isdir=True</em>, <em>root=False</em>, <em>starting=None</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.FSacquire" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find a directory or file here or higher in the directory structure.
+Returns file/folder name or an empty string
+isdir: Must be a folder if True(default), otherwise must be a file
+root:  Allow it to be found at the root of the drive (default=False)
+starting: specify starting directory explicitly  # added JMc 9/12/12</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.get">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">get</code><span class="sig-paren">(</span><em>obj</em>, <em>key</em>, <em>df=None</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.getconfig">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">getconfig</code><span class="sig-paren">(</span><em>name=None</em>, <em>cspecFile='default.conf'</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.getconfig" title="Permalink to this definition">¶</a></dt>
+<dd><p>return a default configobj or pass a different name to read that file
+Added the cspecFile parm so as to be able to override default.conf.  This
+really needs a .cspec type file for the validation anyway. JSH 10/26/2011.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.getCSSCalDateFormat">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">getCSSCalDateFormat</code><span class="sig-paren">(</span><em>fmatType='MDYY'</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.getCSSCalDateFormat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts one of the 4 EVOS/MPSS standard date format codes used in our apps to the appropriate code used
+by the NewCSSCal widget for interactive calendar and date/time services (using the customized version from
+Dec., 2017.)
+:param fmatType: Must be: MDYY, MDY, DMY, DMMY, or YYMD
+:return: Corresponding code for the NewCssCal widget.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.getCustomDateRange">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">getCustomDateRange</code><span class="sig-paren">(</span><em>cRangeType</em>, <em>tFromDate=None</em>, <em>tToDate=None</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.getCustomDateRange" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generic tool to get specific date ranges from user selections from typical drop-down selectors.
+cRangeType values recognized include:
+LMONTH = Last Month
+LWEEK = Last Week
+LYEAR = Last Year
+YTD = Year to Date
+MTD = Month to Date
+LQUARTER Last Quarter
+QTD = Quarter to Date
+DATERANGE = Date range specified by tFromDate, tToDate</p>
+<p>If cRangeType is any of the first 7, returns a tuple of tFromDate, tToDate (datetime objects) values
+calculated by the specification relative to TODAY.  If it is DATERANGE, then the tFromDate and tToDate values
+are simply returned.  On error, a None value is returned.  Error includes tFromDate or tToDate being empty or None
+or tToDate prior to tFromDate, if DATERANGE is specified, or if an unrecognized value of cRangeType is received.</p>
+<p>Added 09/27/2013. JSH.
+Bug fix 12/01/2015. JSH.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.getDateRangeTypeText">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">getDateRangeTypeText</code><span class="sig-paren">(</span><em>cRangeType</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.getDateRangeTypeText" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a text string which contains the explanatory text for the cRangeType values as required for
+the getCustomDateRange() function.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.getExcelColumn">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">getExcelColumn</code><span class="sig-paren">(</span><em>lpnCol</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.getExcelColumn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a left-to-right columns number for a spreadsheet (starting with 1) to an alphabetic Excel Column
+ID equivalent.  For example, Column 1 is “A”, and Column 26 is “Z”.  After that, the letters repeat.
+Column 27 is “AA”, 28 is “AB” and so on.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.getfilechanged">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">getfilechanged</code><span class="sig-paren">(</span><em>cFile=''</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.getfilechanged" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple utility that returns the datetime value of the last modification date for any file.
+:param cFile: fully qualified path name for the file in question
+:return: datetime.datetime value of the last modification date or None if file is not found or otherwise
+not accessible.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.getJQueryDateFormat">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">getJQueryDateFormat</code><span class="sig-paren">(</span><em>fmatType='MDYY'</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.getJQueryDateFormat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a format string as used by the jQuery datepicker widget which can then adapt to the current standard
+date format in the PlanTools/BidTools contexts.
+:param fmatType: Must be one of the following: MDY, DMY, MDYY, DMYY, YYMD, DMMY
+:return: format string.  raises a ValueError if a bad string is passed.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.getlasterrormessage">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">getlasterrormessage</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.getlasterrormessage" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.getMIMEType">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">getMIMEType</code><span class="sig-paren">(</span><em>cExt=''</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.getMIMEType" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.getrandomseed">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">getrandomseed</code><span class="sig-paren">(</span><em>nSize=4</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.getrandomseed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a seed that can be used by any randomizer, which is not dependant on the system clock.  Use
+if you think your processes may run concurrently and get the same seed for random() from the clock.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.getTempFileName">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">getTempFileName</code><span class="sig-paren">(</span><em>ext='tmp'</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.getTempFileName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a fully qualified path name for a temporary file that can be used as needed.  The file will NOT
+be created.  That is the responsibility of the calling program.  It will NOT be deleted automatically either.
+:param ext: Pass an extension if that will be important, otherwise the extension .TMP will be used
+:return: The file name, or “” on error</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.handleError">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">handleError</code><span class="sig-paren">(</span><em>func</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.handleError" title="Permalink to this definition">¶</a></dt>
+<dd><p>decorator that will wrap error detection around a method</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.HexToStr">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">HexToStr</code><span class="sig-paren">(</span><em>lpcHex</em>, <em>lpcKey=''</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.HexToStr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes a string coded as hexadecimal (one 2 character hex expression per output string character)
+and returns the ASCII text string decoded from it.  Optionally pass an encryption key
+to decrypt the result.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.isBetween">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">isBetween</code><span class="sig-paren">(</span><em>lpnTest</em>, <em>lpnFrom</em>, <em>lpnTo</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.isBetween" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pass any three values of the same type in the parameters.  If the lpnTest
+value is &gt;= lpnFrom AND &lt;= lpnTo, this function returns 1, otherwise 0</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.IsCanada">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">IsCanada</code><span class="sig-paren">(</span><em>cZip=''</em>, <em>cProvince=''</em>, <em>cCountry=''</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.IsCanada" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.isDateBetween">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">isDateBetween</code><span class="sig-paren">(</span><em>tTest</em>, <em>tFrom</em>, <em>tTo</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.isDateBetween" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple test of whether a datetime or date value tTest is between the datetime or date values
+of tFrom and tTo, inclusive.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.isDigits">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">isDigits</code><span class="sig-paren">(</span><em>lpcStr</em>, <em>bAllowSpace=False</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.isDigits" title="Permalink to this definition">¶</a></dt>
+<dd><p>examines every character in lpcStr and returns True if all are in the range from 0 to 9, else False
+:param lpcStr: String to test
+:param bAllowSpace: pass True if a ‘ ‘ char is OK.
+:return: See above</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.isstr">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">isstr</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.isstr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.isunicode">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">isunicode</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.isunicode" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.IsValidNumber">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">IsValidNumber</code><span class="sig-paren">(</span><em>lpcStr</em>, <em>bForceInt=False</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.IsValidNumber" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pass any string that purports to be a representation of a number (like a value passed back by
+a web page form).  Returns a float or an int consisting of the numeric value (or None if the value is not
+a valid number).  A non-string value will trigger an error, except for None, which returns None
+as of Oct. 10, 2013.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.JUSTFNAME">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">JUSTFNAME</code><span class="sig-paren">(</span><em>lpcFile</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.JUSTFNAME" title="Permalink to this definition">¶</a></dt>
+<dd><p>pass any fully qualified file or path name and this returns just the file name itself, including the extension
+and the dot separator, if any.  Like the VFP JUSTFNAME() function
+:param lpcFile: The file name
+:return: Just the base file name</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.JUSTSTEM">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">JUSTSTEM</code><span class="sig-paren">(</span><em>lpcFile</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.JUSTSTEM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pass any fully or partially qualified file name and this returns just the base name.  So for example, if
+you pass c: empmyfile.txt, this will return the text string ‘myfile’.  If, there is not a valid file name
+(doesn’t have to exist, just be in a valid format), then returns the empty string.
+:param lpcFile: Any file name.
+:return: string.  See above.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.makeNewCSSDateFormat">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">makeNewCSSDateFormat</code><span class="sig-paren">(</span><em>cEvosFmat='MDYY'</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.makeNewCSSDateFormat" title="Permalink to this definition">¶</a></dt>
+<dd><p>For most calendar lookups in data entry, we use the www.rainforest.com NewCSSCal() function in
+datetimepicker3_css.js as modified by Evos/MPSS.  This calendar widget uses different date format
+codes from PlanTools/BidTools standard.  Pass a PlanTools/BidTools date format string (from the Configurator)
+to this method to convert it to a form recognized by NewCSSCal().
+:return: The CSS calendar required date format string.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.MPConfirm">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">MPConfirm</code><span class="sig-paren">(</span><em>cMsg</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.MPConfirm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like MPMsgBox except expects a “Yes” or “No” answer
+:param cMsg:
+:return: Returns True for Yes, otherwise False</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.MPlocal_except_handler">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">MPlocal_except_handler</code><span class="sig-paren">(</span><em>cType</em>, <em>xValue</em>, <em>xTraceback</em>, <em>cErrorFilePath</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.MPlocal_except_handler" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.MPMsgBox">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">MPMsgBox</code><span class="sig-paren">(</span><em>cMsg</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.MPMsgBox" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.MPshow_variables">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">MPshow_variables</code><span class="sig-paren">(</span><em>obj</em>, <em>ignore=[]</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.MPshow_variables" title="Permalink to this definition">¶</a></dt>
+<dd><p>helper function to show variables in order</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.multiItemFieldToList">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">multiItemFieldToList</code><span class="sig-paren">(</span><em>cValue</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.multiItemFieldToList" title="Permalink to this definition">¶</a></dt>
+<dd><p>In DBF files where multiple values are stored in a Memo field either as json, comma delimited or line delmited
+values, this function is designed to extract that information into a Python list().
+:param cValue: Stored field data string
+:return: list of the values.  Returns an empty list of there is nothing there.  None on error.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.PADRIGHT">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">PADRIGHT</code><span class="sig-paren">(</span><em>cStr</em>, <em>nLen</em>, <em>cPad=' '</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.PADRIGHT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a text string padded at the right with a specified character to a specified length.
+:param cStr: The source string.
+:param nLen: The target length.  If the source string exceeds the length of nLen, it will be truncated.  Normally</p>
+<blockquote>
+<div>this value should be a positive integer.  Passing a negative integer will remove the specified number of
+characters from the right end of the string – which may or may not be what you want.</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cPad</strong> – The padding character to be used to extend the length of the string to nLen.  If omitted, an ascii
+space (32) will be used.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The resulting string</td>
+</tr>
+</tbody>
+</table>
+<p>This replicates Visual FoxPro behavior in the PADRIGHT() function.  Note that using a format code like “%-10s”
+is not sufficient because it does not truncate, which VFP does.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.PyTime2datetime">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">PyTime2datetime</code><span class="sig-paren">(</span><em>ptDate</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.PyTime2datetime" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.rad2mile">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">rad2mile</code><span class="sig-paren">(</span><em>oLat</em>, <em>oLon</em>, <em>dLat</em>, <em>dLon</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.rad2mile" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.rawReplace">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">rawReplace</code><span class="sig-paren">(</span><em>cSource</em>, <em>cOld</em>, <em>cNew</em>, <em>bMakeAscii=False</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.rawReplace" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.removeNonPrint">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">removeNonPrint</code><span class="sig-paren">(</span><em>xStr</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.removeNonPrint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pass this any string or bytearray and will remove all the ascii characters below the space.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.RemoveTextBlock">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">RemoveTextBlock</code><span class="sig-paren">(</span><em>cSource=''</em>, <em>cDelim1=''</em>, <em>cDelim2=''</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.RemoveTextBlock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like the same named tool in MPSS/Evos MPSSLib.PRG.  It removes all text found in the cSource block between
+two non-identical delimiters and returns the result.  The delimiters are removed too.
+:param cSource:
+:param cDelim:
+:return: The resulting string</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.RIGHT">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">RIGHT</code><span class="sig-paren">(</span><em>cStr</em>, <em>nLen</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.RIGHT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Quick way to extract the nLen characters of cStr counting from the right-most end of the string.  So for example,
+mTools.RIGHT(“1234567890”, 4) returns “7890”.  If nLen is greater than the actual length of the string, returns
+the entire string.  If nLen is 0, returns an empty string.  Note: we don’t have a LEFT() because that is easy
+to do with one line of Python code using a slice.
+:param cStr: source string from which to extract a part
+:param nLen: the required length of the resulting string.
+:return: sub string as defined above</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.RTOD">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">RTOD</code><span class="sig-paren">(</span><em>nRadians=0.0</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.RTOD" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts an angle (or lat or lon) from radians to degrees)
+:param nRadians: must be a float
+:return: degrees as a float with a decimal component.  Returns None on error
+NOTE: Differs from the result from Visual FoxPro RTOD() in the 7th or 8th decimal place.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.runPythonApp">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">runPythonApp</code><span class="sig-paren">(</span><em>cApp=''</em>, <em>cParmString=''</em>, <em>cHomeDir=''</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.runPythonApp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determines where python.exe is and then runs it with the specified .py program and parms.  Looks first for
+a PYTHONPATH environment variable.  If that is empty, then determines the current Python version and tries
+either c:python27 or c:python36 .  If it can’t find the app there, it will look at sys.executable to see
+if it contains “python.exe”.  (Note that COM objects may report other .exe files.)  If that fails then
+raises an error.  Note we don’t use os.environ because it doesn’t reflect the most recent system environment
+variable updates.
+:param cApp: fully qualified path name to the .py file
+:param cParmString: any command line parms to be passed to the .py module
+:param cHomeDir: If not to run in the current directory, specify full path where it should be run.
+:return: True on OK</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.safeHTMLcoding">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">safeHTMLcoding</code><span class="sig-paren">(</span><em>lcSource</em>, <em>bFixNewLines=False</em>, <em>bSimple=False</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.safeHTMLcoding" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replaces unsafe characters in a text string with their HTML codes to allow strings to be embedded
+more easily in javascript variables passed from the page engine.
+Fixed this function 04/20/2017. JSH.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.sanitizeHtml">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">sanitizeHtml</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.sanitizeHtml" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.setCommonErrorPath">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">setCommonErrorPath</code><span class="sig-paren">(</span><em>cPath</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.setCommonErrorPath" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.StartOfWeek">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">StartOfWeek</code><span class="sig-paren">(</span><em>ltDate</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.StartOfWeek" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pass this any date/datetime value and it returns the date() value for the Monday of the week into which the
+ltDate value falls.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.STR">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">STR</code><span class="sig-paren">(</span><em>lpnVal</em>, <em>lpnLen=10</em>, <em>lpnDec=0</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.STR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that works like the VFP STR() function.  It transforms any numeric value into a string
+with the value right-aligned (left justified).  Default size is 10 characters and no decimal places,
+but other sizes and decimal places are allowed.  As with VFP STR() a non-numeric value for the first
+parameter triggers an exception.  This makes it easy to construct string values which match the STR()
+function values in a CodeBaseTools index.</p>
+<p>Like the VFP STR() function, if the value won’t fit in the string length provided, it is converted
+to exponential notation, which may not be what you want!</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.STREXTRACT">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">STREXTRACT</code><span class="sig-paren">(</span><em>lpcSource</em>, <em>lpcDelim1</em>, <em>lpcDelim2</em>, <em>lpnCnt=1</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.STREXTRACT" title="Permalink to this definition">¶</a></dt>
+<dd><p>function like VFP STREXTRACT() which returns the text string contained between two delimiters within a
+source string.  Returns the lpnCnt-th instance.  Returns “” on not found.  If lpcDelim1 == “”, then
+returns a string starting with the beginning of lpcSource.  If lpcDelim2 == “”, then returns from the
+lpnCnt-th occurrance of lpcDelim1 to the end of lpcSource.
+<strong>*******</strong> Initial version returns only the first instance.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.strRand">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">strRand</code><span class="sig-paren">(</span><em>StrLength</em>, <em>isPassword=0</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.strRand" title="Permalink to this definition">¶</a></dt>
+<dd><p>This returns a string of random characters being either uppercase alpha letters
+or numbers.  If isPassword is FALSE or unassigned, then selects from all 36 possible values,
+otherwise omits 1,I,O,0 to avoid password confusion.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.STRTOFILE">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">STRTOFILE</code><span class="sig-paren">(</span><em>lcString</em>, <em>lcFile</em>, <em>lbAppend=False</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.STRTOFILE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Added optional 3rd parm to cause the string contents to be appended to an existing file rather than creating a new file.
+Added trap for bad directory name, which causes this to return a False.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.StrToHex">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">StrToHex</code><span class="sig-paren">(</span><em>lpcString</em>, <em>lpcKey=''</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.StrToHex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function that converts any text string to a string of hex values.  Each
+character of the string is converted to two characters of Hex numbers.
+Optionally accepts an encryption key to encrypt the result string</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.TestTimeEntry">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">TestTimeEntry</code><span class="sig-paren">(</span><em>cTestTime</em>, <em>bBlankOK=False</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.TestTimeEntry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Re-creation of the Evos/MPSS Time validator function that checks that a time is in the range from 0000 (midnight)
+to 2359 (one minute prior to midnight).  If lpbBlankOK is True, then allows a completely blank value to be passed.
+:param cTestTime: The text string to be evaluated
+:param bBlankOK: If True, blanks are OK
+:return: The corrected 4-character text time value or None on error.  Sets the gcLastErrorMessage global on error.
+If lpbBlankOK is True and a blank is received, then returns the empty string.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.thispath">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">thispath</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.thispath" title="Permalink to this definition">¶</a></dt>
+<dd><p>returns full path name of the file ‘name’ in the same folder as the calling program</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.toAscii">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">toAscii</code><span class="sig-paren">(</span><em>cSrc</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.toAscii" title="Permalink to this definition">¶</a></dt>
+<dd><p>Brute force removal of non-ascii characters from a string.  Returns a standard string, NOT unicode.
+:param cSrc:
+:return: standard ascii string.
+Always works, regardless of the input string, but will lose all upper range special characters.
+New 10/07/2016. JSH.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.TTOC">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">TTOC</code><span class="sig-paren">(</span><em>tDateTime</em>, <em>nHow=0</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.TTOC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pass a datetime value and an optional value of nHow and this creates a text string
+representation of the value in the same exact way as the VFP TTOC() functions.  This simplifies
+the creation of values to seek for when datetime values are included in VFP table indexes.
+- nHow = 0: yields MM/DD/YY HH:MM:SS xM (where xM is either AM or PM)
+- nHow = 1: yields YYYYMMDDHHMMSS with no punctuation.  This will match a VFP index value like:</p>
+<blockquote>
+<div>UPPER(LOGIN_ID) + TTOC(MYDATETIME, 1)</div></blockquote>
+<ul class="simple">
+<li>nHow = 2: Time only in form HH:MM:SS xM per the above.</li>
+<li>nHow = 3: yields YYYY-MM-DDTHH:MM:SS (where time is expressed in 24 hour clock time) - used in some XML formats.</li>
+<li>nHow = 4: yields YYYY_MM_DD_HH_MM_SS, which can be used in file names and read more easily than nHow = 1.</li>
+<li>nHow = 9: yields YYYYMMDDHH:MM:SS:000 (the format needed by the CodeBaseTools seek() method when
+passing JUST the datetime value.  This is a format which is NOT supported by the VFP TTOC() function.</li>
+<li>nHow set to any other number returns the built-in Python str() representation of a datetime.datetime type:
+YYYY-MM-DD HH:MM:SS.SSSSSS where the number of seconds is represented to 6 decimal places.</li>
+</ul>
+<p>For human readable date/time strings see FormatDateTimeString()</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.TTOD">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">TTOD</code><span class="sig-paren">(</span><em>tTheDT</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.TTOD" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like the VFP TTOD() function, converts a datetime type value to a date type value.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="MPSSBaseTools.WEEK">
+<code class="descclassname">MPSSBaseTools.</code><code class="descname">WEEK</code><span class="sig-paren">(</span><em>ltDate</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.WEEK" title="Permalink to this definition">¶</a></dt>
+<dd><p>Works similar the VFP WEEK() function.  Pass it a datetime value and it returns the week number within the current
+year.  NOTE: in VFP the dividing line between weeks is between Saturday and Sunday (see DOW above).  In Python,
+the dividing line is between Sunday and Monday.  This function uses the native PY method of calculation.
+Week numbers can range from 1 to 53.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="classes">
+<h2><a class="toc-backref" href="#id2">Classes</a><a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="#MPSSBaseTools.baseService" title="MPSSBaseTools.baseService"><code class="xref py py-class docutils literal notranslate"><span class="pre">baseService</span></code></a>:
+Undocumented.</li>
+<li><a class="reference internal" href="#MPSSBaseTools.bf" title="MPSSBaseTools.bf"><code class="xref py py-class docutils literal notranslate"><span class="pre">bf</span></code></a>:
+The purpose of this class is to provide the bit twiddling functionality of the</li>
+<li><a class="reference internal" href="#MPSSBaseTools.Bunch" title="MPSSBaseTools.Bunch"><code class="xref py py-class docutils literal notranslate"><span class="pre">Bunch</span></code></a>:
+A Dictionary Object that can be accessed via attributes</li>
+<li><a class="reference internal" href="#MPSSBaseTools.NamedTuple" title="MPSSBaseTools.NamedTuple"><code class="xref py py-class docutils literal notranslate"><span class="pre">NamedTuple</span></code></a>:
+Undocumented.</li>
+</ul>
+<dl class="class">
+<dt id="MPSSBaseTools.baseService">
+<em class="property">class </em><code class="descclassname">MPSSBaseTools.</code><code class="descname">baseService</code><span class="sig-paren">(</span><em>bIsCOM=False</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.baseService" title="Permalink to this definition">¶</a></dt>
+<dd><p class="rubric">Inheritance</p>
+digraph inheritance417d626dc5 {
+rankdir=LR;
+size=&quot;8.0, 12.0&quot;;
+  &quot;baseService&quot; [URL=&quot;#MPSSBaseTools.baseService&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;];
+}
+</dd></dl>
+
+<dl class="class">
+<dt id="MPSSBaseTools.bf">
+<em class="property">class </em><code class="descclassname">MPSSBaseTools.</code><code class="descname">bf</code><span class="sig-paren">(</span><em>value=0</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.bf" title="Permalink to this definition">¶</a></dt>
+<dd><p>The purpose of this class is to provide the bit twiddling functionality of the
+BITSET() functions in VFP.  It allows you to set individual bit values in an unsigned
+long integer and retrieve those values.  The result can be turned into an int at any time.
+You treat this like a list, setting the nth element of the list to 0 (0 bit) or any non-zero value
+(set the bit value as 1).  Standard slicing also works.
+Example:
+myBitField = bf() # Starts out with value of 0 in all 32 bits.
+myBitField[0] = 1 # Sets the 0th bit to 1
+myBitField[7] = 1 # Sets the 7th (actually, the physical 8th bit) to 1
+nVal = int(myBitField) # returns 129L (unsigned long integer)
+nVal2 = int(nVal) # returns signed integer 129</p>
+<p class="rubric">Inheritance</p>
+digraph inheritance9fd9af192b {
+rankdir=LR;
+size=&quot;8.0, 12.0&quot;;
+  &quot;bf&quot; [URL=&quot;#MPSSBaseTools.bf&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;The purpose of this class is to provide the bit twiddling functionality of the&quot;];
+}
+</dd></dl>
+
+<dl class="class">
+<dt id="MPSSBaseTools.Bunch">
+<em class="property">class </em><code class="descclassname">MPSSBaseTools.</code><code class="descname">Bunch</code><a class="headerlink" href="#MPSSBaseTools.Bunch" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Dictionary Object that can be accessed via attributes</p>
+<p class="rubric">Inheritance</p>
+digraph inheritance83d804cedf {
+rankdir=LR;
+size=&quot;8.0, 12.0&quot;;
+  &quot;Bunch&quot; [URL=&quot;#MPSSBaseTools.Bunch&quot;,fontname=&quot;Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans&quot;,fontsize=10,height=0.25,shape=box,style=&quot;setlinewidth(0.5)&quot;,target=&quot;_top&quot;,tooltip=&quot;A Dictionary Object that can be accessed via attributes&quot;];
+}
+</dd></dl>
+
+<dl class="class">
+<dt id="MPSSBaseTools.NamedTuple">
+<em class="property">class </em><code class="descclassname">MPSSBaseTools.</code><code class="descname">NamedTuple</code><span class="sig-paren">(</span><em>tupleClassName</em>, <em>tupleFieldnames</em>, <em>**defaults</em><span class="sig-paren">)</span><a class="headerlink" href="#MPSSBaseTools.NamedTuple" title="Permalink to this definition">¶</a></dt></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+<footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, M-P Systems Services, Inc.
+
+    </p>
+	<p>
+        Licensed under GNU Lesser GPL version 3.0</p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

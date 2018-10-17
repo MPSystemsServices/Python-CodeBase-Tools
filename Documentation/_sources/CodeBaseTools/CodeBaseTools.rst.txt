@@ -1,0 +1,65 @@
+=================
+``CodeBaseTools``
+=================
+
+.. automodule:: CodeBaseTools
+
+   .. contents::
+      :local:
+
+.. currentmodule:: CodeBaseTools
+
+
+Functions
+=========
+
+- :py:func:`cbTools`:
+  Undocumented.
+
+- :py:func:`cbToolsX`:
+  This version of the cbTools caller creates a brand new instance every time.  This is preferred for new work
+
+- :py:func:`copydatatable`:
+  Function which copies all files for one DBF type table from one directory to another.
+
+
+.. autofunction:: cbTools
+
+.. autofunction:: cbToolsX
+
+.. autofunction:: copydatatable
+
+
+Classes
+=======
+
+- :py:class:`_cbTools`:
+  Undocumented.
+
+- :py:class:`TableObj`:
+  Treat vfp table access as if separate objects for each table.
+
+- :py:class:`VFPFIELD`:
+  Undocumented.
+
+
+.. autoclass:: _cbTools
+   :members:
+
+   .. rubric:: Inheritance
+   .. inheritance-diagram:: _cbTools
+      :parts: 1
+
+.. autoclass:: TableObj
+   :members:
+
+   .. rubric:: Inheritance
+   .. inheritance-diagram:: TableObj
+      :parts: 1
+
+.. autoclass:: VFPFIELD
+   :members:
+
+   .. rubric:: Inheritance
+   .. inheritance-diagram:: VFPFIELD
+      :parts: 1

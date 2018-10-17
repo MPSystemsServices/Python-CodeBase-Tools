@@ -1,0 +1,95 @@
+=================
+``ExcelComTools``
+=================
+
+.. automodule:: ExcelComTools
+
+   .. contents::
+      :local:
+
+.. currentmodule:: ExcelComTools
+
+
+Functions
+=========
+
+- :py:func:`makeBodyBoldDateFormat`:
+  Undocumented.
+
+- :py:func:`makeBodyBoldFormat`:
+  Undocumented.
+
+- :py:func:`makeBodyDateFormat`:
+  Undocumented.
+
+- :py:func:`makeBodyFormat`:
+  Undocumented.
+
+- :py:func:`makeBodyMoneyFormat`:
+  Undocumented.
+
+- :py:func:`makeBodyNoWrapFormat`:
+  Undocumented.
+
+- :py:func:`makeBodyNumber2DFormat`:
+  Undocumented.
+
+- :py:func:`makeBodyNumberFormat`:
+  Undocumented.
+
+- :py:func:`makeHeaderFormat`:
+  Undocumented.
+
+- :py:func:`makeMainTitleFormat`:
+  Undocumented.
+
+- :py:func:`makeTitleCenterFormat`:
+  Undocumented.
+
+- :py:func:`makeTitleFormat`:
+  Undocumented.
+
+- :py:func:`calcColumnWidth`:
+  Undocumented.
+
+
+.. autofunction:: makeBodyBoldDateFormat
+
+.. autofunction:: makeBodyBoldFormat
+
+.. autofunction:: makeBodyDateFormat
+
+.. autofunction:: makeBodyFormat
+
+.. autofunction:: makeBodyMoneyFormat
+
+.. autofunction:: makeBodyNoWrapFormat
+
+.. autofunction:: makeBodyNumber2DFormat
+
+.. autofunction:: makeBodyNumberFormat
+
+.. autofunction:: makeHeaderFormat
+
+.. autofunction:: makeMainTitleFormat
+
+.. autofunction:: makeTitleCenterFormat
+
+.. autofunction:: makeTitleFormat
+
+.. autofunction:: calcColumnWidth
+
+
+Classes
+=======
+
+- :py:class:`excelTools`:
+  NOTE: This class is for COM applications ONLY.  Its methods are intended to be called by COM clients
+
+
+.. autoclass:: excelTools
+   :members:
+
+   .. rubric:: Inheritance
+   .. inheritance-diagram:: excelTools
+      :parts: 1

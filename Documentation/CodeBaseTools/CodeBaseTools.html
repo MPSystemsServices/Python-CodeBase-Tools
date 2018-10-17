@@ -1,0 +1,2761 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>CodeBaseTools &mdash; MPSS Common Modules 1.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../MPSSCommon Module Docs.html" class="icon icon-home"> MPSS Common Modules
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">CodeBaseTools</span></code></a><ul>
+<li><a class="reference internal" href="#string-handling-for-python-2-3-compatibility">String handling for Python 2/3 compatibility</a></li>
+<li><a class="reference internal" href="#foxpro-and-visual-foxpro-compatibility">FoxPro and Visual FoxPro Compatibility</a></li>
+<li><a class="reference internal" href="#string-handling-and-internationalization-depends-on-python-version">String handling and internationalization… Depends on Python version</a><ul>
+<li><a class="reference internal" href="#data-fields">Data Fields:</a></li>
+<li><a class="reference internal" href="#python-2-7-earlier-versions-may-work-but-are-not-officially-supported">Python 2.7 (earlier versions may work but are not officially supported)</a></li>
+<li><a class="reference internal" href="#python-3-x-3-4-and-higher-earlier-versions-not-supported">Python 3.x (3.4 and higher.  Earlier versions not supported.)</a></li>
+<li><a class="reference internal" href="#all-python-versions">All Python versions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#functions">Functions</a></li>
+<li><a class="reference internal" href="#classes">Classes</a></li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../MPSSCommon Module Docs.html">MPSS Common Modules</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../MPSSCommon Module Docs.html">Docs</a> &raquo;</li>
+        
+      <li><code class="docutils literal notranslate"><span class="pre">CodeBaseTools</span></code></li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/CodeBaseTools/CodeBaseTools.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-CodeBaseTools">
+<span id="codebasetools"></span><h1><code class="docutils literal notranslate"><span class="pre">CodeBaseTools</span></code><a class="headerlink" href="#module-CodeBaseTools" title="Permalink to this headline">¶</a></h1>
+<p>This module is a wrapper and Pythonizer for the CodeBasePYWrapper.pyd shared library written
+in ‘C’ using the Python ‘C’ API, which provides relatively easy and Pythonic access to Visual FoxPro DBF tables.  The
+underlying engine is the CodeBase library, which, as of September 28, 2018, is released by its owner Sequiter, Inc.,
+into Open Source, and is available for free use under the GNU Lesser GPL V3.0 license.</p>
+<p>Basic documenation for each function is provided in the docstrings below.</p>
+<dl class="docutils">
+<dt>NOTE FOR THIS VERSION 2.00 – October, 2014:</dt>
+<dd>This version is a wrapper for a compiled core python module named CodeBasePYWrapper.pyd which is a revised and</dd>
+</dl>
+<p>improved version of the original CodeBaseWrapper.dll.  The core module is now built with the Python C-API which
+allows much faster transfer of data from disk to memory.  The original dll was accessed using the cTypes modules
+and the Win32 extensions.  cTypes is not required for this enhanced version.</p>
+<p>Python Version information:
+This module has been developed and tested with Python 2.7.6 and 2.7.10.</p>
+<p>Tested also with Python 3.6.  Earlier 3x versions haven’t been tested and may not work.</p>
+<div class="section" id="string-handling-for-python-2-3-compatibility">
+<h2>String handling for Python 2/3 compatibility<a class="headerlink" href="#string-handling-for-python-2-3-compatibility" title="Permalink to this headline">¶</a></h2>
+<p>Effective with the April, 2018 changes for Python 2 and 3 compatibility, all text values passed to the
+Codebase Tools engine will be coerced to str types.  That means plain strings for 2.x and Unicode
+strings for 3.x.  The engine will test for these types and throw an error if the type is wrong.
+This applies to path names (no “pathlike” objects), alias names, field names, tag names, and logical expressions
+for selecting and filtering.</p>
+<p>Field return values will be converted per the table below, if conversion is requested.  Unconverted field
+contents will be returned as type bytes in all versions, if stored in the tables as text.  Field setting values may
+be supplied as any valid type (including text representations of values like numbers and dates) and will be converted
+by the engine.</p>
+</div>
+<div class="section" id="foxpro-and-visual-foxpro-compatibility">
+<h2>FoxPro and Visual FoxPro Compatibility<a class="headerlink" href="#foxpro-and-visual-foxpro-compatibility" title="Permalink to this headline">¶</a></h2>
+<p>All field types used in FoxPro 2.6 DOS and Windows are supported natively by this tool.  Also the indexes
+generated are compatible with .CDX compound indexes with one or more index tags.</p>
+<p>Visual FoxPro 5.0 through 9.0 SP2 tables are supported with the following exceptions:</p>
+<ol class="arabic simple">
+<li>Tables contained in a database container can be read, written to and reindexed, but only the short field names
+will be usable.  Field names that are 10 characters long or less can be accessed by their normal names.</li>
+<li>Tables contained in a database container cannot have their structure changed, nor have indexes removed, added,
+or changed, as those changes will not be recorded in the database container.</li>
+<li>VFP supports multiple Windows Code Pages, including 1252, Western Europe.  This module only supports
+tables marked for Code Page 1252, however, NO translations between code pages are performed by this module.</li>
+<li>VFP may or may not support Unicode strings, including multibyte languages like Cantonese, in its C and M type
+fields.  See the docs below on string and Unicode handling in this module.</li>
+<li>Most, but not all field types are supported, and some type codes are different as given in the following table:</li>
+</ol>
+<dl class="docutils">
+<dt>VFP Type Code  | Type Name        | CodeBase Type Code     |  Python 2 Type    |  Python 3 Type***</dt>
+<dd><p class="first">B              Double               B                         float               float
+C              Character            C                         str                 str (Unicode)
+C              Character(binary)    Z                         bytearray           bytes</p>
+<blockquote>
+<div>(opt) unicode       (opt)str (Unicode)</div></blockquote>
+<p>D              Date                 D                         datetime.date       datetime.date
+F              Float                F (same as Numeric)       float               float
+G              General              G (see <a href="#id1"><span class="problematic" id="id2">**</span></a>note below)      bytes               bytes
+I              Integer              I                         int                 int
+I              Integer(auto incr)   [not supported</p>
+<blockquote>
+<div><ul class="simple">
+<li>see <a href="#id3"><span class="problematic" id="id4">*</span></a>note below]</li>
+</ul>
+</div></blockquote>
+<p class="last">L              Logical              L                         bool                bool
+M              Memo                 M                         str                 str (Unicode)
+M              Memo(binary)         X                         bytes               bytes
+N              Number               N                         float               float
+Q              Varbinary            [not supported]
+T              Datetime             T                         datetime.datetime   datetime.datetime
+V              Varchar              [not supported]
+V              Varchar(binary)      [not supported]
+W              Blob                 [not supported]
+Y              Currency             Y                         Decimal             Decimal</p>
+</dd>
+</dl>
+<p><a href="#id5"><span class="problematic" id="id6">*</span></a>Note – The last Codebase version added support for an auto incrementing integer field, but these fields are NOT
+recognized by Visual FoxPro, and VFP auto incrementing integer fields are not recognized by Codebase and can
+cause Codebase to crash.  This module therefore does not support auto incrementing integer fields directly, but a
+utility function getNewKey() is provided as a source for consecutive integer values.</p>
+<p><a href="#id7"><span class="problematic" id="id8">**</span></a>Note – CodeBase and this module support G (General) type fields for reading and writing, but unlike in Visual
+Foxpro, their contents cannot be filled with some kind of APPEND GENERAL sort of function.  VFP tables which have
+had a G field populated by the APPEND GENERAL command from an OLE document can be copied to other tables by this
+module, however, as these fields are read as simple strings of generic binary data (possibly containing null bytes),
+exactly as X Memo(binary) fields, there is no interpretation done with them.</p>
+<p><a href="#id9"><span class="problematic" id="id10">**</span></a><a href="#id11"><span class="problematic" id="id12">*</span></a>Note – All “strings” in Python 3.x are Unicode.  Sequences of bytes that are not intended to represent text of any
+kind are stored in “bytes” variables, not “strings”.  Accordingly, for Py 3.x the default Python type target for a
+standard char or memo field is a string, and that of char or memo binary fields is bytes.  But you may want to store
+Unicode data in binary fields to ensure no CodePage conversions are attempted by FoxPro.  As a result options are
+provided to write to and read from binary fields in several different Unicode codings.</p>
+</div>
+<div class="section" id="string-handling-and-internationalization-depends-on-python-version">
+<h2>String handling and internationalization… Depends on Python version<a class="headerlink" href="#string-handling-and-internationalization-depends-on-python-version" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>Field Names:</dt>
+<dd>ASCII is default, but extended ASCII with Code Page 1252 is supported for displaying table structure,
+but fields having names with characters above ASCII 127 cannot be accessed for reading and writing.</dd>
+<dt>Tag Names:</dt>
+<dd>ASCII is default, but extended ASCII tag names work properly</dd>
+<dt>Alias Names:</dt>
+<dd>Must be standard ASCII strings.  If specified with cp1252 high order bit characters, the Alias Name will be
+coerced to 7-bit ASCII.</dd>
+<dt>Table Names:</dt>
+<dd>Names supported by the operating system will work (but see note above for Alias Names, as auto-assigned
+Alias Names are also forced to 7-bit ASCII strings.)</dd>
+</dl>
+<div class="section" id="data-fields">
+<h3>Data Fields:<a class="headerlink" href="#data-fields" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="python-2-7-earlier-versions-may-work-but-are-not-officially-supported">
+<h3>Python 2.7 (earlier versions may work but are not officially supported)<a class="headerlink" href="#python-2-7-earlier-versions-may-work-but-are-not-officially-supported" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt>Char and Memo:</dt>
+<dd><p class="first">Default data storage is 8-bit strings as found in Python str objects.  Embedded nulls will be treated as end of
+string markers and will not be stored.  Unicode strings will be coerced to Code Page 1252 before saving.
+Applies to scatter, gather, insert, replace, and curval type functions.</p>
+<p>If bytearray types (with or without embedded nulls) are supplied for these fields, they will be copied into
+the target field as pure binary data.  In the case of char fields, any unused space to the right of the data
+will be padded with blanks.  Memo fields will contain only the data content.  If you write binary data from
+bytearray objects into these standard text fields, be sure that you handle the content accordingly when
+reading it back.  Also beware of FoxPro Code Page translations to which these fields are subject by default.</p>
+<p>The following special coding will be allowed optionally in these functions for string and unicode object
+data sources.:
+‘ ‘, ‘X’, or None = The default storage and retrieval
+‘W’ = Windows Double Byte Unicode encoding for the specified Code Page (default Code Page in the U.S.A. is</p>
+<blockquote>
+<div>usually cp1252) on the local machine.  Source data may be string or bytearray, and conversion will be
+performed.  Unicode will be coerced to the default Code Page.</div></blockquote>
+<p class="last">‘8’ = UTF-8 encoding. Source may be string, bytearray, or Unicode.</p>
+</dd>
+<dt>Char(binary) and Memo(binary):</dt>
+<dd><p class="first">Default data storage is a non-text sequence of 8-bit bytes with no textual meaning.  The raw contents of strings
+will be stored, but with strings terminated when a NULL is encountered.  Bytearrays will be copied character
+for character, regardless of the presence of null bytes.</p>
+<p>The following special coding will be allowed optionally in these functions with string or unicode type
+data source objects:
+‘ ‘, ‘X’, or None = The default storage and retrieval
+‘D’ = Windows Double Byte Unicode encoding for the specified Code Page (default Code Page in the U.S.A. is</p>
+<blockquote>
+<div>usually cp1252) on the local machine.</div></blockquote>
+<p>‘U’ = UTF-8 encoding.
+‘C’ = Custom Code Page code.  See Python codecs documentation for allowable values.  Examples include:</p>
+<blockquote class="last">
+<div>“cp1252” - Western Europe, “cp1251” - Cyrillic (Russian, etc.), “gb2312” - Simplified Chinese.</div></blockquote>
+</dd>
+</dl>
+</div>
+<div class="section" id="python-3-x-3-4-and-higher-earlier-versions-not-supported">
+<h3>Python 3.x (3.4 and higher.  Earlier versions not supported.)<a class="headerlink" href="#python-3-x-3-4-and-higher-earlier-versions-not-supported" title="Permalink to this headline">¶</a></h3>
+<dl class="docutils">
+<dt>Char and Memo:</dt>
+<dd><p class="first">All 3.x Python strings are Unicode.  This module will attempt to code Python strings for storage in the
+field type specified.  If the Unicode string value cannot be converted into a form suitable for the field type,
+an error will be triggered. Applies to scatter, gather, insert, replace, and curval type functions.
+By default conversion of the strings to and from 8-bit Code Page 1252 will be attempted.  This will handle
+most special characters for Western European languages.</p>
+<p>Version 3.x also has a bytes and bytearray type (differences are very subtle, but the both contain
+sequences of bytes that don’t necessarily have avy textual meaning.  Both of these binary data types may be
+stored in both plain and binary char/memo fields, but you will need to be careful with their data
+reteieval.  In all such cases, the contents of the bytes and bytearray objects will be stored byte for
+byte into the target field.</p>
+<p>The following special coding will be allowed optionally in these functions:
+‘ ‘, ‘X’, or None = The default storage and retrieval (cp1252, 8-bit coding or plain ASCII)
+‘W’ = Windows Double Byte Unicode encoding for the specified Code Page (default Code Page in the U.S.A. is</p>
+<blockquote>
+<div>usually cp1252) on the local machine.</div></blockquote>
+<p class="last">‘8’ = UTF-8 encoding.</p>
+</dd>
+<dt>Char(binary) and Memo(binary):</dt>
+<dd><dl class="first docutils">
+<dt>Default data storage is a non-text sequence of 8-bit bytes with no textual meaning.</dt>
+<dd>The following special coding will be allowed optionally in these functions:</dd>
+</dl>
+<p>‘ ‘, ‘X’, or None = The default storage and retrieval.  For Bytes and ByteArray data, this will be a simple
+copy of the binary data.  Char fields will be filled out with nulls.  String (Unicode) data will be stored
+as Code Page 1252 and padded out with blanks. (For pure binary data, memo (binary) should be preferred.)
+‘D’ = Windows Double Byte Unicode encoding for the specified Code Page (default Code Page in the U.S.A. is</p>
+<blockquote>
+<div>usually cp1252) on the local machine.</div></blockquote>
+<p>‘U’ = UTF-8 encoding.
+‘C’ = Custom Code Page code.  See Python codecs documentation for allowable values.  Examples include:</p>
+<blockquote class="last">
+<div>“cp1252” - Western Europe, “cp1251” - Cyrillic (Russian, etc.), “gb2312” - Simplified Chinese.  There
+are many others.</div></blockquote>
+</dd>
+</dl>
+</div>
+<div class="section" id="all-python-versions">
+<h3>All Python versions<a class="headerlink" href="#all-python-versions" title="Permalink to this headline">¶</a></h3>
+<p>Note that with all the non-default codings, you are expected to know what codings are contained the fields
+you are reading and writing.  Data which cannot be transformed by the Python codecs manager will trigger
+a Python error and will need to be trapped by a try… except… block.</p>
+<p>Note that if you specify a custom coding and are sharing the data with Visual FoxPro, you are responsible for
+ensuring the codings match on both sides.  VFP will dynamically change field data in Char and Memo
+fields (but not their binary versiona) if the table and local machine Code Pages do not match.  This could
+result in badly corrupted data, as this module does no automatic Code Page conversions.</p>
+<p>Also, be careful with functions that read or write data from and to multiple fields.  In such cases, the custom
+coding spcifiers shown above will be applied to every field of the appropriate type.  If that is not what you
+want, process fields individually using replace() or curvalstrex().</p>
+</div>
+</div>
+<div class="section" id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="#CodeBaseTools.cbTools" title="CodeBaseTools.cbTools"><code class="xref py py-func docutils literal notranslate"><span class="pre">cbTools()</span></code></a>:
+Undocumented.</li>
+<li><a class="reference internal" href="#CodeBaseTools.cbToolsX" title="CodeBaseTools.cbToolsX"><code class="xref py py-func docutils literal notranslate"><span class="pre">cbToolsX()</span></code></a>:
+This version of the cbTools caller creates a brand new instance every time.  This is preferred for new work</li>
+<li><a class="reference internal" href="#CodeBaseTools.copydatatable" title="CodeBaseTools.copydatatable"><code class="xref py py-func docutils literal notranslate"><span class="pre">copydatatable()</span></code></a>:
+Function which copies all files for one DBF type table from one directory to another.</li>
+</ul>
+<dl class="function">
+<dt id="CodeBaseTools.cbTools">
+<code class="descclassname">CodeBaseTools.</code><code class="descname">cbTools</code><span class="sig-paren">(</span><em>bIsLarge=False</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools.cbTools" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="CodeBaseTools.cbToolsX">
+<code class="descclassname">CodeBaseTools.</code><code class="descname">cbToolsX</code><span class="sig-paren">(</span><em>bIsLarge=False</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools.cbToolsX" title="Permalink to this definition">¶</a></dt>
+<dd><p>This version of the cbTools caller creates a brand new instance every time.  This is preferred for new work
+because it provides for a unique session number for the instance to reduce interference between instances
+in opening and closing tables.  Should work fine with TableObj type routines as well as legacy methods.
+Added Dec. 2, 2014. JSH.
+:param bIsLarge:
+:return: The object reference to a new instance of cbTools()
+NOTE: While Codebase does assign each instance a unique data session number, the opening and closing of
+tables is not really isolated, despite what their docs claim. Oct. 7, 2015. JSH.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="CodeBaseTools.copydatatable">
+<code class="descclassname">CodeBaseTools.</code><code class="descname">copydatatable</code><span class="sig-paren">(</span><em>cTableName=''</em>, <em>cSourceDir=''</em>, <em>cTargetDir=''</em>, <em>bByZap=False</em>, <em>oCBT=None</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools.copydatatable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function which copies all files for one DBF type table from one directory to another.
+Takes 5 parameters:
+- Name of the table, no path, extension optional unless NOT .DBF
+- Name of the source directory - fully qualified
+- Name of the target directory - fully qualified
+- By Zap, which causes table content to be removed and replaced
+- oCBT which is a handle to a CodeBaseTools object, if an external one is to be used.</p>
+<p>Returns True on success, False on failure.  If there is an existing table in the
+target directory, it and its related files are renamed to a random name prior
+to the copy process and then copied to an ARCHIVE subdirectory.  If failure,
+the partially copied files are removed and the originals renamed to their starting names.
+On returning False, writes the error into the gcLastErrorMessage global.
+In that case call getlasterrormessage() to retrieve the description of the error.
+As of 12/29/2013, this method will attempt to copy by zapping the contents of the
+target table and appending in the source, if the bByZap parameter is True.  If failing
+that or if bByZap is False, then copies using the operating system copy functions.
+Caller should provide a CodeBaseTools object as oCBT or this program will create its own.
+Note that if the source table is in a VFP database container, and if the function
+uses the OS to copy the file, the resulting copy will have a reference to the database
+container in it, which may not be what you intended.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="#CodeBaseTools._cbTools" title="CodeBaseTools._cbTools"><code class="xref py py-class docutils literal notranslate"><span class="pre">_cbTools</span></code></a>:
+Undocumented.</li>
+<li><a class="reference internal" href="#CodeBaseTools.TableObj" title="CodeBaseTools.TableObj"><code class="xref py py-class docutils literal notranslate"><span class="pre">TableObj</span></code></a>:
+Treat vfp table access as if separate objects for each table.</li>
+<li><a class="reference internal" href="#CodeBaseTools.VFPFIELD" title="CodeBaseTools.VFPFIELD"><code class="xref py py-class docutils literal notranslate"><span class="pre">VFPFIELD</span></code></a>:
+Undocumented.</li>
+</ul>
+<dl class="class">
+<dt id="CodeBaseTools._cbTools">
+<em class="property">class </em><code class="descclassname">CodeBaseTools.</code><code class="descname">_cbTools</code><span class="sig-paren">(</span><em>bLargeMode=False</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools" title="Permalink to this definition">¶</a></dt>
+<dd><p class="rubric">Inheritance</p>
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.TableObj">
+<code class="descname">TableObj</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.TableObj" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create database object from cbTools connection object.  Ignores deleted record.
+:tablename: can include full path
+optional :reset: will cause file to be re-opened if already open</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.afielddict">
+<code class="descname">afielddict</code><span class="sig-paren">(</span><em>lpcAlias=''</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.afielddict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Similar to afields in that it retrieves field data, but it returns a dict() keyed by the field name (always
+upper case), containing the object pointer for the field info structure.  Makes it easy to get specs
+on individual fields without looping through the list returned by afields()
+:param lpcAlias:
+:return: see above. Returns None on error</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.afields">
+<code class="descname">afields</code><span class="sig-paren">(</span><em>lpcAlias=''</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.afields" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves field structure information for the currently selected table or the specified table designated
+by alias name.</p>
+<p>Returns a list of VFPFIELD objects, each containing information on one field, the list is in order as the
+fields physically appear in the table.  See the doc for createtable() for how the output of this method
+can be used to create a duplicate of the table.</p>
+<p>The properties of the VFPFIELD object are detailed in the createtable() documentation.</p>
+<p>If there is no currently selected table, or the alias isn’t recognized, or some other error occurs, returns None.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.afieldtypes">
+<code class="descname">afieldtypes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.afieldtypes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Utility function which returns a dictionary containing field type information for the currently selected table.</p>
+<p>The keys to the dictionary are the field names.  This provides an easy way to tailor any data preparation for
+storage in a specific field, based on the target field type.</p>
+<p>Returns the dictionary on success, None on failure.  Much faster than getting all afields() info, but NOTE:
+the ordering of the dict() is unrelated to the sequence of fields in the table.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.alias">
+<code class="descname">alias</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.alias" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that returns the alias name of the currently selected table. If there is no
+currently selected table, returns an empty string “”. Call this immediately after a table
+use() or createtable() if you need to capture the alias, especially if you may have opened
+or created a table with a temporary or externally defined name, and don’t want to make
+assumptions about what default name might have been assigned to the table and have not set
+the alias name yourself.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.appendblank">
+<code class="descname">appendblank</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.appendblank" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a new, completely blank record at the end of the currently selected table.  Once the record is added
+you can call gatherfromarray() or replace() to fill data into the fields of the new record.</p>
+<p>Returns True on success, False on error, in which case check cErrorMessage and nErrorNumber for more information.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.appendfrom">
+<code class="descname">appendfrom</code><span class="sig-paren">(</span><em>cAlias=''</em>, <em>cSource=''</em>, <em>cExpr=''</em>, <em>cType=''</em>, <em>cDialect=''</em>, <em>cDelimiter=''</em>, <em>cQuoteChar=''</em>, <em>cFieldList=''</em>, <em>bFieldsFromRow1=True</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.appendfrom" title="Permalink to this definition">¶</a></dt>
+<dd><p>Works much like the APPEND FROM command in Visual FoxPro.  You specify a currently open alias as
+the target, or pass “” or None, if you want to use the currently selected table as the target.  The
+engine will attempt to append the data from the file cSource into that table.  It will select for the
+append process only records which meet the cExpr logical expression if it is not “” or None.  NOTE: as
+of this version, the cExpr filter is ONLY applied for DBF type source files.</p>
+<p>Four types of files can be the source: DBF tables, System Data Format (fixed position fields in a
+text file using CR/LF separators for the records, CSV (comma separated values), and TAB/TXT (tab character
+delimited values).  CSV and TAB/TXT file reading makes use of the Python csv library, which means that it
+may be slightly slower to execute than ‘C’ native imports of DBF or SDF type files, but also means that there
+is a great deal of flexibility in configuring the csv module to handle variations in CSV formatting.</p>
+<p>Four optional parameters provide some configuration flexibility for use of this module:</p>
+<p>cDialect = supports the dialect options supported by csv.  Typically these are “excel” and “excel-tab”, and
+provide for reading csv or tab delimited (.TXT) files created by Excel.  Leave empty for native appendfrom()
+processing or to override with the remaining parms.</p>
+<p>cDelimiter = define a character which separates fields in the input text string.  This defaults to “,” (comma)
+for native appendfrom() operations and ‘excel’ dialect.  For tab-delimited files, use ” ” (tab char), which
+is also the default for ‘excel-tab’ dialect.</p>
+<p>cQuoteChar = the character used in the file to set off text strings, if any.  For native appendfrom() behavior,
+this defaults to the double quote charcter: ‘”’.  Typically tab-delimited files don’t use quote characters,
+but some custom formats may.  By default, the csv handling of double quote characters embedded within text
+fields is applied (it recognizes “” embedded in the string as a quote character).  For custom handling of
+such situations, see customizing csv for your needs below.</p>
+<p>bFieldsFromRow1 = Indicates whether the reader should look for field names in the first line of the input
+file.  VFP does NOT support this feature, but csv DOES, and the default for appendfrom() behavior with
+CSV or TAB/TXT input is for this to be True.  If you do NOT use this feature, then you have two options:
+1) Supply cFieldList with a comma delimited text string containing one field name for each field in the
+input table or 2) Be ABSOLUTELY CERTAIN that the target DBF table has exactly the fields you want in the
+exact order as found in the input.</p>
+<p>Customizing csv for your needs: When this object class is created, the self.oCSV property is initialized
+to an instance of csv.  That instance, configured to provide default behavior will be used for the
+appendfrom() function.  However, if you configure your own csv instance and set custom dialect information
+for it, you can use that by setting the oCSV attribute to a reference to your custom instance of csv.  See
+the Python documentation for its csv.Dialect class for how to customize the format.  Alternatively, if
+you know you’ll always be wanting a particular Dialect configuration, then specify the properties of
+Dialect on the self.oCSV object:</p>
+<blockquote>
+<div><ul class="simple">
+<li>delimiter</li>
+<li>doublequote</li>
+<li>escapechar</li>
+<li>lineterminator</li>
+<li>quotechar</li>
+<li>quoting</li>
+<li>skipinitialspace</li>
+</ul>
+</div></blockquote>
+<p>If you set any one of these values to a non-None value, you’ll need to set them all to meet your specific
+needs, and no default Dialect information will be applied, and the parameters cDialect, cDelimiter,
+cQuoteChar will ALL be ignored.</p>
+<p>NOTE: The default behavior of appendfrom() with CSV and TAB/TXT type files will correctly append files
+created by the copyto() method of this class.</p>
+<p>Will use the file name extension of the source file to determine the type.  If that value is not “DBF” for
+DBF table, SDF or DAT for System Data Format, or CSV for Comma Separated Values type, then you will need
+to specify the type in the cType parameter as one of these 4 possible strings.  Since TAB is typically
+not used as an extension for a tab-delimited file, you should expect to use the string ‘TAB’ for the
+cType parameter and use .TXT or other appropriate extension for the file name.</p>
+<p>Returns the number of records appended or -1 on error.  Zero records is a potentially valid return if
+for some reason the source table/file is empty or if cExpr matches no records..</p>
+<p>For SDF appends, the expected field widths for type C and type N fields are determined by the
+table field sizes themselves.  However other field types like D, T, and B have special rules.  See
+the documentation for the copyto() method for size rules for output to SDF from these fields.  This
+appendfrom() method uses the same width assumptions for append from an SDF type file.  If these special rules
+are not consistent with an SDF file supplied from another source, create a DBF table with all type C
+fields and set the width of each to the corresponding width of each field in the source file.  After appending
+from the SDF file, you can then copy from the resulting DBF table to one with the desired field types, making
+conversions as necessary.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.ataginfo">
+<code class="descname">ataginfo</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.ataginfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves index tag information for the currently selected table.  If there are no index tags, returns
+an empty list.  Otherwise returns a list consisting of one VFPINDEXTAG object for each list element.</p>
+<dl class="docutils">
+<dt>The VFPINDEXTAG objects each have five properties defining the characteristics of the index tag:</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt>cTagName - The name of the sort order tag name.  Use this string value to set the current order</dt>
+<dd><p class="first last">to this index using the setorderto() method.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>cTagExpr - The expression defining the tag.  At minimum this will be the name of one field or a function</dt>
+<dd><p class="first last">like DELETED() that relates to the contents of each record.  It can be a much more complex
+expression like “UPPER(first_name)+UPPER(last_name)+STR(salary)”.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>cTagFilt - If the index tag is to only have visibility to a subset of records, this filter expression can</dt>
+<dd><p class="first last">contain a logical expression containing references to one or more fields.  In that case, if you
+set order to the tag and execute skip() or copytoarray(), only records for which this expression
+evaluates to True will be recognized.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>nDirection - 0 if ordering is standard ascending order.  10 if ordering is descending with largest values</dt>
+<dd><p class="first last">at the top.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>nUnique - value of 0 if duplicate index key values are allowed.  Value of 20 if an attempt to add a record</dt>
+<dd><p class="first last">that has a key identical to an existing key value will trigger an error.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+<p>If there is no currently selected table or some other error occurs, returns None.</p>
+<p>Sets the value the property tally to the number of tags.  0 is a valid value (no index tags defined), and -1
+indicates an error.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.calcfor">
+<code class="descname">calcfor</code><span class="sig-paren">(</span><em>stat='SUM'</em>, <em>fldexpr=''</em>, <em>forexpr=''</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.calcfor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates a statistic from a numeric expression in fldexpr based on the records in the currently selected table
+that satisfy the logical expression contained in forexpr.  Returns a float value result of the calculation.
+Returns None on any kind of error (for example an invalid expression string).  See locate() for examples of
+valid contents for the forexpr parameter.  This obeys the setting of DELETED.</p>
+<p>Values allowed in stat are:
+“SUM” - totals the values in the fldexpr
+“AVG” - produces a simple average
+“MAX” - what it says
+“MIN” - what it says.</p>
+<p>Other considerations:
+- Must NEVER be used in the midst of a locate/continue/locateclear sequence. If it is,</p>
+<blockquote>
+<div>it will return None error.</div></blockquote>
+<ul class="simple">
+<li>Does not alter the current record pointer position, so can be called on the current table in the middle
+of a scan().</li>
+<li>Since this executes entirely in the ‘C’ engine, it will be much faster than scanning through a table
+with Python code calling lower level CBTools functions.</li>
+<li>If the fldexpr contains only the name of an Integer type field, the result will always be 0.0 UNLESS
+you append a “+0” to the expression (due to an oddity in the way CodeBase handles Integer fields).  So,
+if S_NUM is an Integer, and you need the sum of these values, pass “S_NUM+0” as the value of fldexpr.  This
+does not apply to Number type fields.  It has not been tested with VFP Double, Float, or Currency type fields.</li>
+</ul>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.cb_shutdown">
+<code class="descname">cb_shutdown</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.cb_shutdown" title="Permalink to this definition">¶</a></dt>
+<dd><p>Manually does what the __del__() does above.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.closedatabases">
+<code class="descname">closedatabases</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.closedatabases" title="Permalink to this definition">¶</a></dt>
+<dd><p>Closes all open tables, flushes all pending writes to the disk, but keeps the CodeBase engine running.  Call this
+method when you are done with a bunch of work, but need to keep the object alive for additional work.  Any calls
+that require a currently selected table or an open table will fail after this has been called and until new calls
+to use().</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.closetable">
+<code class="descname">closetable</code><span class="sig-paren">(</span><em>alias=''</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.closetable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Closes the currently open table or the table with the alias specified by the optional alias parameter.  Flushes
+all unsaved data to the disk and releases all the file handles.</p>
+<p>The table cannot be accessed again without another use() method, and references to this alias will fail.</p>
+<p>Returns True on success (table was open and is now closed) or False on failure (didn’t find anything to close).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.closetempindex">
+<code class="descname">closetempindex</code><span class="sig-paren">(</span><em>lnCode</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.closetempindex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Temporary indexes are automatically destroyed when the table they relate to is closed.  If you want
+to close the temporary index before the table, pass the index code to this method.  You may wish to do
+this if you are going to be adding a large number of records to the table, and don’t want the possibly
+useless overhead of updating the temporary table(s) on every append.  Returns True on OK, False on failure.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.convert_vfp_type">
+<code class="descname">convert_vfp_type</code><span class="sig-paren">(</span><em>lcSourceValue</em>, <em>lcSourceType</em>, <em>lbStripBlanks</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.convert_vfp_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Since the development of the CodeBaseTools Python API module that quickly and easily returns native Python
+objects for field values, there is limited use for this feature.  However, scatter and other functions
+do offer a “no data conversion” for slightly enhanced speed, and those unconverted values can be
+translated by this function when you are ready to use them in your program.</p>
+<p>Note that for char (binary) and memo (binary) and any text fields containing Unicode data, you MUST
+allow the CodeBaseTools module to do the conversions internally rather than using this function.
+———————————————————————————————————-
+Converts the field value information returned from the CodeBase engine into the appropriate native Python value.</p>
+<p>If you elect to have converttypes=False in copytoarray() or scatter(), you may want to use this method at some
+point to convert the raw values returned to native Python values.  But, to do so you’ll need to determine the
+source field value type.  That can be extracted using the afields() method and inspecting the cType property
+of the appropriate field.</p>
+<p>Returns the Python value (int, string, datetime, date, bool, etc.) or None on error.  Will also return None on
+empty DATE and DATETIME field values.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.copyindexto">
+<code class="descname">copyindexto</code><span class="sig-paren">(</span><em>cSourceAlias</em>, <em>cTargetAlias</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.copyindexto" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes two open tables and copies the indexes from the source table to the target table.  Removes the indexes
+from the target table at the start.</p>
+<p>It is recommended that the target alias table be opened in Exclusive mode unless you are sure that there
+cannot be any conflicts in opening the table.
+:param cSourceAlias:
+:param cTargetAlias:
+:return:  True on success, False on failure of any kind – including if the target table doesn’t have all
+the fields found in the source indexes.</p>
+<p>NOTE: The target table must be a VFP “FREE” table NOT part of a database container.  Performing this method
+on a target table in a database container will result in data corruption.  Source tables, however, may
+be part of a VFP database container without problems, however PRIMARY KEY index tags may NOT copy correctly,
+but CANDIDATE and UNIQUE indexes will.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.copyto">
+<code class="descname">copyto</code><span class="sig-paren">(</span><em>cAlias=''</em>, <em>cOutput=''</em>, <em>cType=''</em>, <em>cTestExpr=''</em>, <em>bHeader=False</em>, <em>cFieldList=''</em>, <em>bStripBlanks=False</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.copyto" title="Permalink to this definition">¶</a></dt>
+<dd><p>An output routine similar to the VFP COPY TO.  It takes any currently open table
+and writes out a text or DBF file in one of four possible formats with the table data
+which meets an optional selection criteria.
+Parameters:
+- cAlias – The alias name of the open table with contents to be written out.</p>
+<blockquote>
+<div>If blank, the currently selected table will be used.</div></blockquote>
+<ul>
+<li><dl class="first docutils">
+<dt>cOutput – [REQUIRED] The fully qualified path name of the output file.  Be sure to include</dt>
+<dd><p class="first last">the file name extension, as this function makes no assumptions about the output file name.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>cType – [REQUIRED] One of four string values: “SDF”, “CSV”, “TAB”, “DBF”, indicating:</dt>
+<dd><p class="first">SDF = System Data Format – Fixed width fields in records delimited by CR/LF
+CSV = Comma Separated Value – Plain text with fields separated by commas</p>
+<blockquote>
+<div><p>unless they are text, in which case, they are set off with double quote
+signs thus: “joe’s Diner”,”Hambergers To Go”,35094,”Another Name”.
+If the text field has an embedded quote, the quote is transformed into a
+double-double quote: “Joe’s “”Best”” Hambergers”,”Pete’s Grill”.
+Embedded line breaks within character/text fields are NOT supported.
+If encountered, they WILL BE REMOVED from the data prior to output.</p>
+</div></blockquote>
+<dl class="last docutils">
+<dt>TAB - Tab separated values.  Plain text with fields separated by a single</dt>
+<dd><p class="first last">Tab (ASCII Character 9) character.  Character and number data is given
+without any quotations other than what might exist in the data.  In
+this implementation embedded line breaks in character fields and em-
+bedded TAB characters in text fields are NOT supported and WILL BE
+REMOVED prior to output of the data.</p>
+</dd>
+<dt>DBF - Standard VFP-type DBF table.  Data structure will be identical to the</dt>
+<dd><p class="first last">source unless a cFieldList is supplied.  No indexes will be copied.  Be SURE
+to supply the file name extension as none will be assumed.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>bHeader – If True, then CSV and TAB outputs will include a first line consisting</dt>
+<dd><p class="first last">of the names of each field, separated by the appropriate separator,
+either Comma or TAB respectively.  Otherwise no field name data will
+be included.  Default is False.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>cFieldList – A list of field names to include in the output.  If omitted, ALL</dt>
+<dd><p class="first last">fields will be included (except as indicated in NOTES).</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>cTestExpr – Text string containing a VFP Logical expression which must be True</dt>
+<dd><p class="first last">for the record to be output.  If empty or null, ALL records are output.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>bStripBlanks – If True, trailing blanks will be stripped at the end of records.</dt>
+<dd><p class="first last">Defaults to False.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>NOTES:
+- For all types except DBF, fields which cannot be represented by simple text</p>
+<blockquote>
+<div>strings without line breaks will be skipped.  These include types MEMO, GENERAL,
+CHARACTER(BINARY), and BLOB.</div></blockquote>
+<ul>
+<li><p class="first">In text formats Date fields will be output as MM/DD/YYYY or as specified by the current setting
+of cbwSETDATEFORMAT().</p>
+</li>
+<li><p class="first">In text formats Date-Time fields will be represented as CCYYMMDDhh:mm:ss, which is re-importable
+back into CodeBase DBF tables via cbwAPPENDFROM().</p>
+</li>
+<li><p class="first">The Deleted status of records will be respected based on the setdeleted() setting.</p>
+</li>
+<li><p class="first">Current Order will be respected.</p>
+</li>
+<li><p class="first">The TYPE of the file will be determined by the cType parameter regardless of the
+name of the output file!!</p>
+</li>
+<li><p class="first">The table named in the cOutput parm should NOT be open.  If it exists, it will be overwritten</p>
+</li>
+<li><p class="first">Field lengths for the SDF type output are, in general determined by the length
+of the data fields themselves.  Rules for length and output are as follows by
+type:</p>
+<blockquote>
+<div><ul class="simple">
+<li>C - Width of field.</li>
+<li>D - 8 characters in the form YYYYMMDD</li>
+<li>T - 16 characters in the form YYYYMMDDhh:mm:ss</li>
+<li>L - 1 character (‘F’ or ‘T’)</li>
+<li>N - Determined by size and decimals of field.</li>
+<li>F (Float) - like N</li>
+<li>B (Double) - 16 bytes, left-filled</li>
+<li>I (Integer) - 11 bytes, left-filled</li>
+<li>Y (Currency) - 16 bytes, 4 decimals, left filled.</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+<dl class="docutils">
+<dt>RETURNS:</dt>
+<dd><p class="first">Returns number of records output or -1 on error.  Zero records returned may be a valid result,
+if there are no records in the source table or none match the cTestExpr evaluation.</p>
+<p class="last">If the function was successful, the new table will exist as specified but it will NOT be open.  If you
+need to work with it, you will need to open it normally with the use() method after this method terminates.</p>
+</dd>
+</dl>
+<p>WARNING: If the output type is DBF and the base file name of the target table is the same as the source
+table, then the alias of the source table MUST be a non-default string (not the same as the base table name).
+The CreateTable() function, which is at the core of this function when outputting a DBF, creates the table
+and opens it with the default alias name.  If that alias name is already in use, the original table is closed,
+and the results will likely NOT be what you expect.</p>
+<p>KNOWN ISSUE: If you do a copyto() on a currently open table, and wish to repeat the process on that table
+with a different target result, it may be necessary to close the source table and re-open it.  In some
+instances the repeat copy will create the target table but NOT put any records into it.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.copytoarray">
+<code class="descname">copytoarray</code><span class="sig-paren">(</span><em>alias=''</em>, <em>maxcount=1000</em>, <em>fieldtomatch=None</em>, <em>matchvalue=None</em>, <em>matchtype='='</em>, <em>converttypes=True</em>, <em>stripblanks=False</em>, <em>fieldlist=''</em>, <em>coding='XX'</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.copytoarray" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copies values of all fields and all (or selected) records of the specified table into a list of dictionaries.
+If the optional parameter alias is left empty, the method works on the currently selected table.  Otherwise
+returns the contents of the open table with the alias name specified.</p>
+<p>The list will be in order as set for the requested table.  If no order is set, the ordering will be by record
+number.  Each element of the list object returned will be a dictionary consisting of one element for each field
+keyed by the field name.  On error will return an empty list.</p>
+<p>The values in the dictionary will be converted from VFP table field types to native Python types by default,
+but you can override this behavior by specifying the named parameter converttypes=False.  By default,
+character fields will be returned with their native VFP table trailing blanks intact.  If you want them removed
+automatically, specify the named parameter stripblanks=True.</p>
+<p>By default the resulting list contains one element for every non-deleted record in the table up to a limit of
+1000 records.  To limit the number of records to a different number to be returned, specify a non-zero value
+for the named parameter maxcount.  To return all records, regardless of the number, set maxcount=0.</p>
+<p>You can filter the records to be returned by supplying the name of a field in the named parameter fieldtomatch.
+This field name is not case sensitive.  In this case, you must also specify a value for matchvalue.  matchvalue
+may be assigned an appropriate Python variable type (object) congruent with the type of data table field you
+specified in the fieldtomatch variable.  Valid Python types associated with DBF Field types are:</p>
+<blockquote>
+<div>Field type I (Integer) - int or long
+Field type C (Character) - string
+Field type D (Date) - datetime.date (None for empty date)
+Field type T (Datetime) - datetime.datetime (None for empty datetime)
+Field type N (Number) - int, long, float or decimal.Decimal
+Field type Y (Currency) - decimal.Decimal
+Field type M (Memo) - string
+Field type L (Logical) - bool (True or False)</div></blockquote>
+<p>If you specify a filter field and matchvalue, the field value will be compared to the matchvalue based on the
+matchtype.  If matchtype is its default value of ‘=’ (equality, yes, it is a single equal sign), the values
+must match for a record to be included.  (Note that for string comparisons, if the matchvalue is shorter than
+the length of the field value, a comparison will only be performed up to the length of the match value.  If
+you want to have an exact string match, character for character you should supply a matchtype of ‘==’
+(double quotes)).  Valid values for the matchtype include:</p>
+<blockquote>
+<div><p>=
+&gt;=
+&lt;=
+== (Exactly equal. See note on string comparisons above. Identical to = for non-string values.)
+&lt;&gt; (NOT equal)
+$ (Is Contained In.  Equivalent to the Python ‘in’ operator.  The field value string must be entirely</p>
+<blockquote>
+<div>contained in the matchvalue string.)</div></blockquote>
+</div></blockquote>
+<p>The reason for the filter mechanism is to allow very fast record filtering in the C component before Python
+ever sees the record values.  This can potentially eliminate significant numbers of records you just don’t want
+to see.  Then you can perform tests on the resulting array to refine your search more precisely.  If you are
+using the client-server version of CodeBase, the filter test will be performed on the server before the data
+is actually retrieved across the network.</p>
+<p>Returns the list object which will be empty on error (len() of 0), in which case cErrorMessage and nErrorNumber
+will be set with explanatory values.  If the list is empty and you included values for fieldtomatch and
+matchvalue and if nErrorNumber = 0, your filter criteria didn’t match any records.</p>
+<p>ValueError will be raised if non-matching value types are passed as matchvalue or if a non-existing field name
+is passed.</p>
+<p>Sets the value of the tally property to the number of records added to the array.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.countfor">
+<code class="descname">countfor</code><span class="sig-paren">(</span><em>expr</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.countfor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Counts the number of records in the currently selected table that satisfy the logical expression contained
+in expr.  Returns a value from 0 to the number of records in the table on success.  Returns -1 on any kind
+of error (for example an invalid expression string).  See locate() for examples of valid contents for the
+expr parameter.  This obeys the setting of DELETED.
+Other considerations:</p>
+<ul class="simple">
+<li>Must NEVER be used in the midst of a locate/continue/locateclear sequence. If it is,
+it will return -1 error.</li>
+<li>Does not alter the current record pointer position, so can be called on the current table in the middle
+of a scan().</li>
+</ul>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.createtable">
+<code class="descname">createtable</code><span class="sig-paren">(</span><em>lcTableName</em>, <em>lxFieldInfo</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.createtable" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><p>Method that creates a DBF type table, overwriting any pre-existing table of the same name.  Pass
+the name of the table and an array of field info structures or a string containing field definitions.</p>
+<p>The first parameter is a string value containing a file name specification.  The name should have a ‘.DBF’
+extension for compatibility with other programs that might access it; however, the .DBF extension is not
+strictly required so long as you know what the file is – these routines will open it again as a DBF file
+if you pass its full name and extension to the use() method.</p>
+<dl class="docutils">
+<dt>The second parameter to pass takes one of two different types of values:</dt>
+<dd><ul class="first last simple">
+<li>String - containing field specification information</li>
+<li>List - with each element containing an instance of a VFPFIELD object having information on one field.</li>
+</ul>
+</dd>
+</dl>
+<p>The string version is the easiest to program.  It is a newline-delimited list of field specification strings.
+Each field specification string is a comma delimited set of field property values.  The contents are:
+&lt;field name&gt;,&lt;field type&gt;,&lt;field width&gt;,&lt;field decimals&gt;,&lt;field allows nulls&gt;</p>
+<p>For example:
+“FIRSTFIELD,C,30,0,FALSE</p>
+</div></blockquote>
+<dl class="docutils">
+<dt>” would create a character field named FIRSTFIELD with a width of 30 bytes and would</dt>
+<dd><p class="first">not allow nulls.  For a brief list of field types see the doc for copytoarray().  For complete documentation on
+defining fields in a DBF, see the CodeBase documentation.</p>
+<p>One field will be created in the table for each specification string, in the order listed.</p>
+<p>Alternatively, you may supply a list of VFPFIELD objects each containing one field spec.  The properties of
+each object must be set to define the field.  For example, for a VFPFIELD object vfx you might set:</p>
+<blockquote>
+<div>vfx.cName=”FIRSTFIELD”
+vfx.cType=”C”
+vfx.nWidth=30
+vfx.nDecimals=0
+vfx.bNulls=False</div></blockquote>
+<p>The most common use of this list of VFPFIELD type input is to obtain a list generated by the afields() method
+from a currently open table.  This allows you to easily create an exact empty copy of an existing table with just
+two lines of code, or by append to or deleting from the afields() result list, you can alter the table structure
+to fit your immediate needs.  Note that the elements of the VFPFIELD object class ARE type-specific.  For example
+the cName value MUST be a string, the nWidth value MUST be an integer.</p>
+<dl class="docutils">
+<dt>General rules:</dt>
+<dd><ol class="first last arabic simple">
+<li>Field names must be 10 characters or less and start with a letter or underscore</li>
+<li>No two field names may be the same</li>
+<li>Maximum number of fields is 254</li>
+<li>Maximum size (width) of a character field is 255 bytes</li>
+<li>Maximum size of a record is 65,500 bytes</li>
+<li>If you include one or more type ‘M’ fields (memo or large text) fields, a memo file will also
+be created with the same base name as the table and an extension of .FPT</li>
+</ol>
+</dd>
+<dt>Limitations:</dt>
+<dd><ol class="first last arabic simple">
+<li>This version of CodeBase cannot read or update VFP tables with auto-incrementing Integer fields.</li>
+<li>Tables contained in a Visual FoxPro database container can be opened, but features derived from
+the database container like long field names, triggers, validations, captions, etc., will not be
+available.</li>
+<li>Tables will always be created in the Visual FoxPro FREE mode, meaning that they are not contained
+in a database container.</li>
+</ol>
+</dd>
+</dl>
+<p>After the createtable() method finishes successfully, the newly created table will be empty and will be
+the currently selected table, opened in read/write mode, ready for appending records.  The alias of this
+table will be the base file name using the default alias naming rules when a specific alias is not provided.
+Be sure that is no table open with that alias already, or that table will be automatically closed and
+possibly overwritten!  If you want the new table to have a custom alias, close it immediately using
+the alias() value and re-open it with your custom alias specified explicitly.</p>
+<p class="last">Returns True on success, False on failure, in which case inspect properties cErrorMessage and nErrorNumber
+for an explanation.  Some errors such as invalid field names or other field characteristics will trigger
+a Python ValueError exception.  When a list is supplied, the CodeBasePYWrapper pyd module generates the
+Python exceptions, if required.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.cursortoxml">
+<code class="descname">cursortoxml</code><span class="sig-paren">(</span><em>cAlias=''</em>, <em>cForExpr=''</em>, <em>cFields=None</em>, <em>bStripBlanks=False</em>, <em>cFileName=''</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.cursortoxml" title="Permalink to this definition">¶</a></dt>
+<dd><p>In VFP the CURSORTOXML() function is a powerful means of copying all or part of a cursor or table into
+XML form in several different ways.  This method provides a subset of that functionality, creating a file
+that is identical to the default VFP output where each record is has a tag, and each field in that record has
+its tag and the corresponding value contained in the tag.  The top-level tag name is always &lt;VFPData&gt;.  All
+field and cursor record tags are lower case.  Outputs fields in each record in the order in which they
+appear in the table or in the order in the cFields list. See also xmltocursor().</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>cAlias</strong> – Pass the alias name if not the currently selected table.</li>
+<li><strong>cForExpr</strong> – Pass a valid logical expression to select records.  If omitted, all records will be output</li>
+<li><strong>cFields</strong> – Pass a comma delimited list of field names to limit the output to selected fields.</li>
+<li><strong>bStripBlanks</strong> – By default, trailing blanks on text fields are left in place.  Set this true to trim them</li>
+<li><strong>cFileName</strong> – Pass a file name to output the result directly into that text file.  If omitted, then
+the method will return the resulting XML as a string</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">The XML text as a string unless the cFileName parm is not empty.  If cFileName is “”, if an error
+occurs, the function will return “”.  If cFileName is a file name, returns True on success, False on
+failure, and sets cErrorMessage.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>NOTE: The XML text is stored in memory until output at the end.  Very large tables may produce memory
+issues as a result, especially in 32-bit versions of Python.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.curval">
+<code class="descname">curval</code><span class="sig-paren">(</span><em>lcFieldName</em>, <em>convertType=False</em>, <em>coding='XX'</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.curval" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is a generic CURVAL() (see VFP Function CURVAL()) that returns the
+value of a specified field found either in the currently selected table
+(just pass the field name) or in any open table (prefix the field name
+with the table alias and a ‘.’ in the lcFieldName parameter. If
+convertType is False or omitted, returns a tuple consisting of the
+string representation of the field value followed by the type of the
+value. See scattertoarray() for more details on the formatting of date
+and datetime values and type codes. If convertType is True, then returns
+a single scalar value of the Python type corresponding to the field
+value type.  Char and Memo fields will always return type string with
+coding as set by the coding parm.  If convertType is False all other field types
+will be in plain ASCII stored in string variables, except for binary char and
+memo fields, which will be returned as bytearray (ver 2.x) or bytes (ver 3.x).</p>
+<p>Returns (None, None) or None on error. May also return None on fields
+containing empty dates. If you are expecting a date field and receive
+(None, None) or None, check the cErrorNumber for a non-0 value
+indicating an error.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.curvaldate">
+<code class="descname">curvaldate</code><span class="sig-paren">(</span><em>lcFieldName</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.curvaldate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves the contents of one field specified by the parm lcFieldName.
+This field MUST be of type DATETIME or of type DATE.</p>
+<p>If you want a value from a table other than the currently selected one,
+use the alias.fieldname notation in the name of the string you pass in
+the lcFieldName parameter.</p>
+<p>Returns a Python datetime.date() value. A value of None is returned if the
+field value is empty or on error. If you have any doubt about the None
+value returned, then check the error messages. A non-blank error
+message or an error number other than 0 may indicate an invalid field
+name or a non-existant alias name.</p>
+<p>Designed for speed with minimal checking. Works ONLY for DATETIME and DATE
+type fields. Does NOT produce useful results from ANYTHING else.  For DATETIME
+fields still only returns the date portion of the value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.curvaldatetime">
+<code class="descname">curvaldatetime</code><span class="sig-paren">(</span><em>lcFieldName</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.curvaldatetime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves the contents of one field specified by the parm lcFieldName.
+This field MUST be of type DATETIME or of type DATE.</p>
+<p>If you want a value from a table other than the currently selected one,
+use the alias.fieldname notation in the name of the string you pass in
+the lcFieldName parameter.</p>
+<p>Returns a Python datetime.datetime() value. A value of None is returned if the
+field value is empty or on error. If you have any doubt about the None
+value returned, then check the error messages. A non-blank error
+message or an error number other than 0 may indicate an invalid field
+name or a non-existant alias name. If the field is of type DATE, the
+return will still be a python datetime type but the values for hour,
+minute, and second will all be 0.</p>
+<p>Designed for speed with minimal checking. Works ONLY DATETIME and DATE
+type fields. Does NOT produce useful results from ANYTHING else.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.curvaldecimal">
+<code class="descname">curvaldecimal</code><span class="sig-paren">(</span><em>lcFieldName</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.curvaldecimal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves the contents of one field specified by the parm lcFieldName as a Python decimal.Decimal()
+type value, which contains an exact representation of any fractional portion.
+If you want a value from a table other than the currently selected one,
+use the alias.fieldname notation in the name of the string you pass
+in the lcFieldName parameter. This method ONLY works with fields that
+are of type NUMBER, FLOAT, or CURRENCY.  Note that in Visual FoxPro, a FLOAT type is exactly
+the same as NUMBER.  Conversely, a DOUBLE is stored in binary form, and may not be able to
+represent fractional data precisely.  An attempt to retrieve a DOUBLE field with this function
+will return an ERROR condition (None).</p>
+<p>Returns the number as a decimal.Decimal() object or None on error. Error can be triggered by a bad
+field name, a non-numeric field, or no table open, etc.</p>
+<p>Designed for speed with minimal checking.</p>
+<p>NOTE:!!!!!  In DBF tables, decimal places are defined, and their values are
+explicit… in a field of type N(10,2) the value 3.33 is stored exactly as 3.33, not
+as some rounding of a binary representation of that value.  This method, however,
+preserves the decimal exactness you may require.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.curvalfloat">
+<code class="descname">curvalfloat</code><span class="sig-paren">(</span><em>lcFieldName</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.curvalfloat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves the contents of one field specified by the parm lcFieldName as a Python float type variable.
+If you want a value from a table other than the currently selected one,
+use the alias.fieldname notation in the name of the string you pass
+in the lcFieldName parameter. This method ONLY works with fields that
+are of type NUMBER, FLOAT, DOUBLE or CURRENCY.  (It MAY work with INTEGER, but
+will return a float, so may not be terribly useful.)</p>
+<p>Returns the number as a float or None on error. Error can be triggered by a bad
+field name, a non-numeric field, or no table open, etc.</p>
+<p>Designed for speed with minimal checking.</p>
+<p>NOTE:!!!!!  In DBF tables, decimal places are defined for NUMBER fields, and their values are
+explicit… in a field of type N(10,2) the value 3.33 is stored exactly as 3.33, not
+as some rounding of a binary representation of that value.  The same is true of CURRENCY fields.
+This method, however, returns the value as a Python float, which IS a binary representation which may NOT
+be exactly the value desired.  For CURRENCY field types, especially, this is generally NOT what is desired.
+To preserve the decimals exactly, use curvalstr() and convert the result into the required
+python type that preserves the decimal exactness you require OR use curvaldecimal().</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.curvallogical">
+<code class="descname">curvallogical</code><span class="sig-paren">(</span><em>lcFieldName</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.curvallogical" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves the contents of one field specified by the parm lcFieldName.
+This field MUST be of type LOGICAL. If you want a value from a table
+other than the currently selected one, use the alias.fieldname notation
+in the name of the string you pass in the lcFieldName parameter.</p>
+<p>Returns a Python value of true or false. A value of None is returned on
+error. If you have any doubt about the None value returned, then check
+the error messages. An non-blank error message may indicate an invalid
+field name or a non-existant alias name.</p>
+<p>Designed for speed with minimal checking. Works ONLY with logical type
+fields. Does NOT produce useful results from ANYTHING else.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.curvallong">
+<code class="descname">curvallong</code><span class="sig-paren">(</span><em>lcFieldName</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.curvallong" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves the contents of one field specified by the parm lcFieldName.
+If you want a value from a table other than the currently selected one,
+use the alias.fieldname notation in the name of the string you pass
+in the lcFieldName parameter. This method ONLY works with fields that
+are of type INTEGER, DATE, or NUMBER. In the case of DATE, you’ll get
+the Julian day number back. In the case of NUMBER, you’ll get the whole
+number part of the value back as a long.</p>
+<p>Returns the number or None on error. Error can be triggered by a bad
+field name or no table open, etc.</p>
+<p>Designed for speed with minimal checking.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.curvalstr">
+<code class="descname">curvalstr</code><span class="sig-paren">(</span><em>lcFieldName</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.curvalstr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves the contents of one field specified by the parm lcFieldName.
+If you want a value from a table other than the currently selected one,
+use the alias.fieldname notation in the name of the string you pass in
+the lcFieldName parameter.</p>
+<p>Returns a text string representation of the field value. No conversions
+are performed. An empty string is a valid return value, but if you
+expect something else, check the error messages. An empty string is also
+returned if the lcFieldName is not found in the current table or if your
+specified alias doesn’t exist.</p>
+<p>Designed for speed with minimal checking. Works OK with char, memo,
+number, currency, and date type fields. Does not produce useful results from
+integer, double, datetime, or float type fields.  Note that the contents of char fields
+are padded with blanks to the full size of the fields.</p>
+<blockquote>
+<div><ul class="simple">
+<li>Returns None on error, and sets errormessage and errornumber</li>
+<li>Returns None when field allows null and has a null value, but does NOT set errors.</li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.curvalstrEX">
+<code class="descname">curvalstrEX</code><span class="sig-paren">(</span><em>lcFieldName</em>, <em>lbStrip=False</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.curvalstrEX" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves the contents of one field specified by the parm lcFieldName.
+If you want a value from a table other than the currently selected one,
+use the alias.fieldname notation in the name of the string you pass in
+the lcFieldName parameter.</p>
+<p>Returns a text string representation of the field value. No conversions
+are performed. An empty string is a valid return value, but if you
+expect something else, check the error messages. An empty string is also
+returned if the lcFieldName is not found in the current table or if your
+specified alias doesn’t exist.</p>
+<p>Designed for speed with minimal checking. Works OK with char, memo,
+number, currency, and date type fields. Does not produce useful results from
+integer, double, or float type fields.  May truncate the contents of Unicode
+strings contained in char(binary) and memo(binary) fields.</p>
+<dl class="docutils">
+<dt>Enhancements over curvalstr:</dt>
+<dd><ul class="first last simple">
+<li>Allows specification of stripping trailing blanks.</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.dbf">
+<code class="descname">dbf</code><span class="sig-paren">(</span><em>alias=''</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.dbf" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Returns the fully qualified path name of the currently selected table or the table</dt>
+<dd>referenced by the optional parameter alias.  Returns the empty string if there is no
+currently open table or if the alias doesn’t exist.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.delete">
+<code class="descname">delete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Marks the current record of the currently selected table for deletion.  Does not move the record pointer
+even if DELETED is set ON.</p>
+<p>Returns True on success, False on failure, in which case cErrorMessage and nErrorNumber will provide more
+information.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.deleted">
+<code class="descname">deleted</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.deleted" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determines if the current record of the currently selected table has been marked for deletion.
+Returns True if the record has been marked for deletion.  Returns False if it hasn’t.  Returns
+None if there has been an error.</p>
+<p>Inspect cErrorMessage and nErrorNumber if None is returned for more information.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.deletetag">
+<code class="descname">deletetag</code><span class="sig-paren">(</span><em>tagname=''</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.deletetag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Specify a tag name in the CDX index of the currently selected table to be removed from the CDX file.  If the
+last tag is removed from a CDX index file, the CDX index file is deleted and the DBF file is marked as having
+no index files.  DO NOT use this method to remove an index tag from a VFP table contained in a VFP Database
+Container.  Doing so will result in data corruption.  This can only be applied to so-called VFP Free Tables.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.deletetagall">
+<code class="descname">deletetagall</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.deletetagall" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes all index tags for the currently selected table. The CDX index file is deleted and the
+DBF file is marked as having no index files.  Returns True on success, False on failure.  Returns True
+if there are no tags set up for the table, even though there is nothing to do.  DO NOT use this method to
+remove index tags from a VFP table contained in a VFP Database Container.  Doing so will result in data
+corruption.  This can only be applied to so-called VFP Free Tables.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.dispstru">
+<code class="descname">dispstru</code><span class="sig-paren">(</span><em>lbToText=False</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.dispstru" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes text to the stdout via a series of print commands which contains information about the structure of the
+currently selected table.  This is the equivalent of the VFP command DISPLAY STRUCTURE.</p>
+<p>Pass a True to lbToText and the function will return a string with this information.</p>
+<p>Returns True for OK and False on failure (usually because there is no currently selected table if lbToText is False.
+If lbToText is True, then returns the string on Success and an empty string on failure.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.dt2seek">
+<code class="descname">dt2seek</code><span class="sig-paren">(</span><em>dateValue</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.dt2seek" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pass a date value, and this returns the proper string format required for the seek() method below.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.dtd2expression">
+<code class="descname">dtd2expression</code><span class="sig-paren">(</span><em>dateTimeValue</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.dtd2expression" title="Permalink to this definition">¶</a></dt>
+<dd><p>Similar to dtt2expression() except it uses the STOD() function to match date type fields. NOTE that the
+Python values returned from VFP DATE and DATETIME fields are always Python datetime objects, BUT in VFP
+they are different entities and can’t be compared directly.  So if a field is a type DATE, you must create
+the matching expression with the STOD() function using this method.  Also note that STOD() is NOT a VFP
+function but a dBase function recognized by CodeBase in expressions.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.dtt2expression">
+<code class="descname">dtt2expression</code><span class="sig-paren">(</span><em>dateTimeValue</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.dtt2expression" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pass a date/time value and this will return a text string appropriate for a constant datetime value
+in an expression for a location or calculate function.  In VFP a constant date/time value is expressed
+with elaborate notation like {^2013-02-15 12:35:00}, but Codebase doesn’t recognize this.  Instead,
+it wants a function like “DATETIME(2013, 2, 15, 12, 35, 0)”.  This function produces that latter string value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.dtt2seek">
+<code class="descname">dtt2seek</code><span class="sig-paren">(</span><em>dateTimeValue</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.dtt2seek" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pass a datetime value, and this returns the proper string format required for the seek() method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.eof">
+<code class="descname">eof</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.eof" title="Permalink to this definition">¶</a></dt>
+<dd><p>Interrogates the record pointer status of the currently selected table.
+Returns True if the record pointer is at the EOF position or on error. Otherwise
+returns False. If False, the record pointer is not at the end. Otherwise EOF or
+an error has occurred and you should take further action.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.fcount">
+<code class="descname">fcount</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.fcount" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the number of fields in the currently selected table or -1 on any kind of error.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.fielddicttolist">
+<code class="descname">fielddicttolist</code><span class="sig-paren">(</span><em>lxDict</em>, <em>lcAlias=''</em>, <em>bPartial=False</em>, <em>cDelim='&lt;~!~&gt;'</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.fielddicttolist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms a record value dictionary as provided by the scatter() method to a list in the format required
+by the insertintotable() method, together with a field name string as required by that method as well.</p>
+<p>The first parameter is the dictionary.  The second parameter is the alias name of the target table which
+you’ll be updating from the values in the list.  Note this parameter is required.  Returns a tuple consisting
+of the list of values as the first element and a delimited string list of field names in the correct
+order as the second element.
+bPartial:  Indicates the lxDict has only SOME of the fields.  Make sure ALL other fields are set.</p>
+<p>Note that the lxDict dictionary must have an entry for every field in the table, but it is NOT limited
+just to those values.  This allows you to build a dictionary with other information besides the required
+fields for whatever purpose in subsequent processing, and just use the fields required for the table when
+processing through this method.</p>
+<p>NOTE: This method is useful for supplying a list and a string of field names for the older version of
+insertintotable().  In this version of CodeBaseTools for Python, a dictionary of field values keyed by
+field name may be passed directly to insertintotable(), which uses the function insertintotableex() to
+pass the dictionary directly to the CodeBase engine.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.fieldinfo">
+<code class="descname">fieldinfo</code><span class="sig-paren">(</span><em>fieldname=''</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.fieldinfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the field structure info for just one field without the bother of afields()
+:param fieldname: may include the alias
+:return: tuple - (type, length, decimals, allow nulls, is binary) or None on error.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.flock">
+<code class="descname">flock</code><span class="sig-paren">(</span><em>retries=0</em>, <em>interval=0.1</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.flock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Locks the currently selected table.  This allows you to safely update multiple records or collect statistics
+about the contents of a table without risk of other processes changing the contents.  Also if you cannot place
+the flock() and can afford the time, pause for a few milliseconds and then try again.  You can do this
+explicitly by specifying a number of retries in the retries parm and an interval specified in fractions of a
+second (default is 0.1 seconds).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.flush">
+<code class="descname">flush</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.flush" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call this function immediately after a gatherfromarray() to force the data changes to be written
+immediately to the disk.  This will ensure that other users of the data will see it immediately.  Otherwise
+CodeBase will buffer writes and could delay these writes until the buffer is full.</p>
+<p>This action applies only to the currently selected data table.</p>
+<p>Returns True on success, False on Error, in which case you need to check cErrorMessage and nErrorNumber.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.flushall">
+<code class="descname">flushall</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.flushall" title="Permalink to this definition">¶</a></dt>
+<dd><p>Similar to flush() but applies to all open tables.</p>
+<p>Will attempt to lock each record being updated.  Also checks to make sure that there are no duplicate
+values for indexes that require unique keys.  If these tests fail, the flushall() can fail.</p>
+<p>Returns True on success, False on Error, in which case you need to check cErrorMessage and nErrorNumber.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.gatherdict">
+<code class="descname">gatherdict</code><span class="sig-paren">(</span><em>cAlias=''</em>, <em>dData=None</em>, <em>codes='XX'</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.gatherdict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fast alternative to gatherfromarray() which updates the current record of the specified table
+with the data contained in the dictionary dData.  Will accept the optional alias name of a currently
+open table if you wish to store the data to a table that is not currently selected.  BE CAREFUL to make sure
+that the target table current record is the one you want to update.  Attempting to update a record
+in any table where there is no active record (either no records in the table or the record pointer at EOF)
+results in an error condition.</p>
+<p>Returns True on success, False on any kind of error.  Consult the error properties for reasons.</p>
+<p>Note that some types of errors will trigger Python exceptions.  These include passing illegal values
+to a field and passing field names that are too long or not of type string.</p>
+<p>Codes specify how string, bytes and bytearray objects are coded into field data.  XX is “default”.  For
+details, see the docs for curval().  You can specify a conversion code for normal char and memo fields amd
+another code for conversions of char(binary) and memo(binary).  For type ‘C’, you can also set alternative
+codecs by setting the</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.gatherfromarray">
+<code class="descname">gatherfromarray</code><span class="sig-paren">(</span><em>lxValues</em>, <em>lxFields=None</em>, <em>lcDelimiter='&lt;~!~&gt;'</em>, <em>lbIgnoreMissing=True</em>, <em>coding='X'</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.gatherfromarray" title="Permalink to this definition">¶</a></dt>
+<dd><p>NOT Recommended with Python 3x!  Note field types not supported!  Limited to text coded in Extended ASCII
+using CodePage 1252. DEPRECATED.</p>
+<p>Use insertdict or gatherdict INSTEAD.</p>
+<p>This function is retained for backwards compatibility and for its modest speed advantage when used within
+its limitations.
+————————————————————————————————————
+Writes values into the current record of the currently selected table.  If the current record is null or the
+record pointer is at EOF, returns False.  Also returns False if there is no currently selected table.</p>
+<p>VFP’s most powerful way to put values into a table record in the “GATHER FROM” command.  This method emulates
+some of its power to be able update a selection of multiple fields all at once without the complication of SQL
+syntax.  The function operates in two modes: Field Specific Mode and All Fields Mode.</p>
+<p>Field Specific Mode:
+In this case you must specify which fields are being updated (by name) and provide a value for each.  This may
+be done in one of three ways:</p>
+<p>Dictionary: Supply the first parameter as a dictionary containing the field values keyed by the field names.
+The field values may be any Python type compatible with the type of the associated field.</p>
+<p>For example, either a 1, True, or “T” are all accepted for the value of a LOGICAL field.  Any other type will
+raise an exception of BadFieldValueType.  As another example, for DATETIME or DATE fields you may provide
+either a datetime.date type value or a datetime.datetime value.  But be aware that integers and numbers will
+be accepted for DATE values. In this case, the number will be truncated to an integer and interpreted as the
+Julian Day value (in VFP the number of days since APPROXIMATELY Jan 1, 4800 BCE).  Specifically, the date
+(Current Era or A.D.) February 1, 2011, has a VFP Julian Day value of 2455594.  DATE and DATETIME values can
+also be supplied by tuples of integer Year, Month, and Day values (for DATE) or integer Year, Month, Day, Hour,
+Minute, Second values (for DATETIME).</p>
+<p>For character fields, any value type will be accepted and converted to a character representation.  See
+comments under the Strings input type for more on type conversions.</p>
+<p>Strings are allowed for all field types, but for correct evaluation they must follow the rules specified in the
+Strings section below.</p>
+<p>Lists: This requires a list of field names as the second parameter and a list of field values as the first
+parameter.  The index of the field names and values must correspond.  As with the dictionary input, the field
+value types must be compatible with the type of the target field.</p>
+<p>Strings: Supply the second parameter as a string consisting of an ordered list of field names delimited by a
+non-alpha string.  By default the delimiter is assumed to be &lt;~!~&gt;, but you may specify another string value
+in the lcDelimiter parameter.  The first parameter must be another string containing a concantenated and
+delimited string representation of all values referenced in the field list.  This value string must be ordered
+identically to the field name string.  No type conversions or checking is done in this mode.  For this reason,
+processing is fast, but you are responsible for expressing each field value in the correct format.
+Formats are as follows for each type of DBF field:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>CHARACTER - Any string value.  Strings longer than the length of the field will be truncated, shorter</dt>
+<dd>strings will be right padded with blanks.  Extended ASCII wirh CodePage 1252 ONLY unless
+data passed as a dict().</dd>
+<dt>NUMBER - String representation of a floating point value in decimal format, e.g. “394039.395”.  For negative</dt>
+<dd>values, prepend the minus sign, e.g. “-25904.99”.  The actual number of decimals stored is
+determined by the field format.  Excess digits to the right of the decimal point will be rounded
+off.  Excess digits to the left of the decimal point will trigger a NumericOverflow error.
+Number type fields store the exact value, e.g. 2.1 is stored as 2.1 if at least one decimal of
+precision is specified, not 2.09999999999999999.  Relative to field size, the size of NUMBER
+fields is defined by a total field width and the number of decimal places.  The total field width
+must be sufficient to handle the largest value intended for the field INCLUDING the decimal point
+AND any prepended minus sign.  For example a field defined as N(7, 3) can accommodate a value of
+999.349 or -99.349 but NOT -999.349, as the latter value requires a field of size N(8, 3).</dd>
+<dt>FLOAT - Similar to NUMBER, but the precision of the input number will be preserved in the value stored.</dt>
+<dd>However, float values, like all IEEE float and double numeric values are stored as approximations
+of the fractional component, e.g. 2.1 double may be stored as 2.0999999999999999.</dd>
+<dt>INTEGER - String representation of any 4-byte integer value, e.g. “195023985” or “-234095”.  Values with</dt>
+<dd>embedded decimals will be stored with decimal fraction truncated.</dd>
+</dl>
+<p>DATE - String representation of a date as 8 digits in the format YYYYMMDD.
+DATETIME - String representation of a datetime value (thousandths of a second are not supported).  The</p>
+<blockquote>
+<div>string must consist of 14 digits in the format YYYYMMDDHHMMSS.</div></blockquote>
+<p>LOGICAL - The single character “T” for True and “F” for False.
+MEMO - Any string value.  The maximum length of the string is 2 Gigabytes, but in practice it is much less</p>
+<blockquote>
+<div>since the maximum size of the FPT file which contains all the memo values is itself 2 Gigabytes.  Non
+ASCII values may be stored in Visual FoxPro memo fields, but some other versions of DBF tables don’t
+support this.</div></blockquote>
+<p>DOUBLE - Like Number.
+CURRENCY - Like Number in that it stores an exact representation of the value but with a fixed 4 decimal</p>
+<blockquote>
+<div>places.</div></blockquote>
+<p>GENERAL - Not supported except when data are supplied in a dictionary.
+CHAR BINARY - Not supported except when data are supplied in a dictionary.
+MEMO BINARY - Not supported except when data are supplied in a dictionary.</p>
+<p>NOTE: Empty DATE and DATETIME values —
+Visual FoxPro and the DBF format allow the concept of an empty date and empty datetime value.  This is
+NOT the same as a NULL value in these fields.  A NULL is an undetermined value.  An empty date is a value
+of type date that doesn’t contain an actual date.  Ditto for datetime.  In VFP an expression like
+somedate={ / / } (that’s VFP date notation) is completely legal.  Date and datetime fields in blank
+records start out with the value of empty date and empty datetime respectively.  You can think of the empty
+date and datetime values as analogs of “” and 0 in the string and number worlds.</p>
+<p>Since Python doesn’t support empty date or datetime values, this module handles this using the value None.
+To supply an empty date or datetime value in this method, supply the value of None.  If you are supplying
+a string representation of a date or datetime, supply a string of 8 blanks for the empty date value or
+”        000000” (8 blanks followed by 6 zeros) as the empty datetime value.  In methods like scatter()
+and copytoarray() empty date and datetime values are converted to the Python value None.  This will be
+indistinguishable from the value None which can be returned when the contents of the field is NULL.</p>
+</div></blockquote>
+<p>All Fields Mode:
+If you are confident that you know how many fields are found in the table and want to quickly update all of them
+at once very simply, you pass as the first parameter an ordered set of values corresponding to all the
+fields in the table.  This single parameter may either be a list[] containing a value for every field in order
+or a delimited string of field values as described above for the Strings type under the Field Specific Mode.  If
+the number of fields you supply is not exactly equal to the number of fields, a MismatchedFields exception is
+raised.  The list form allows non-string values to be passed as above.  Value type checking will be performed
+on non-string types.  The string form does not do value or format checking and passes the delimited string
+directly to the CodeBase engine for storage.</p>
+<p>The lbIgnoreMissing parameter applies if the source (lxValues) is a dictionary.  In that case, set
+lbIgnoreMissing to True if you want to store any data where there IS a match on the field name vs the key into
+the dictionary, and where there isn’t a match, the problem is ignored.  If this value is left to False, the
+default, such a condition will trigger a KeyError exception, which will have to be trapped externally.</p>
+<p>Returns True on success, False on any kind of failure, in which case cErrorMessage and nErrorNumber will be
+set with explanatory values.</p>
+<p>Note that the dictionary returned by scatter() may be used as the first parameter of this method after you make
+any required changes to the field values.
+July 21, 2014 - Changed lbIgnoreMissing default to True. JSH.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.getNewKey">
+<code class="descname">getNewKey</code><span class="sig-paren">(</span><em>dataDir</em>, <em>filename=None</em>, <em>readOnly=False</em>, <em>stayOpen=False</em>, <em>noFlush=False</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.getNewKey" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy of GetNewKey from VFP.  Returns the next sequential key number for the passed filename or a negative
+value on error.  M-P System Services, Inc., specific code.</p>
+<dl class="docutils">
+<dt>dataDir: cDataDirectory from configurator.  If NEXTKEY.DBF is not open and this is blank, triggers an</dt>
+<dd>exception.  This is where the NEXTKEY.DBF table should be found if the method has to open it.</dd>
+<dt>filename: name of file to get next key.  Defaults to <em>current</em>, but if no current and blank, triggers</dt>
+<dd>an exception.</dd>
+</dl>
+<p>readOnly: if set, return <em>previous</em> key number, write nothing - (for testing) - NOT USED!
+stayOpen: if set, does not close NextKey.dbf when done.  For looping and testing.  For maximum speed when</p>
+<blockquote>
+<div>using this function to add many records in a loop, open the NEXTKEY.DBF table prior to starting the
+loop.  This function will then not try to open it every time it runs.</div></blockquote>
+<dl class="docutils">
+<dt>noFlush: By default the method flushes the contents of the NEXTKEY.DBF table to disk using the OS flush</dt>
+<dd>to disk command to make sure that any other users see the updates immediately. However, if that
+won’t be needed for operational requirements, this function can be speeded up by more than a
+factor of 10 by passing noFlush=True, to bypass this flushing action.  In that case, you may still
+wish to issue a flush() function at the end of your looping update process.</dd>
+</dl>
+<p>Placed here because it is dbf file related but could be useful for many applications.</p>
+<p>NOTE: CodeBase claims to support auto-generated key fields, but that functionality doesn’t appear to be
+compatible with the corresponding feature in Visual FoxPro.  This function helps get around that limitation
+by using a NextKey.dbf table to store the “next key” value of each table in your system.  The NextKey.dbf
+table is expected to have two fields:
+Field  Field Name      Type                Width    Dec   Index   Collate Nulls    Next    Step
+1  TABLE_NAME      Character              15            Asc   Machine    No
+2  NEXTKEYVAL      Integer                 4                             No</p>
+<p>and to have an index called TABLE_NAME on UPPER(TABLE_NAME).  The dataDir parameter tells the function
+where to find the NextKey.dbf table.  This function uses record locking to ensure that no keys are duplicated
+within the same table.</p>
+<p>It is the responsibility of the programmer to know which field is the key field in the table and to do
+the replace of the value generated by this function into the appropriate field in the table.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.getValueFromXMLString">
+<code class="descname">getValueFromXMLString</code><span class="sig-paren">(</span><em>cValue</em>, <em>cType</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.getValueFromXMLString" title="Permalink to this definition">¶</a></dt>
+<dd><p>Utility function that takes an XML value in standard VFP output format, and returns the Python native type
+corresponding to the field type specified in the cType parameter
+:param cValue:
+:param cType:
+:return: Native Python value or None on error.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.getdatasession">
+<code class="descname">getdatasession</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.getdatasession" title="Permalink to this definition">¶</a></dt>
+<dd><p>When multiple instances of this class exist, each will be given its own data session.
+Other instances may set the “current” session to a different value.  If you find your
+table is not reported ‘open’, when you think it should be try storing the session number
+of your instance and restore to it with setdatasession().  If you change a current data session
+be sure to put it back when exiting the function.
+:return: Integer session number</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.getdateformat">
+<code class="descname">getdateformat</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.getdateformat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Obtains the current setting of date format from the CodeBase engine.  Returns a text string indicting
+the type of format. See setdateformat() for format codes.  Will always return a string value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.getfieldinfo">
+<code class="descname">getfieldinfo</code><span class="sig-paren">(</span><em>lpcFieldName=''</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.getfieldinfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns info on the width, decimals, type, nulls for a field in the currently selected table.</p>
+<p>Return value is None, if the field doesn’t exist in the current table or there is no currently selected table.</p>
+<p>Returns tuple of (cType, nLength, nDecimals, bNulls) if field is found.
+Added 07/30/2015. JSH. [Consider in future implementing directly in the cbtools C engine.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.goto">
+<code class="descname">goto</code><span class="sig-paren">(</span><em>gomode</em>, <em>gonum=1</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.goto" title="Permalink to this definition">¶</a></dt>
+<dd><p>Primary method for navigating through the currently selected table. Functionality is
+similar to the GOTO command in Visual FoxPro and xBase languages. Unlike SQL-based
+databases, VFP tables can be accessed navigationally by moving around amongst the records in
+the table using variations of this method. Returns True when navigation is successful,
+otherwise False. If False, inspect the cErrorMessage and nErrorNumber properties for more
+information. The effect of this method is to move the current record pointer. The current
+record will be the source of field information when the scatter() method is executed and the
+target of updates when the gathermemvar() method is executed. If an order based on an index
+Tag has been set by setorderto(), all gomode values except RECORD honor the index order.</p>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt>gomode = character string containing one of the following values:</dt>
+<dd><dl class="first docutils">
+<dt>RECORD - In this case you must supply the second parameter gonum with an integer</dt>
+<dd><p class="first last">value specifying the record number to move to. If the record number
+specified doesn’t exist, the method returns False</p>
+</dd>
+<dt>SKIP - Moves the current record point forward or back a specified number of records</dt>
+<dd><p class="first last">(in index order if one has been set). If gonum is not supplied, then moves
+forward by one record.  If gonum &gt; 1, moves forward by gonum records if
+possible. If EOF() is reached before gonum records, returns False.  If gonum
+&lt; 0, moves backwards by gonum records if possible. If BOF() is reached
+before gonum records, returns False.</p>
+</dd>
+</dl>
+<p>NEXT - Identical to SKIP with gonum = 1.
+PREV - Identical to SKIP with gonum = -1.
+TOP  - Moves to the top record by the current ordering (or record 1 if there is no</p>
+<blockquote>
+<div><p>index Tag ordering in effect).  If there are no records in the table, returns
+False.</p>
+</div></blockquote>
+<dl class="last docutils">
+<dt>BOTTOM - Move to the the last record by the current ordering (or the highest record</dt>
+<dd><p class="first last">number if there is no index Tag ordering in effect).  If there are no records
+in the table, returns False.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd>True on Success, False on Failure for any reason. Inspect the cErrorMessage or nErrorNumber
+for reasons.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.indexon">
+<code class="descname">indexon</code><span class="sig-paren">(</span><em>lcTag</em>, <em>lcExpr</em>, <em>tagFilter=''</em>, <em>descending=0</em>, <em>unique=0</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.indexon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that creates an index tag for the currently selected open DBF table.
+If no DBF is currently selected, or some other problem occurs, it returns False
+otherwise returns True.  This method creates and modifies the VFP type CDX index
+files which may contain multiple physical indexes, each identified by a Tag name.
+It is expected that there will be one and only one CDX index for the table.  In VFP
+and CodeBase, this one-to-one limit is not enforced, but with one CDX file having the
+same base file name as the table, you are assured that the index will be updated with
+its key values whenever the underlying table field values change.</p>
+<p>If no CDX file exists for the table, one is created and the requested tag added to it.</p>
+<p>If the tag exists, it is replaced with your new tag without any warning.</p>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd><ul class="first last">
+<li><p class="first">lcTag = a character string of up to 10 alphanumeric values starting with a letter</p>
+</li>
+<li><dl class="first docutils">
+<dt>lcExpr = a character string containing an index expression with one or more fields</dt>
+<dd><p class="first last">defining the index ‘key’.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>tagFilter = optional character string with an expression limiting the number of</dt>
+<dd><p class="first last">records indexed</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>unique = one of several values determining how duplicate key values will be handled when the table</dt>
+<dd><p class="first">is indexed or new records are added:
+0 = No special handling, duplicate key values are recorded in the index normally.
+15 = VFP Compatible “Candidate” index.  Duplicate key values will result in an error condition if</p>
+<blockquote>
+<div><p>encountered in the table.  Both VFP and CodeBase recognize this index type.</p>
+</div></blockquote>
+<dl class="last docutils">
+<dt>20 = CodeBase compatible setting.  Duplicate key values will result in an error condition if</dt>
+<dd><p class="first last">encountered in the table by CodeBase BUT, when VFP accesses or indexes the table it will behave
+like code 25.</p>
+</dd>
+<dt>25 = VFP type UNIQUE index.  In this case when the table is indexed, only the first occurrence of a</dt>
+<dd><p class="first last">duplicate is stored in the index.  If the table is traversed or browsed in this index order,
+it is possible that not all records will be visible or be displayed.  Behavior is the same
+for VFP and CodeBase.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>True on success, False on any error (see properties cErrorMessage and nErrorNumber for</dt>
+<dd>more information)</dd>
+</dl>
+</dd>
+</dl>
+<p>NOTE: As of Oct. 26, 2013, see method setstrictaliasmode(), which may be required to support this method.</p>
+<p>IMPORTANT NOTE!!! Do NOT attempt to use this method to add an index to a table contained in a VFP Data Dictionary
+Container.  Such tables can ONLY have indexes changed using VFP itself.  However, those indexes CAN be
+reindexed successfully by the reindex() method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.insertdict">
+<code class="descname">insertdict</code><span class="sig-paren">(</span><em>dDict</em>, <em>lcAlias=''</em>, <em>coding='XX'</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.insertdict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple version of insertintotable() that just takes a dict() of field names and values and inserts
+the data into the specified lcAlias table or the current table if it’s empty.  Returns True on OK,
+False on any error.  Synonymous with insertintotable() with a dict() parm, but simpler calling
+signature.</p>
+<p>For coding specifies txt string conversion rules for text and binary data.  See class docstring for
+details of alloable codes.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.insertintotable">
+<code class="descname">insertintotable</code><span class="sig-paren">(</span><em>lxValues</em>, <em>lcFields=''</em>, <em>lcAlias=''</em>, <em>lcDelimiter='&lt;~!~&gt;'</em>, <em>coding='XX'</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.insertintotable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs in one function the tasks of appending a new record to a table and filling the fields with new data.
+This approach requires that values for every field must be supplied in the lxValues parameter.  The rules for
+this field are identical to those for gatherfromarray() in the All Fields Mode.</p>
+<p>Unlike gatherfromarray() this method allows you to specify an alias name if you don’t want to insert the
+data into the currently selected table.  Of course the table specified by alias must first have been opened
+by the use() method.</p>
+<p>Call this function repeatedly in a tight loop to add lots of records to the table.  Do NOT call flush() or
+flushall() until you are done.</p>
+<p>The lxValues field is where you pass field data to the method.  There are three forms this value may take.
+Depending on which form you supply, you may need to supply the lcFields parameter as well:</p>
+<ol class="arabic simple">
+<li>Dict() should be keyed by field name with native python values for each field as the item value.  Do not
+pass any value for lcFields or an empty string.  lcDelimiter is ignored.  This is a fast, native Python
+field update.  In this form, you do not need to populate the dict() with every field in the table,
+just the ones you need to update.  However, be sure to pre-populate any primary keys that must be
+unique!</li>
+<li>String should contain a delimited text representation of the contents of each field.  Either all fields must be
+supplied in the correct order as in the table, or supply a list of field names in the appropriate order
+in the lcFields parameter.  The lcDelimiter value should be used for both.  See the gatherfromarray()
+doc string for details on how strings should be formatted for logical, date and other non-text fields.</li>
+<li>List() containing one element for each field you want to update.  In this case you MUST supply an
+element of the list for every field in the table in the correct order.</li>
+</ol>
+<p>Returns True on Success, False on error.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.isexclusive">
+<code class="descname">isexclusive</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.isexclusive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the exclusive open status on the currently selected table.  Returns True if exclusive, False if
+NOT exclusive.  Returns None on error.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.islargemode">
+<code class="descname">islargemode</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.islargemode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the status of Large Mode operations.  If this instance of the Tools is using large mode
+then, this will return True.  Otherwise False.  If True, this tools instance may NOT be used to
+open DBF tables that might also be opened concurrently by Visual FoxPro applications.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.isreadonly">
+<code class="descname">isreadonly</code><span class="sig-paren">(</span><em>alias=''</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.isreadonly" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if the specified open data table was opened in read only mode, otherwise false.
+:param alias: Specify the target table alias or leave empty for the currently selected table.
+:return: True if opened readonly.  If in read-write or exclusive mode, returns False.  Returns None
+on error - typically table not opened.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.locate">
+<code class="descname">locate</code><span class="sig-paren">(</span><em>expr</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.locate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Comparable to the VFP LOCATE command.  This operates ONLY on the currently selected table and
+performs a search of the table for the first record which satisfies the logical expression provided
+in the parameter expr.  Parm expr must contain a valid VFP/DBASE type expression and may include
+.AND., .OR., and other logical expression elements.  Field names in the currently selected table
+may be included as well as VFP/DBASE functions supported by CodeBase.  If any of the logical expressions
+contained in expr match index expressions in index tags on the current table, CodeBase will optimize
+the search to take advantage of the tags.</p>
+<p>Returns True on success (found a record), False on failure for any reason.  Inspect nErrorNumber if there
+is a possibility of an error condition.  It will have the value 0, if it is a simple no-find situation.</p>
+<p>Examples of valid expr values:</p>
+<p>UPPER(LAST_NAME) = “JONES” .AND. UPPER(FIRST_NAME) = “PETER” .AND. SSN = “123456789”
+STR(RecordKey) + TTOC(dateField, 1) + COMPANY = ”   123456720120629053329UNITED COPPER”</p>
+<p>In the first example if there is an index on the expression UPPER(LAST_NAME) the search will be partially
+optimizable and will be substantially faster than a brute force search through the table.  In the second
+example, for it to be optimizable, an index tag would need to exist with the expression exactly the
+same as the expression to the left of the = sign.</p>
+<p>Note that logical expression operators like .AND. and .OR. are required to have the periods.  VFP is
+tolerant of having those operators given simply as AND or OR, but the CodeBase DLL is not.</p>
+<p>See also the locateclear() and locatecontinue() methods which may be used on conjunction with locate()</p>
+<p>While you are debugging, or where the expr value may be created by a user, the error number should always
+be checked when False is returned, as False may be the result of an illegal expression.</p>
+<p>WARNING!  The locate(), locatecontinue(), locateclear() sequence may NOT be nested.  Only ONE locate
+process may be in effect at any one time!!!</p>
+<p>NOTE: calling locate() clears the previously called locate(), so locate() may be called repeatedly if just one
+record is needed each time.  At the end of calling a bunch of locates, you should then clear the locate sub-
+system with a locateclear() since some other lookup functions may use the locate() logic internally, and will
+fail if there is a pending un-cleared locate active.  To be safe, call locateclear() after any locate() if
+you won’t be needing its results or locatecontinue() any more.</p>
+<dl class="docutils">
+<dt>ALSO NOTE: Locate will not work consistently with the current index set to a descending index.  Use some</dt>
+<dd>form of scan with an expression instead, which can traverse an index in reverse.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.locateclear">
+<code class="descname">locateclear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.locateclear" title="Permalink to this definition">¶</a></dt>
+<dd><p>There is no VFP correlate to this method.  Due to memory management in CodeBase, when a locate/continue
+sequence is complete, it is best to call locateclear() to release memory and make sure that the table involved
+in the locate sequence (currently selected table) be made available for normal seeking, skipping, etc.</p>
+<p>Returns True on success, False on failure, but the return value may normally be discarded.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.locatecontinue">
+<code class="descname">locatecontinue</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.locatecontinue" title="Permalink to this definition">¶</a></dt>
+<dd><p>A successful VFP LOCATE command may be followed by any number of CONTINUE commands to continue the
+search for records which meet the criteria specified by the initial LOCATE.  locatecontinue() provides
+that functionality after the locate() method.  If it returns True, another record has been found
+that satisfies the expr value as provided to the initial locate() method.  Otherwise, it returns False.
+On False, nErrorNumber will be non-zero if an error has occurred.  nErrorNumber will be 0 if there
+simply are no more matching records.</p>
+<p>locatecontinue will traverse the table in the currently set order or in record number order if there
+is no set order.  locatecontinue() called without a corresponding initial locate() will produce
+either an error condition or an undefined result.</p>
+<p>When locatecontinue() is called the currently selected table MUST be the same as was selected at the time
+the preceding locate() was called or the results will be undefined.</p>
+<p>It is STRONGLY recommended that after the last locatecontinue() method call in the series, the
+locateclear() method be called to release memory and allow normal processing, seek(), etc., of the
+currently selected table.</p>
+<p>See also locate(), locateclear()</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.makeXMLValueString">
+<code class="descname">makeXMLValueString</code><span class="sig-paren">(</span><em>xValue</em>, <em>cType</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.makeXMLValueString" title="Permalink to this definition">¶</a></dt>
+<dd><p>Utility function that transforms a field type into a text value string for cursortoxml() output.
+:param xValue: Any legal python value
+:param cType: The official type of the database table from which it comes.
+:return: Text string of the value to put into the XML block</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.maketempindex">
+<code class="descname">maketempindex</code><span class="sig-paren">(</span><em>lcExpr</em>, <em>tagFilter=''</em>, <em>descending=0</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.maketempindex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Similar to indexon except that this creates a temporary, single use index that only lives as long
+as the table is open.  This index has only one order embedded in it.  This method call applies the
+index to the currently selected table and makes the new temp index the current order selection.  You
+can traverse the file in the temp index order but seek() is not currently supported.  However, the
+locate() method will exploit available temporary indexes if they allow the locate to be optimizable.</p>
+<p>You can change to different orders in the regular index file (CDX) by using setorderto() while you keep
+this temp index open.  Open temp indexes are updated when records are changed, added or deleted in the
+table.</p>
+<p>The method returns a temp index code which you should store in case you need to set the ordering back to
+this temp index with selecttempindex(), which uses the index code as its parameter.</p>
+<p>The temp index is associated with one alias – the currently selected one when the index was created.  If
+the same table is open with a different alias, it cannot be accessed by that different alias with this
+index order.</p>
+<p>Multiple temporary indexes can be opened for a table at the same time, and you can switch back and forth
+among them as required.  Closing the table with the closetable() method, closes all temporary indexes
+associated with the specified alias and deletes the files they were stored in.</p>
+<p>lcExpr MUST be a valid VFP index expression, and tagFilter, if non-blank, must be a valid VFP logical
+filter expression. See indexon() for details.  Set descending to 1 to have the index constructed in
+reverse order (highest at the top).  The ‘unique’ option is not available for temp indexes.</p>
+<p>Returns a valid index code &gt;= 0 or -1 on error.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.openTableList">
+<code class="descname">openTableList</code><span class="sig-paren">(</span><em>aTables</em>, <em>cPath=''</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.openTableList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pass this a list of values each consisting EITHER of a string containing a comma or space delimited
+list of table names OR a list of tuples consisting of (tablename, readonly, alias).  Then the method
+will attempt to open all tables, set each to the specified readonly status, and assign the
+specified alias.  All three elements of each tuple must be passed, but they may be passed as None
+or “”.  In that case the default readonly will be False, and the normal alias will be assigned.  The
+same defaults will apply if the aTables value is a string of table names.</p>
+<p>If one of the tables is to be opened exclusively, the readonly element of the tuple must be passed as
+the text string “EXCL”.</p>
+<p>Returns a list of the aliases, in the same order as the tables originally passed.  Returns None on
+error, in which case you can inspect the cErrorMessage property for the reason why.  If None is returned,
+NONE of the tables will be opened.  Any opened partway through the process will be closed before the return.</p>
+<p>If cPath is non-empty, it will be prepended to each of the table names to make the full path name of
+the table to be opened.  Otherwise you’ll need to put the fully qualified path name of each table
+in the list of tuples.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.order">
+<code class="descname">order</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.order" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves the index tag previously set by setorderto() from the currently selected table.  Returns a
+string containing the tag name of the index tag set or an empty string if one isn’t set or there is no
+currently active table.  If an error occurred (likely no table selected), the cErrorMessage and
+nErrorNumber properties will be set.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.pack">
+<code class="descname">pack</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.pack" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pack performs the VFP PACK function which copies all records NOT marked
+for deletion to a temporary table, then empties out the table, and
+copies the surviving records back into it. This method performs that
+task on the currently selected table.</p>
+<p>The VFP rule that this can only be performed on a table opened
+exclusively is NOT enforced in this module, but if it is expected that
+other users might access the table, then a use() with the exclusive
+option should be done before applying a pack().</p>
+<p>One of the side effects of a pack() is that memo files (the .FPT file)
+storing memo field data, are restructured, which usually produces a
+smaller file.</p>
+<p>Returns True on success, False on failure of any kind. A typical error
+would be that there is no currently selected table.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.recall">
+<code class="descname">recall</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.recall" title="Permalink to this definition">¶</a></dt>
+<dd><p>The opposite of delete().  This works on the current record of the currently selected table.  If
+that record is marked for deletion, then removes the mark.  If not marked for deletion, then does
+nothing.</p>
+<p>Returns True on success, False on Error, in which case you need to check cErrorMessage and nErrorNumber.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.recallall">
+<code class="descname">recallall</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.recallall" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs a recall() operation on every record in the currently selected table currently marked for
+deletion.  When this is done successfully, there will be no records in the table marked for deletion.</p>
+<p>Returns True on success, False on error, in which case you need to check cErrorMessage and nErrorNumber.</p>
+<p>Sets the value of the tally property to the number of records recalled.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.reccount">
+<code class="descname">reccount</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.reccount" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the physical number of records contained in the currently
+selected table. This will include records that have been marked for
+deletion. Use countrecords() to get the number of undeleted records.</p>
+<p>Returns -1 on error, in which case see cErrorMessage and nErrorNumber.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.recno">
+<code class="descname">recno</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.recno" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the record number of the current record of the currently
+selected table. Returns the record number on success, -1 on any kind of
+failure.</p>
+<p>When a table is opened the record pointer is automatically moved to
+record 1, if it exists, and there is no selected index tag. If you need
+to work on a record, then move to some other records, and later go back
+to the original record, it is much faster to save the recno() value and
+return to that record using the goto(“RECORD”, nTheRecord) method.</p>
+<p>It is possible for the recno() value returned to be one greater than
+the number of records as returned by the reccount() method. In that
+case, the record pointer is at an EndOfFile condition, and eof() will
+return true.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.refreshbuffers">
+<code class="descname">refreshbuffers</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.refreshbuffers" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is a more drastic update of the information on the currently selected table than refreshrecord().
+In this case, the entire cached data for the currently selected table is purged, forcing a re-read from
+the disk of any part of the table required for subsequent processing, including the table header.</p>
+<p>This function incurs substantial disk overhead the next time the table is accessed, so should be used with
+care in loops.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.refreshrecord">
+<code class="descname">refreshrecord</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.refreshrecord" title="Permalink to this definition">¶</a></dt>
+<dd><p>While VFP properly handles the refresh of its internal buffers when another application has changed a table,
+CodeBase does NOT.  If you are working with a table that is potentially subject to changes by an external
+application, and if you have been keeping this table open to save the time of re-opening prior to each
+use, then before accessing the data, you should select the table and then call this method to be sure
+the most recent version of the current record data is in the CodeBase internal buffers.</p>
+<p>Note that this ONLY operates on the data in the current record.  Other records may remain buffered and
+potentially out of date relative to changes made by other processes.</p>
+<p>Returns True on success, False on failure.  On failure records the error message.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.reindex">
+<code class="descname">reindex</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.reindex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call this method to refresh the indexes on the currently selected table.</p>
+<p>Normally indexes in CDX index files (the Visual FoxPro standard) are updated automatically by this module
+as they are by VFP when changes are made to the table.  However, after a while the index pointers can become
+inefficiently arranged, and a reindex can possibly improve performance on large (over 1mm records) tables.</p>
+<p>Returns True on success, False on failure of any kind.</p>
+<p>Note: If it is possible that other users will be accessing the table you wish to reindex, it is best to
+use() the table with the exclusive=True parameter so as to prevent index corruption and data retrieval
+errors by the other users.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.replace">
+<code class="descname">replace</code><span class="sig-paren">(</span><em>lpcFldName</em>, <em>lpxValue</em>, <em>coding='XX'</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.replace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provides a quick and convenient way to replace the value of a field in the current record in any open table
+without worrying about selecting the current table.  Further, it takes any native Python type and properly
+stores it in the field, assuming that the Python type is compatible with the data field type.  See the
+documentation for field and value types for the matchvalue in copytoarray().</p>
+<p>To specify a field in any open table, prepend the field name with the table alias separated by a period.  For
+example for the last_name field of the employee1 table, set the value of lpcFldName to “employee1.last_name”.</p>
+<p>To Replace() a date field value with the VFP empty date, supply a value of 0, not None.</p>
+<p>Returns True on success, False on failure, and stores error info into cErrorMessage and nErrorNumber.</p>
+<p>The ‘coding’ parm added April 21, 2018.  See the class docstring for codes that define how string values will
+be converted for different text encodings. “XX” is the default coding.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.replacedatetimeN">
+<code class="descname">replacedatetimeN</code><span class="sig-paren">(</span><em>lpcFieldName</em>, <em>lpnYear=0</em>, <em>lpnMonth=0</em>, <em>lpnDay=0</em>, <em>lpnHour=0</em>, <em>lpnMinute=0</em>, <em>lpnSecond=0</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.replacedatetimeN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Very fast storage of a long value into a long field. Very little error checking.
+:param lpcFieldName: Field name with optional alias specification.
+:param lpnYear: The year number (3 or 4 digits).  Recognizes years back to 200 AD.
+:param lpnMonth: Month number 1 to 12.
+:param lpnDay: Day of month number.
+:param lpnHour: Hours part of the time from 0 to 23
+:param lpnMinute: Minutes past the hour, from 0 to 59
+:param lpnSecond: Seconds past the minute, from 0 to 59
+:return: 1 on OK, else 0 or -1 on failure.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.replacelong">
+<code class="descname">replacelong</code><span class="sig-paren">(</span><em>lpcFieldName</em>, <em>lpnValue=0</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.replacelong" title="Permalink to this definition">¶</a></dt>
+<dd><p>Very fast storage of a long value into a long field. Very little error checking.
+:param lpcFieldName: Field name with optional alias specification.
+:param lpnValue: Long value.  NO conversions are performed!!
+:return: 1 on OK, else 0 or -1 on failure.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.rlock">
+<code class="descname">rlock</code><span class="sig-paren">(</span><em>retries=0</em>, <em>interval=0.1</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.rlock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Locks the currently selected record of the currently selected table.  This allows you to safely update
+the contents of the record either by a replace() or a gatherfromarray().</p>
+<p>This method plus its corresponding one unlock() gives you the added measure of certainty relative to
+the record updating process.  If activity in the target table is light, with few other users making updates,
+it is not necessary to call rlock() explicitly.  After your field value updates, CodeBase waits until you move off
+the record or call flush() to lock the record, write the data to the file, and then automatically unlock the
+record.  Typically, this works without a hitch.  But in situations where there is a lot of save activity it
+can happen that it is impossible to obtain the lock, and an error is reported from the record move or flush.</p>
+<dl class="docutils">
+<dt>To avoid that possibility, the sequence would be:</dt>
+<dd><ul class="first last simple">
+<li>navigate to the record with seek(), skip() or goto()</li>
+<li>scatter() the field values so you can work with them in your program</li>
+<li>when you are ready to save changes back to the record, call rlock()</li>
+<li>if rlock() returns True, you can call replace() or gatherfromarray() to make the changes</li>
+<li>if rlock() and the update was successful, call flush()</li>
+<li>call unlock()</li>
+</ul>
+</dd>
+</dl>
+<p>Returns True on Locked OK, False if unable to get lock for any reason.</p>
+<p>Note: Leave the rlock() in place as short a time as possible.  Also if you cannot place the rlock() and can
+afford the time, pause for a few milliseconds and then try again.  You can do this explicitly by specifying
+a number of retries in the retries parm and an interval specified in fractions of a second (default is
+0.1 seconds).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.scan">
+<code class="descname">scan</code><span class="sig-paren">(</span><em>indexTag=''</em>, <em>forExpr=''</em>, <em>noData=False</em>, <em>fieldList=None</em>, <em>getList=False</em>, <em>stripblanks=False</em>, <em>bNoTop=False</em>, <em>bDescending=False</em>, <em>coding='XX'</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.scan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Functions as an iterator that can be used for successively returning rows from the currently selected table
+either as dictionaries, similar to scatter() which returns a dictionary for the current record, OR
+as a list of values as from scattertoarray() if you pass getList as True.  Note that the items in the
+returned list() will be either in the order the fields appear in the table or, if fieldList was passed,
+in the order found in the fieldList string.</p>
+<dl class="docutils">
+<dt>Call as:</dt>
+<dd><dl class="first last docutils">
+<dt>for xx in xcbTools.scan(indexTag=”MyTag”, forExpr=”FIRSTNAME=’John’”)</dt>
+<dd>print xx[“FIRSTNAME”], xx[“LASTNAME”]</dd>
+</dl>
+</dd>
+</dl>
+<p>Returns None on error and when done.  Note that if forExpr is provided (non blank) the iteration
+will stop when there are no more records matching the forExpr.  If the indexTag value (or the currently
+selected index tag) has an expression exactly matching the left hand side of the forExpr, then the iteration
+may stop before an actual EOF() condition is reached.  Otherwise when the iteration is completed, the table
+record pointer will be positioned at EOF().</p>
+<p>noData parameter:  This returns a record number rather than the scattered contents of the entire record.
+Use this if you just want a few fields and don’t want to waste the time for parsing the full record.</p>
+<p>Support for temporary indexes:  If you want to scan in order by a temporary index, create the index
+and then when scanning pass “” or omit the indexTag parameter.  Your temporary index ordering will apply
+to the scan.  Specifying a different tag in the scan will substitute that ordering even if one or more
+temporary indexes exist.</p>
+<p>The  parameter fieldList is an optional comma-delimited list of field names.  If it is non-blank and if
+noData is False, then the returned dict() or list() ONLY has the fields listed in the fieldList.  This allows fast
+in-dll retrieval of field values even when you only want a few of the many fields in the table.</p>
+<p>By default, this function starts the scan at the beginning of the table, based on the currently set or
+specified index tag (or by recno, if no tag is active).  Pass bNoTop=True to override this behavior, and to
+start from where the record pointer is currently positioned.  If bDescending is True, then by default goes
+to the bottom of the table.  bNoTop is respected by not going to the bottom first in this case.</p>
+<p>If bDescending is True, then the scan moves backward through the table in the specified order.</p>
+<p>NOTE: Nested scans are NOT supported.  seek() is supported into another table in the middle of the scan.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.scatter">
+<code class="descname">scatter</code><span class="sig-paren">(</span><em>alias=''</em>, <em>converttypes=True</em>, <em>stripblanks=False</em>, <em>fieldList=None</em>, <em>coding='XX'</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.scatter" title="Permalink to this definition">¶</a></dt>
+<dd><p>The most generally used way to retrieve the contents of a data record
+from the current record of the currently selected table or a table whose
+alias you specify. Returns information on the contents of all fields in
+the table.</p>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt>alias = specify the alias of a currently open table if you want a</dt>
+<dd><p class="first last">table other than the currently selected table. Does not change the
+currently selected table unless there is no currently selected table.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>converttypes = Pass a value of False to get all values as text</dt>
+<dd><p class="first last">representations of their field values. For example, with convertypes
+True, date values are returned as Python dates. With convertypes False,
+date values are returned as strings of the form “YYYYMMDD”.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>stripblanks = If set to True (default is False), this tells the method</dt>
+<dd><p class="first last">to strip off all the trailing blanks on all character fields. Note that
+in VFP and all DBF tables, character fields are padded with blanks to
+the full width of the field.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>fieldList = if not None, it should be a string of upper case field names</dt>
+<dd><p class="first last">to be included in the dictionary, separated by commas.</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">coding = XX (default) or codes for char and binary fields, see class docstring.</p>
+</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd>On success returns a dictionary consisting of field name keys and field
+values. On failure returns the value of None and the cErrorMessage and
+nErrorNumber values will be set for more information. You can modify the
+values for individual fields in this dictionary and then store the
+changes back to the table by passing the dictionary as the first
+parameter to the gatherfromarray() method.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.scatterblank">
+<code class="descname">scatterblank</code><span class="sig-paren">(</span><em>lcAlias=''</em>, <em>lbBinaryAsUnicode=True</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.scatterblank" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a dictionary for an empty record in the currently selected table or the table specified by
+alias.  Contains one item keyed by the uppercase of the field name and having a value representing an
+empty field.  For example, if the field is an INTEGER, the value will be 0.  If the field is a LOGICAL,
+the value will be .F. (VFP False).  If the field is CHARACTER, the value will be an empty string.  For
+DATE and DATETIME fields, the value will be Python None.</p>
+<p>Added 03/20/2012. JSH.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.scatterraw">
+<code class="descname">scatterraw</code><span class="sig-paren">(</span><em>alias=''</em>, <em>converttypes=True</em>, <em>stripblanks=False</em>, <em>lcDelimiter='&lt;~!~&gt;'</em>, <em>coding='XX'</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.scatterraw" title="Permalink to this definition">¶</a></dt>
+<dd><p>IMPORTANT: This function is here for backwards compatibility with older versions of this
+module.  It is deprecated for future new development.  Use scatter() or other retrieval
+mechanisms instead that are now just as fast or faster.</p>
+<p>Retrieves the contents of a data record from the current record of the
+currently selected table or a table whose alias you specify. Returns
+information on the contents of all fields in the table. Applies NO
+formatting or translation of the result data. Use for speed when you are
+confident you know what is in the table and what order the fields are
+found in.</p>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt>alias = specify the alias of a currently open table if you want a</dt>
+<dd><p class="first last">table other than the currently selected table. Does not change the
+currently selected table unless there is no currently selected table.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>delimiter = string of one or more characters (up to 32) which will be</dt>
+<dd><p class="first last">used as the delimiter between the values in the output string.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd>On success returns a simple character string containing a simple text
+representation of the value of each table field in order. Returns no
+information about field names. Values are delimited in the string by the
+delimiter string, which defaults to “&lt;~!~&gt;”, but can be overridden…
+Returns None on error.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.scattertoarray">
+<code class="descname">scattertoarray</code><span class="sig-paren">(</span><em>alias=''</em>, <em>converttypes=True</em>, <em>stripblanks=False</em>, <em>fieldList=None</em>, <em>coding='XX'</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.scattertoarray" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves the contents of a data record from the current record of the
+currently selected table or a table whose alias you specify. Returns
+information on the contents of all fields in the table.</p>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt>alias = specify the alias of a currently open table if you want a</dt>
+<dd><p class="first last">table other than the currently selected table. Does not change the
+currently selected table unless there is no currently selected table.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>converttypes = Pass a value of False to get all values as text</dt>
+<dd><p class="first last">representations of their field values. For example, with convertypes
+True, date values are returned as Python dates. With convertypes False,
+date values are returned as strings of the form “YYYYMMDD”.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>stripblanks = If set to True (default is False), this tells the method</dt>
+<dd><p class="first last">to strip off all the trailing blanks on all character fields. Note that
+in VFP and all DBF tables, character fields are padded with blanks to
+the full width of the field.</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">fieldList = Comma delimited list of field names to include in the output.</p>
+</li>
+<li><dl class="first docutils">
+<dt>coding = XX for system text conversion defaults or a codec or Unicode value from</dt>
+<dd><p class="first last">docstring of this class.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd>On success returns a simple list of field values in the order in which the fields are found
+in the table OR in the order in which the fields were listed in the fieldList parameter.  Returns
+None on error.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.scattertolist">
+<code class="descname">scattertolist</code><span class="sig-paren">(</span><em>alias=''</em>, <em>converttypes=True</em>, <em>stripblanks=False</em>, <em>fieldList=None</em>, <em>coding='XX'</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.scattertolist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like scatter except that instead of returning a dict(), it returns a list of tuples which
+can be sent via a COM connection to a COM client with the full record.</p>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt>alias = specify the alias of a currently open table if you want a</dt>
+<dd><p class="first last">table other than the currently selected table. Does not change the
+currently selected table unless there is no currently selected table.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>converttypes = Pass a value of False to get all values as text</dt>
+<dd><p class="first last">representations of their field values. For example, with convertypes
+True, date values are returned as Python dates. With convertypes False,
+date values are returned as strings of the form “YYYYMMDD”.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>stripblanks = If set to True (default is False), this tells the method</dt>
+<dd><p class="first last">to strip off all the trailing blanks on all character fields. Note that
+in VFP and all DBF tables, character fields are padded with blanks to
+the full width of the field.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>fieldList = if not None, it should be a string of upper case field names</dt>
+<dd><p class="first last">to be included in the dictionary, separated by commas.</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">coding = default string text coding or values per class docstring.</p>
+</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd>On success returns a list consisting of field names and field
+values as a tuple for each field. On failure returns the value of None and the cErrorMessage and
+nErrorNumber values will be set for more information. You can modify the
+values for individual fields in this dictionary and then store the
+changes back to the table by passing the dictionary as the first
+parameter to the gatherfromarray() method.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.scattertorecord">
+<code class="descname">scattertorecord</code><span class="sig-paren">(</span><em>alias=''</em>, <em>converttypes=True</em>, <em>stripblanks=False</em>, <em>fieldList=None</em>, <em>coding='XX'</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.scattertorecord" title="Permalink to this definition">¶</a></dt>
+<dd><p>Works just like scattertoarray() except that it returns a named tuple with each element having a name
+equal to the uppercased field name, thus: myResult.MYFIELD01
+:return: The named tuple can either be accessed by index number or by the name of the item in the tuple.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.seek">
+<code class="descname">seek</code><span class="sig-paren">(</span><em>targmatch</em>, <em>alias=''</em>, <em>indextag=''</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.seek" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method is closely analogous to the VFP SEEK() function and uses an
+index Tag to find a record matching a specified lookup string (the
+targmatch value). If a matching record is found, returns True, otherwise
+False. False can also be returned for a number of other failure causes,
+and the nErrorNumber should be checked for a non-zero value to identify
+error situations. Unlike setorderto(), gathermemvar(), alias() and many
+other methods, this one doesn’t have to work on the currently selected
+data table. This allows you to do a seek() into another table in the
+middle of traversing the currently selected table. You can retrieve
+field values from the found record in that other table using curval()
+which allows you to specify the table from which to return the field
+value.</p>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt>targmatch = A text string containing the value to find by the specified index tag.</dt>
+<dd><p class="first last">For example if there is an index Tag with an expression of “UPPER(xCode
++ yCode)” where xCode and yCode are each character fields of length
+10, and you wanted to find a record with an xCode value of “abc” and a
+yCode value = “yior” you would construct the targmatch as “ABC       YIOR      “.
+Note that in DBF files character fields are automatically
+padded to their full length with space characters, and a concantentation
+of field values will include those spaces. Also note that the targmatch
+values are all upper case because the field values in the example tag
+expression are wrapped in a UPPER() function.</p>
+</dd>
+<dt>Some further rules for Tag expressions:</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt>If the field indexed is a date field, the index expression must be a</dt>
+<dd><p class="first last">character string of the form “YYYYMMDD”.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>If the field indexed is any type of number, the index expression must</dt>
+<dd><p class="first last">be a character string containing a text representation of the value
+being searched for. For example, if the field is an integer and
+you are searching for 29502, the targmatch string should be “29502”. For
+number, double, and currency type fields, be sure to include the decimal
+point in your text string.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>If the field indexed is a datetime value, the index expression</dt>
+<dd><p class="first last">required is not exactly what you would expect.
+The required text string should be in the form “YYYYMMDDHH:MM:SS:TTT”
+where YYYY is the year, MM the month, DD the calendar day, HH the time
+hour (24 hour clock time), MM minutes, SS seconds, and TTT thousandths
+of seconds. BUT NOTE: the colons ARE REQUIRED. Also, since DBF tables
+can’t store datetime values accurate to the one thousandth of a second,
+the TTT value should always be “000”.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>If the tag expression is a character string, the targmatch value may</dt>
+<dd><p class="first last">be equal to or less than the length of the tag expression. If it is less
+than the length of the tag expression it will “find” the first record
+which matches the characters of the tag expression. If the targmatch
+string length is larger than the actual tag expression length, the
+result will always be False.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>alias = Allows you to specify the alias name of any currently open</dt>
+<dd><p class="first last">table. If passed as an empty string or omitted the currently selected
+table is assumed. Otherwise the table specified by the alias name is the
+subject of the seek. The currently selected table is NOT changed.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>indextag = Optional specification of the index tag to use for the</dt>
+<dd><p class="first last">seek. If not specified, then seeks using the tag specified in the latest
+setorderto() method for the table. In that case, if no current order has
+been set for the table, the method returns False.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd>True for success (record is found).  False for any other condition.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.select">
+<code class="descname">select</code><span class="sig-paren">(</span><em>lcAlias</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.select" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method that sets the currently selected table to the one with the alias passed as the
+parameter. If the string value you pass is not associated with an open table, a False is
+returned. If the string is associated with an open table, that table becomes the currently
+selected table, and a True is returned. Note that alias names are NOT case sensitive in VFP
+or in this module.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.selecttempindex">
+<code class="descname">selecttempindex</code><span class="sig-paren">(</span><em>lnCode</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.selecttempindex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Once a temporary index has been created with maketempindex, if you have needed to change the index order
+for any reason, you can restore the temporary ordering of a previously created temp index. Store the return
+value from maketempindex() and use it as the lnCode parm value in this method.  Subsequent goto() and skip()
+method calls will use the temp index.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.setcustomencoding">
+<code class="descname">setcustomencoding</code><span class="sig-paren">(</span><em>lpcEncoding=''</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.setcustomencoding" title="Permalink to this definition">¶</a></dt>
+<dd><p>If you want string data to be retrieved and saved in an encoding different from the three basic options
+(ASCII, UTF-8, and Code Page 1252), you can specify one the many standard Python encodings (see the Python
+documentation for the latest complete list.)  For this custom configuration to be applied, the conversion
+code of ‘C’ must be specified and the target field must be a binary version (either of char or memo).
+:param lpcEncoding: Python encoding name like “cp1252” or “cp1251”.
+:return: True.  Note that there is no error checking on the value of the lpcEncoding parameter!  If
+you specify a non-existent name, this module will generate a coding error when processing binary data
+with the ‘C’ conversion option.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.setdatasession">
+<code class="descname">setdatasession</code><span class="sig-paren">(</span><em>nSession</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.setdatasession" title="Permalink to this definition">¶</a></dt>
+<dd><p>set the data session back to what it was earlier.  the session number MUST be one that came
+from getdatasession() or the results will be undefined.
+:param nSession:
+:return: The session number switched to or -1 on error</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.setdateformat">
+<code class="descname">setdateformat</code><span class="sig-paren">(</span><em>lpcFormat=''</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.setdateformat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Codebase, like the USA versions of Visual FoxPro assumes U.S. standard date
+expressions of the form MM/DD/YY or MM/DD/YYYY, in contrast to other parts of
+the world that use DD/MM/YY or DD/MM/YYYY or other combinations.  This default
+assumptions about date text strings can be changed.  This is especially useful
+when importing text data via the appendfrom() function.  If non-numeric
+characters are found in the text, and it is intended to be stored in a date or
+datetime field, then an attempt will be made to parse the text based on the
+standard date expression, either MM/DD/YYYY or an alternate set prior to the
+append process.
+Parameters:</p>
+<blockquote>
+<div><ul class="simple">
+<li>lpcFormat - This must be a character string with at minimum the characters
+‘YY’ or ‘YYYY’, and ‘MM’, and ‘DD’ in some combination with punctuation or
+it must be one of the Visual FoxPro standard SET DATE TO values such as:
+AMERICAN = MM/DD/YY
+ANSI = YY.MM.DD
+BRITISH = DD/MM/YY
+FRENCH = DD/MM/YY
+GERMAN = DD.MM.YY
+ITALIAN = DD-MM-YY
+JAPAN = YY/MM/DD
+TAIWAN = YY/MM/DD
+USA = MM-DD-YY
+MDY = MM/DD/YY
+DMY = DD/MM/YY
+YMD = YY/MM/DD
+Pass NULL or the empty string to restore the MDY/AMERICAN default.</li>
+</ul>
+</div></blockquote>
+<p>Returns 1 on OK, 0 on any kind of error, mainly unrecognized formats.
+The total length of the lcFormat string must be no greater than 16 bytes.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.setdeleted">
+<code class="descname">setdeleted</code><span class="sig-paren">(</span><em>lbHow=None</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.setdeleted" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function sets the DELETED status for all table access.  If DELETED ON or TRUE is set by passing a
+value of True to the method() then most table navigation methods will automatically skip over deleted
+records.  When this module is initialized, the status is set to DELETED OFF in which case all records
+are visible regardless of deleted status.  To turn DELETED OFF, pass a False to the method.  This may be done
+at any time and will affect all future table navigation until changed.</p>
+<p>Again, note that this follows the FoxPro convention where the DELETED ON status tells the data engine to
+ignore deleted records (Delete testing is ON).  When DELETED OFF has been set in VFP, all records, including
+those on which the deleted flag has been set to TRUE are visible.</p>
+<p>For most normal operations, you will want to issue a setdeleted(True) command to ensure that you don’t
+have to test constantly for the deleted() status of every record.</p>
+<p>The DELETED status affects all skip() functions and goto() functions except for those where you goto()
+a specific record number.  In that case you will still need to test the deleted() status.</p>
+<p>Also, the copytoarray() method adheres to the DELETED status.</p>
+<p>If you pass None as the parameter lbHow, then the function returns the current state of the DELETED flag:
+True for DELETED is ON, False for DELETED is OFF.  Otherwise, always returns True.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.setorderto">
+<code class="descname">setorderto</code><span class="sig-paren">(</span><em>tagname</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.setorderto" title="Permalink to this definition">¶</a></dt>
+<dd><p>If the currently selected table has one or more index tags available, this method will set
+the current ordering (which is recognized by the various modes of the goto() method) to the
+tag specified by tagname. Returns True on success, False on failure for any reason. Inspect
+the cErrorMessage or nErrorNumber for reasons.  Pass “” as tagname to set to native recno order.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.setstrictaliasmode">
+<code class="descname">setstrictaliasmode</code><span class="sig-paren">(</span><em>bMode=False</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.setstrictaliasmode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Obsolete, but here because some old code may make this call</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.skip">
+<code class="descname">skip</code><span class="sig-paren">(</span><em>gonum=1</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.skip" title="Permalink to this definition">¶</a></dt>
+<dd><p>Identical to the goto() method with the “SKIP” gomode value, except it runs a stripped down
+function for speed with only very basic error checking and reporting.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.tagcount">
+<code class="descname">tagcount</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.tagcount" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the number of index tags stored in the CDX index file for the
+currently selected table. Returns 0 if there aren’t any.</p>
+<p>Returns -1 on error, in which case see cErrorMessage and nErrorNumber.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.unlock">
+<code class="descname">unlock</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.unlock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unlocks the current record of the currently selected table.  See rlock() for more information.  Returns True
+on success, False on failure.  Also is used to remove the table lock applied by flock().</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.updatestructure">
+<code class="descname">updatestructure</code><span class="sig-paren">(</span><em>cSourceTable</em>, <em>cTargetTable</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.updatestructure" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function examines the field structure and index tags of the source table referenced by cSourceTable
+and forces the table named in cTargetTable (not currently open) to have the same structure and index tags.  The
+current content of the target table is retained so long as all of its fields are retained.  Data in fields
+which are not contained in the cSourceTable table will be lost.
+:param cSourceTable: Alias of pattern table, the source of the structure/tags, not currently open.
+:param cTargetTable: DBF table to be modified with the structure and index tags of the pattern (source) table.
+:return: True on success, False on failure or any error.</p>
+<p>NOTE: Do NOT, repeat DO NOT, use this method to modify the structure or indexes of a VFP table contained
+in a VFP database container.  If you do, the table may become un-readable!</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.use">
+<code class="descname">use</code><span class="sig-paren">(</span><em>tableName</em>, <em>alias=''</em>, <em>readOnly=False</em>, <em>exclusive=False</em>, <em>noBuffering=False</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.use" title="Permalink to this definition">¶</a></dt>
+<dd><p>Basic method for starting work with a DBF table. This must be called before any work with
+the table can be performed. After the table is opened with use(), it is the “Currently
+Selected Table” and can be accessed by the other methods of this class that operate on the
+currently selected table. If you call use() again for another table, that table becomes the
+currently selected table. You can change the currently selected table later by calling the
+select() method and passing to it the alias name assigned by the original use() method call.</p>
+<blockquote>
+<div>When finished with the table call close() and pass the alias name assigned when the table</div></blockquote>
+<p>was opened. The method closedatabases() will also close the table (and close all other open
+tables too). (Changed the mechanism by which the alias is handled 02/19/2015. JSH.)</p>
+<p>Parameters:
+:param: tableName:  path name to the dbf table you want to open.  Must have the .dbf extension</p>
+<blockquote>
+<div>unless the table you wish to open has some other extension – .DBF is not
+enforced, in other words.  Up to you as to how much info you pass in the
+path name, but if the file can’t be found the method reports an error.</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Param:</th><td class="field-body"><p class="first">alias: an optional character string with an alphanumeric string starting with a
+letter or underscore which will be used as the alias for subsequent table and field
+manipulations.  The presence of this value determines how tables are opened when
+multiple tables might be opened with the same base file name but in different
+directories.  Two cases:
+1) An alias is specified.
+If a table with that alias is already open (either this same table or another one in
+a different directory but with the same base name), that table is closed, and then
+this table open happens and the alias you specified is assigned.  Otherwise the
+table is simply opened and this alias name is assigned.
+2) NO alias is specified.
+A default alias is determined, which is equal to the base table name (other than
+path and extension) of the table with embedded spaces and punctuation removed, if any.
+If this same table is already open with that alias, it is closed and re-opened with your
+required properties.
+If a different table is already open with that alias, it is left open, and a new
+unique alias is created as ‘TMP’ followed by a string of 12 random characters.  The
+table specified in this function call is then opened with that new alias.</p>
+<p>NOTE: If you do NOT specify an alias, the alias name is NOT guaranteed to be the table
+base name.  If you will need to manipulate the tables and you don’t specify an alias
+name, you MUST store the alias name value provided by the alias() method immediately
+after the table is opened, and use that alias name for select() and similar functions
+which take an alias name parameter.</p>
+<p>The same table is allowed to be opened multiple times, each with its own alias.  Remember
+in that case that closing one of the instances will NOT close the other(s).</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Param:</th><td class="field-body"><p class="first">readOnly: boolean value which defaults to False.  If set to True, then the table is
+opened in a mode which prevents any record updates or record appends.
+Reads from tables opened readOnly are faster, and readOnly is preferred when
+writing is not actually required.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Param:</th><td class="field-body"><p class="first">exclusive: boolean value which defaults to False.  If set to True, then the table is
+opened in exclusive mode.  This means that while the table is open, no other
+process may open or access it.  Exclusive mode is required for safely
+applying indexes in situations where other processes may attempt access.  When
+exclusive is True, the setting for readOnly is ignored and defaults to False.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Param:</th><td class="field-body"><p class="first last">noBuffering: Boolean value defaults to False.  Set to True to force the CodeBase engine
+to read/write directly from/to disk without any in-memory buffering of data.
+This may be useful for tables with lots of multi-user access.  However you
+may still need to call flush() if data corruption issues are encountered.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>Returns:</dt>
+<dd>True on success, False on any error</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.used">
+<code class="descname">used</code><span class="sig-paren">(</span><em>alias</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.used" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pass a text string with an alias name.  If that table is open, the function will return True,
+otherwise false.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.xmltocursor">
+<code class="descname">xmltocursor</code><span class="sig-paren">(</span><em>cAlias=''</em>, <em>cXML=''</em>, <em>cFileName=''</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.xmltocursor" title="Permalink to this definition">¶</a></dt>
+<dd><p>In VFP the XMLTOCURSOR() function is the converse of the CURSORTOXML() function.  It makes possible the loading
+of XML created by CURSORTOXML() back into a cursor.  This replicates a portion of the functionality of the
+VFP function.  In this case, the xml data will be stored back into a table (appending the records) which
+has some or all of the fields specified in the xml data.  It will be up to you to make sure that if the
+table has primary keys, which must be set externally to unique values, that those will be handled somehow.
+No capability is provided to create a table into which to load the XML (as is provided for in VFP), so you
+must first create a table to receive the XML records, and have field names which correspond.</p>
+<p>The primary tag name for the XML data is typically &lt;VFPData&gt; but may be something else.  Tag names for
+individual records may be any value.  Tag names for fields must match the spelling (but not the case) of fields
+in the target table, or the data element will be ignored.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>cAlias</strong> – Alias of an open table.  If blank, the currently selected table will be used.</li>
+<li><strong>cXML</strong> – Text string with the XML content to be loaded.  Leave “” if loading from a file.</li>
+<li><strong>cFileName</strong> – File name from which to load the XML.  Leave “” if cXML is passed.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Number of records loaded.  0 indicates an error.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools._cbTools.zap">
+<code class="descname">zap</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools._cbTools.zap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes all records from the currently selected table.  This is more drastic than deleting all records
+because the table is actually reconstructed from scratch with no records.  All existing records will be
+lost.  USE WITH CARE.  There is NO WARNING MESSAGE.</p>
+<p>Use on a table that has not been opened in exclusive mode is extremely risky.</p>
+<p>Returns True on success, False on failure.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="CodeBaseTools.TableObj">
+<em class="property">class </em><code class="descclassname">CodeBaseTools.</code><code class="descname">TableObj</code><span class="sig-paren">(</span><em>vfp</em>, <em>tablename</em>, <em>alias=''</em>, <em>readOnly=False</em>, <em>exclusive=False</em>, <em>reset=False</em><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools.TableObj" title="Permalink to this definition">¶</a></dt>
+<dd><p>Treat vfp table access as if separate objects for each table.
+‘reset’ keyword will close/reopen file to flush file buffer  (still requires full path in tablename)
+opens with ‘setdeleted’ True, so deleted records are ignored by default</p>
+<dl class="method">
+<dd><p>closes table AND renders instance inert.
+does not change current active file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools.TableObj.newId">
+<code class="descname">newId</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools.TableObj.newId" title="Permalink to this definition">¶</a></dt>
+<dd><p>return next unique ID.
+does not change current active file
+NextKey file should be already opened</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools.TableObj.next">
+<code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools.TableObj.next" title="Permalink to this definition">¶</a></dt>
+<dd><p>next record.
+does not change current active file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="CodeBaseTools.TableObj.reset">
+<code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#CodeBaseTools.TableObj.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>close and re-open file.
+does not change current active file</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="CodeBaseTools.VFPFIELD">
+<em class="property">class </em><code class="descclassname">CodeBaseTools.</code><code class="descname">VFPFIELD</code><a class="headerlink" href="#CodeBaseTools.VFPFIELD" title="Permalink to this definition">¶</a></dt>
+</dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, M-P Systems Services, Inc.
+
+    </p>
+	<p>
+        Licensed under GNU Lesser GPL version 3.0</p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

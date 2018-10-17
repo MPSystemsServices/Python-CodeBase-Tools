@@ -1,0 +1,450 @@
+=================
+``MPSSBaseTools``
+=================
+
+.. automodule:: MPSSBaseTools
+
+   .. contents::
+      :local:
+
+.. currentmodule:: MPSSBaseTools
+
+
+Functions
+=========
+
+- :py:func:`ADDBS`:
+  Undocumented.
+
+- :py:func:`ADDFS`:
+  Undocumented.
+
+- :py:func:`cleanFileName`:
+  Expects as a parm a base file name (no path) and an optional extension.  This typically would be a file
+
+- :py:func:`clearHTMLCode`:
+  Takes any string with some HTML tags and removes them leaving only the base code. Very simple logic looking
+
+- :py:func:`cleanUnicodeString`:
+  Applies transformations to strings where it may be possible to have higher-order unicode values embedded
+
+- :py:func:`confirmPath`:
+  Undocumented.
+
+- :py:func:`convertUnits`:
+  Converts the nFromNumber (converted to float if necessary) into the specified output value with units conversion:
+
+- :py:func:`CTOD`:
+  Pass a simple date string, and this returns a Python datetime.date() value representing the string.  This is like
+
+- :py:func:`CTOT`:
+  The reverse of the TTOC() function below.  It auto-detects which of the datetime formats (not including
+
+- :py:func:`CTOTX`:
+  Addresses some of the shortcomings of CTOT for parsing datetimes in the form of 08/01/2018 10:30AM which
+
+- :py:func:`deleteByAge`:
+  Pass a file name skeleton (fully qualified path name) which may or may not match some files in the
+
+- :py:func:`DELETEFILE`:
+  Clean removal of a single file named by the fully qualified name.
+
+- :py:func:`dict2lower`:
+  Takes a dictionary keyed by text strings and converts all those text strings to lower case
+
+- :py:func:`diffInMinutes`:
+  Undocumented.
+
+- :py:func:`DOW`:
+  Pass this a datetime value and returns the Visual FoxPro Day of week value as returned by the DOW() function.
+
+- :py:func:`dtFromDateAndTime`:
+  Undocumented.
+
+- :py:func:`DTOR`:
+  Converts a decimal float value in degrees to radians
+
+- :py:func:`DTOT`:
+  Quick conversion utility to convert a Python datetime.date() object to a datetime.datetime() object,
+
+- :py:func:`fDiv`:
+  In Python 2.x the division of two integers results in an integer result.  If instead you want a floating result
+
+- :py:func:`FILETOSTR`:
+  To emulate the VFP function this MUST be a type 'rb', since VFP does NO transformations in a
+
+- :py:func:`findAllFiles`:
+  Finds all files matching the standard OS file wildcard pattern in cSkel and returns them in a list
+
+- :py:func:`FORCEEXT`:
+  Pass any file name as lpcFile and an extension (less any '.') in lpcExt and this
+
+- :py:func:`FormatDateString`:
+  Takes a time() type date value or a datetime() type date (date or datetime) value and transforms it into
+
+- :py:func:`FormatDateTimeString`:
+  See the FormatDateString() function for details of formatting options.
+
+- :py:func:`FSacquire`:
+  Find a directory or file here or higher in the directory structure.
+
+- :py:func:`get`:
+  Undocumented.
+
+- :py:func:`getconfig`:
+  return a default configobj or pass a different name to read that file
+
+- :py:func:`getCSSCalDateFormat`:
+  Converts one of the 4 EVOS/MPSS standard date format codes used in our apps to the appropriate code used
+
+- :py:func:`getCustomDateRange`:
+  Generic tool to get specific date ranges from user selections from typical drop-down selectors.
+
+- :py:func:`getDateRangeTypeText`:
+  Returns a text string which contains the explanatory text for the cRangeType values as required for
+
+- :py:func:`getExcelColumn`:
+  Converts a left-to-right columns number for a spreadsheet (starting with 1) to an alphabetic Excel Column
+
+- :py:func:`getfilechanged`:
+  Simple utility that returns the datetime value of the last modification date for any file.
+
+- :py:func:`getJQueryDateFormat`:
+  Returns a format string as used by the jQuery datepicker widget which can then adapt to the current standard
+
+- :py:func:`getlasterrormessage`:
+  Undocumented.
+
+- :py:func:`getMIMEType`:
+  Undocumented.
+
+- :py:func:`getrandomseed`:
+  Returns a seed that can be used by any randomizer, which is not dependant on the system clock.  Use
+
+- :py:func:`getTempFileName`:
+  Returns a fully qualified path name for a temporary file that can be used as needed.  The file will NOT
+
+- :py:func:`handleError`:
+  decorator that will wrap error detection around a method
+
+- :py:func:`HexToStr`:
+  Takes a string coded as hexadecimal (one 2 character hex expression per output string character)
+
+- :py:func:`isBetween`:
+  Pass any three values of the same type in the parameters.  If the lpnTest
+
+- :py:func:`IsCanada`:
+  Undocumented.
+
+- :py:func:`isDateBetween`:
+  Simple test of whether a datetime or date value tTest is between the datetime or date values
+
+- :py:func:`isDigits`:
+  examines every character in lpcStr and returns True if all are in the range from 0 to 9, else False
+
+- :py:func:`isstr`:
+  Undocumented.
+
+- :py:func:`isunicode`:
+  Undocumented.
+
+- :py:func:`IsValidNumber`:
+  Pass any string that purports to be a representation of a number (like a value passed back by
+
+- :py:func:`JUSTFNAME`:
+  pass any fully qualified file or path name and this returns just the file name itself, including the extension
+
+- :py:func:`JUSTSTEM`:
+  Pass any fully or partially qualified file name and this returns just the base name.  So for example, if
+
+- :py:func:`makeNewCSSDateFormat`:
+  For most calendar lookups in data entry, we use the www.rainforest.com NewCSSCal() function in
+
+- :py:func:`MPConfirm`:
+  Like MPMsgBox except expects a "Yes" or "No" answer
+
+- :py:func:`MPlocal_except_handler`:
+  Undocumented.
+
+- :py:func:`MPMsgBox`:
+  Undocumented.
+
+- :py:func:`MPshow_variables`:
+  helper function to show variables in order
+
+- :py:func:`multiItemFieldToList`:
+  In DBF files where multiple values are stored in a Memo field either as json, comma delimited or line delmited
+
+- :py:func:`PADRIGHT`:
+  Returns a text string padded at the right with a specified character to a specified length.
+
+- :py:func:`PyTime2datetime`:
+  Undocumented.
+
+- :py:func:`rad2mile`:
+  Undocumented.
+
+- :py:func:`rawReplace`:
+  Undocumented.
+
+- :py:func:`removeNonPrint`:
+  Pass this any string or bytearray and will remove all the ascii characters below the space.
+
+- :py:func:`RemoveTextBlock`:
+  Like the same named tool in MPSS/Evos MPSSLib.PRG.  It removes all text found in the cSource block between
+
+- :py:func:`RIGHT`:
+  Quick way to extract the nLen characters of cStr counting from the right-most end of the string.  So for example,
+
+- :py:func:`RTOD`:
+  Converts an angle (or lat or lon) from radians to degrees)
+
+- :py:func:`runPythonApp`:
+  Determines where python.exe is and then runs it with the specified .py program and parms.  Looks first for
+
+- :py:func:`safeHTMLcoding`:
+  Replaces unsafe characters in a text string with their HTML codes to allow strings to be embedded
+
+- :py:func:`sanitizeHtml`:
+  Undocumented.
+
+- :py:func:`setCommonErrorPath`:
+  Undocumented.
+
+- :py:func:`StartOfWeek`:
+  Pass this any date/datetime value and it returns the date() value for the Monday of the week into which the
+
+- :py:func:`STR`:
+  Function that works like the VFP STR() function.  It transforms any numeric value into a string
+
+- :py:func:`STREXTRACT`:
+  function like VFP STREXTRACT() which returns the text string contained between two delimiters within a
+
+- :py:func:`strRand`:
+  This returns a string of random characters being either uppercase alpha letters
+
+- :py:func:`STRTOFILE`:
+  Added optional 3rd parm to cause the string contents to be appended to an existing file rather than creating a new file.
+
+- :py:func:`StrToHex`:
+  Function that converts any text string to a string of hex values.  Each
+
+- :py:func:`TestTimeEntry`:
+  Re-creation of the Evos/MPSS Time validator function that checks that a time is in the range from 0000 (midnight)
+
+- :py:func:`thispath`:
+  returns full path name of the file 'name' in the same folder as the calling program
+
+- :py:func:`toAscii`:
+  Brute force removal of non-ascii characters from a string.  Returns a standard string, NOT unicode.
+
+- :py:func:`TTOC`:
+  Pass a datetime value and an optional value of nHow and this creates a text string
+
+- :py:func:`TTOD`:
+  Like the VFP TTOD() function, converts a datetime type value to a date type value.
+
+- :py:func:`WEEK`:
+  Works similar the VFP WEEK() function.  Pass it a datetime value and it returns the week number within the current
+
+
+.. autofunction:: ADDBS
+
+.. autofunction:: ADDFS
+
+.. autofunction:: cleanFileName
+
+.. autofunction:: clearHTMLCode
+
+.. autofunction:: cleanUnicodeString
+
+.. autofunction:: confirmPath
+
+.. autofunction:: convertUnits
+
+.. autofunction:: CTOD
+
+.. autofunction:: CTOT
+
+.. autofunction:: CTOTX
+
+.. autofunction:: deleteByAge
+
+.. autofunction:: DELETEFILE
+
+.. autofunction:: dict2lower
+
+.. autofunction:: diffInMinutes
+
+.. autofunction:: DOW
+
+.. autofunction:: dtFromDateAndTime
+
+.. autofunction:: DTOR
+
+.. autofunction:: DTOT
+
+.. autofunction:: fDiv
+
+.. autofunction:: FILETOSTR
+
+.. autofunction:: findAllFiles
+
+.. autofunction:: FORCEEXT
+
+.. autofunction:: FormatDateString
+
+.. autofunction:: FormatDateTimeString
+
+.. autofunction:: FSacquire
+
+.. autofunction:: get
+
+.. autofunction:: getconfig
+
+.. autofunction:: getCSSCalDateFormat
+
+.. autofunction:: getCustomDateRange
+
+.. autofunction:: getDateRangeTypeText
+
+.. autofunction:: getExcelColumn
+
+.. autofunction:: getfilechanged
+
+.. autofunction:: getJQueryDateFormat
+
+.. autofunction:: getlasterrormessage
+
+.. autofunction:: getMIMEType
+
+.. autofunction:: getrandomseed
+
+.. autofunction:: getTempFileName
+
+.. autofunction:: handleError
+
+.. autofunction:: HexToStr
+
+.. autofunction:: isBetween
+
+.. autofunction:: IsCanada
+
+.. autofunction:: isDateBetween
+
+.. autofunction:: isDigits
+
+.. autofunction:: isstr
+
+.. autofunction:: isunicode
+
+.. autofunction:: IsValidNumber
+
+.. autofunction:: JUSTFNAME
+
+.. autofunction:: JUSTSTEM
+
+.. autofunction:: makeNewCSSDateFormat
+
+.. autofunction:: MPConfirm
+
+.. autofunction:: MPlocal_except_handler
+
+.. autofunction:: MPMsgBox
+
+.. autofunction:: MPshow_variables
+
+.. autofunction:: multiItemFieldToList
+
+.. autofunction:: PADRIGHT
+
+.. autofunction:: PyTime2datetime
+
+.. autofunction:: rad2mile
+
+.. autofunction:: rawReplace
+
+.. autofunction:: removeNonPrint
+
+.. autofunction:: RemoveTextBlock
+
+.. autofunction:: RIGHT
+
+.. autofunction:: RTOD
+
+.. autofunction:: runPythonApp
+
+.. autofunction:: safeHTMLcoding
+
+.. autofunction:: sanitizeHtml
+
+.. autofunction:: setCommonErrorPath
+
+.. autofunction:: StartOfWeek
+
+.. autofunction:: STR
+
+.. autofunction:: STREXTRACT
+
+.. autofunction:: strRand
+
+.. autofunction:: STRTOFILE
+
+.. autofunction:: StrToHex
+
+.. autofunction:: TestTimeEntry
+
+.. autofunction:: thispath
+
+.. autofunction:: toAscii
+
+.. autofunction:: TTOC
+
+.. autofunction:: TTOD
+
+.. autofunction:: WEEK
+
+
+Classes
+=======
+
+- :py:class:`baseService`:
+  Undocumented.
+
+- :py:class:`bf`:
+  The purpose of this class is to provide the bit twiddling functionality of the
+
+- :py:class:`Bunch`:
+  A Dictionary Object that can be accessed via attributes
+
+- :py:class:`NamedTuple`:
+  Undocumented.
+
+
+.. autoclass:: baseService
+   :members:
+
+   .. rubric:: Inheritance
+   .. inheritance-diagram:: baseService
+      :parts: 1
+
+.. autoclass:: bf
+   :members:
+
+   .. rubric:: Inheritance
+   .. inheritance-diagram:: bf
+      :parts: 1
+
+.. autoclass:: Bunch
+   :members:
+
+   .. rubric:: Inheritance
+   .. inheritance-diagram:: Bunch
+      :parts: 1
+
+.. autoclass:: NamedTuple
+   :members:
+
+   .. rubric:: Inheritance
+   .. inheritance-diagram:: NamedTuple
+      :parts: 1

@@ -1,0 +1,35 @@
+================
+``DBFXLStools2``
+================
+
+.. automodule:: DBFXLStools2
+
+   .. contents::
+      :local:
+
+.. currentmodule:: DBFXLStools2
+
+
+Classes
+=======
+
+- :py:class:`DbfXlsEngine`:
+  DbfXlsEngine provides a suite of methods to copy data from DBF tables to Excel files and the reverse.  It requires
+
+- :py:class:`dbfxlTools`:
+  This is a COM wrapper around the DbfXlsEngine object above.  It is a bit of a hybrid, as it can be called stand-alone
+
+
+.. autoclass:: DbfXlsEngine
+   :members:
+
+   .. rubric:: Inheritance
+   .. inheritance-diagram:: DbfXlsEngine
+      :parts: 1
+
+.. autoclass:: dbfxlTools
+   :members:
+
+   .. rubric:: Inheritance
+   .. inheritance-diagram:: dbfxlTools
+      :parts: 1
