@@ -28,6 +28,8 @@ Python CodeBase Tools provide the following capabilities:
 For all functionality see the HTML documentation of this module.
 # Support for Python Versions
 The .PY files in Python-CodeBase-Tools package are designed to be cross platform, functional on all versions of Python from 2.7 and up.  However the compiled library .pyd file is specific to the Python version you are using.  Currently, Python 2.7, 3.6, and 3.7 are supported.  Support for earlier Python versions can be made available if interest is strong enough.
+# Integration with Visual FoxPro Applications
+DBF tables can be opened both by Visual FoxPro applications and Python applications using CodeBaseTools simultaneously.  Record and table locking and buffering work correctly to support multi-user applications where both Python and VFP applications are accessing the tables.  For more information on how to integrate Python components with existing Visual FoxPro applications, see our white paper at http://www.mpss-pdx.com/Documents/Heuer_WhitePaper_PythonAsAWayForward.pdf
 # OS Compatibility
 The Python .pyd files which wrap the CodeBase(tm) c4dll.dll module were compiled for Windows.  They are 32-bit modules but will run properly on either 32-bit or 64-bit Windows version 7 or later.  The COM functionality in ExcelComTools and DBFXLStools2 is specific to Microsoft Windows. As of October, 2018, the LibXL product, upon which the ExcelTools module is based (also required for the DBFXLStools2 module) is a Windows-specific component.  
 # Python-CodeBase-Tools Licensing
