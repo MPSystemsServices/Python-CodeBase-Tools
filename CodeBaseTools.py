@@ -203,6 +203,8 @@ Also, be careful with functions that read or write data from and to multiple fie
 coding spcifiers shown above will be applied to every field of the appropriate type.  If that is not what you
 want, process fields individually using replace() or curvalstrex().
 """
+
+from __future__ import print_function, absolute_import
 import decimal
 import os
 import csv
@@ -311,6 +313,7 @@ class _cbTools(object):
             self.xNonPrintables[ord(c)] = None
         self.cbt = cbp
         self.nDataSession = self.cbt.initdatasession(bLargeMode)
+
         self.oCSV = csv
         self.xLastFieldList = []  # Used by scattertorecord() to avoid having to repeat afields()
         self.cLastRecordAlias = ""  # ditto
@@ -514,6 +517,7 @@ class _cbTools(object):
             self.cErrorMessage = "NO table name supplied"
             self.nErrorNumber = -49348
             return False
+
         # if "LTLACCESSENABLE" in tableName:
         #     import traceback
         #     stack_str = ''.join(traceback.format_stack())
@@ -530,6 +534,7 @@ class _cbTools(object):
         if not lbReturn:
             self.cErrorMessage = self.cbt.geterrormessage() + " OPEN FAILED"
             self.nErrorNumber = self.cbt.geterrornumber()
+
         return lbReturn
 
     def maketempindex(self, lcExpr, tagFilter="", descending=0):
@@ -584,7 +589,7 @@ class _cbTools(object):
         lbReturn = self.cbt.selecttempindex(lnCode)
         if (not lbReturn):
             self.cErrorMessage = self.cbt.geterrormessage()
-            self.nErrorNumber  = self.cbt.geterrornumber()
+            self.nErrorNumber = self.cbt.geterrornumber()
         return lbReturn
 
     def closetempindex(self, lnCode):
@@ -2880,7 +2885,9 @@ class _cbTools(object):
         """
         self.cErrorMessage = ""
         self.nErrorNumber = 0
+        cTable = self.dbf(alias)
         lbReturn = self.cbt.closetable(alias)
+
         if not lbReturn:
             self.cErrorMessage = self.cbt.geterrormessage()
             self.nErrorNumber = self.cbt.geterrornumber()
@@ -2936,6 +2943,7 @@ class _cbTools(object):
         """
         self.cErrorMessage = ""
         self.nErrorNumber = 0
+
         lbReturn = self.cbt.closedatabases()
         if not lbReturn:
             self.cErrorMessage = self.cbt.geterrormessage()
@@ -3772,7 +3780,7 @@ Field  Field Name     Type     Width    Dec  Nulls
                             if self.cbt.geterrornumber() != 0:
                                 self.cErrorMessage = self.cbt.geterrormessage()
                                 self.nErrorNumber = self.cbt.geterrornumber()
-                                raise ValueError("Scan failed with err: " + str(self.cErrorMessage))
+                                raise ValueError("Scan failed with err: " + str(self.cErrorMessage)+ " " + self.dbf())
                             break
                         yield lxDict
                     if oCBT.alias() != lcCurrentTable:
@@ -3795,7 +3803,7 @@ Field  Field Name     Type     Width    Dec  Nulls
                         if self.cbt.geterrornumber() != 0:
                             self.cErrorMessage = self.cbt.geterrormessage()
                             self.nErrorNumber = self.cbt.geterrornumber()
-                            raise ValueError("Scan failed with err: " + str(self.cErrorMessage))
+                            raise ValueError("Scan failed with err: " + str(self.cErrorMessage) + " " + self.dbf())
                         break
                     yield lxDict
                     if oCBT.alias() != lcCurrentTable:
@@ -4096,7 +4104,7 @@ Field  Field Name     Type     Width    Dec  Nulls
 
         return cRet
 
-    def getNewKey( self, dataDir, filename=None, readOnly=False, stayOpen=False, noFlush=False):
+    def getNewKey(self, dataDir, filename=None, readOnly=False, stayOpen=False, noFlush=False):
         """
         Copy of GetNewKey from VFP.  Returns the next sequential key number for the passed filename or a negative
         value on error.  M-P System Services, Inc., specific code.
@@ -4122,7 +4130,7 @@ Field  Field Name     Type     Width    Dec  Nulls
         by using a NextKey.dbf table to store the "next key" value of each table in your system.  The NextKey.dbf
         table is expected to have two fields:
         Field  Field Name      Type                Width    Dec   Index   Collate Nulls    Next    Step
-        1  TABLE_NAME      Character              15            Asc   Machine    No
+        1  TABLE_NAME      Character              20            Asc   Machine    No
         2  NEXTKEYVAL      Integer                 4                             No
 
         and to have an index called TABLE_NAME on UPPER(TABLE_NAME).  The dataDir parameter tells the function
@@ -4293,17 +4301,22 @@ Field  Field Name     Type     Width    Dec  Nulls
             self.cErrorMessage = "openTableList Failed because: %s, %d" % (self.cErrorMessage, self.nErrorNumber)
         return lxReturn
 
-_cbToolsobj = _cbTools()    # always in use
+
+# _cbToolsobj = _cbTools()    # always in use
+_cbToolsobj = None  # Only instantiated if needed.
 _cbToolsLargeobj = None     # only instantiated if needed
 
 
 def cbTools(bIsLarge=False):
     global _cbToolsLargeobj
+    global _cbToolsobj
     if bIsLarge:
         if _cbToolsLargeobj is None:
             _cbToolsLargeobj = _cbTools(True)
         return _cbToolsLargeobj
     else:
+        if _cbToolsobj is None:
+            _cbToolsobj = _cbTools()
         return _cbToolsobj
 
 
@@ -4745,8 +4758,7 @@ def copydatatable(cTableName="", cSourceDir="", cTargetDir="", bByZap=False, oCB
 
 def cbtWork():
     tmpdir = 'c:\\MPSSPythonScripts\\TestDataOutput'
-    from MPSSCommon.MPSSBaseTools import confirmPath, DELETEFILE
-    if not confirmPath(tmpdir):
+    if not mTools.confirmPath(tmpdir):
         tmpdir = ''
     # Create Table Example #1
     xFlds = list()
@@ -4773,7 +4785,7 @@ def cbtWork():
     lnStart = time()
 
     testname = os.path.join(tmpdir, "employee1.dbf")
-    DELETEFILE(testname)
+    mTools.DELETEFILE(testname)
     print(testname)
     bResult = vfp.createtable(testname, lcFld)
     lnEnd = time()
@@ -4929,7 +4941,7 @@ def cbt_test():
     vfp = cbTools()
     vfp.use("e:\\loadbuilder2\\appdbfs\\73rdstrt\\shipmstr.dbf", alias="SHIPMSTR")
     nStart = time()
-    nResult = vfp.copyto(cAlias="SHIPMSTR", cOutput=cDest, cType="DBF", cTestExpr='', bHeader=True, bStripBlanks=True)
+    nResult = vfp.copyto(cAlias="SHIPMSTR", cOutput=cDest, cType="DBF", cTestExpr='', bHeader=True, bStripBlanks=False)
     nEnd = time()
     vfp.closetable("SHIPMSTR")
     print("ELAPSED TIME: ", (nEnd - nStart))
@@ -4939,8 +4951,8 @@ def cbt_test():
     print("NRESULT: ", nResult)
     # return True
     tmpdir = 'c:\\MPSSPythonScripts\\TestDataOutput'
-    from MPSSCommon.MPSSBaseTools import confirmPath
-    if not confirmPath(tmpdir):
+
+    if not mTools.confirmPath(tmpdir):
         tmpdir = ''
     #  Create Table Example #1
     lcFld = "firstname,C,25,0,FALSE\n"
@@ -5181,6 +5193,8 @@ def cbt_test():
 #     return lbResult
 
 
+__all__ = ["_cbTools", "cbTools", "cbToolsX", "TableObj", "copydatatable", "VFPFIELD"]
+
 if __name__ == "__main__":
     print("***** Testing CodeBaseTools.py components")
     cbt_test()
@@ -5189,7 +5203,8 @@ if __name__ == "__main__":
     print(lbResult)
     print("***** Testing Complete")
     if 'stop' in sys.argv:
-        raw_input('press <enter>')
+        if not _ver3x:
+            raw_input('press <enter>')
+        else:
+            input('press <enter>')
 
-    
-        

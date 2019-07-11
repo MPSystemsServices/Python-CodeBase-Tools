@@ -12,34 +12,37 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-# DBFtools.py created by M-P System Services, Inc. to provide access to the CodeBaseTools
-# and ExcelTools modules in an integrated package.
-# VERSION 2 that uses 'with' features for better exception handling
+"""DBFtools.py created by M-P System Services, Inc. to provide access to the CodeBaseTools
+and ExcelTools modules in an integrated package. """
 
+# VERSION 2 that uses 'with' features for better exception handling
 # Fix applied 07/16/2011. JSH: changed name of _setdbfstru to setdbfstru.
 # 7/20/2011, JMc  default to .dbf if no extension passed as VFP filename
-
 # 04/30/2014 - JSH - Added code to terminate reading an Excel sheet when a completely blank row is encountered.
 
-# 09/28/2018 - JSH - Simplified from the MPSS, Inc., original to eliminate the COM object.  Contact the author
-# for more information on that option.
 from __future__ import print_function, absolute_import
 
 from datetime import date, datetime
 import copy
 from time import time
 import os, tempfile
-from CodeBaseTools import *
+from CodeBaseTools import VFPFIELD, cbTools
 from ExcelTools import *
 import MPSSBaseTools as mTools
-
 
 __author__ = "J. S. Heuer"
 
 d2xConvertFrom = "NYCDTILMBFGZW"
-d2xConvertTo =   "NNSDDNLSNNXSX"
+d2xConvertTo = "NNSDDNLSNNXSX"
 x2dConvert = {"N": "N", "S": "C", "L": "L", "D": "T", "X": "X", "B": "X", "E": "X"}
 cErrorMessage = ""  # Keeping some old code happy.
+
+if sys.version_info[0] <= 2:
+    _ver3x = False
+    xLongType = long
+else:
+    _ver3x = True
+    xLongType = int
 
 
 def addExt(name, ext='dbf'):
@@ -50,12 +53,26 @@ def addExt(name, ext='dbf'):
 
 
 class DbfXlsEngine(object):
+    """
+    DbfXlsEngine provides a suite of methods to copy data from DBF tables to Excel files and the reverse.  It requires
+    the installation of the ExcelTools module and the CodeBaseTools module.  Note that the ExcelTools module requires
+    a licensed version of LibXL and the LibXLWrapper.dll.  LibXLWrapper.dll is an open source module that is part
+    of the ExcelTools distribution, but LibXL is a commercial product requiring a user name and license code to
+    be stored in a libXLLicenseInfo.txt file.  See the documentation for ExcelTools for more details.
 
+    The normal usage for this object is to pass it an object reference to an instance of cbTools() from the
+    CodeBaseTools module:
+
+        oEngine = DbfXlsEngine(cbTools())
+
+    But, if no cbTools instance is supplied, one will be created if possible, providing this is invoked via the
+    "with" mechanism.  See the dtTest() function for an example of this usage.
+    """
     def __init__(self, oVFP=None):
         global d2xConvertFrom
         global d2xConvertTo
         global x2dConvert
-        """ Ye-olde init, to define properties. """
+
         self.d2xconvertFrom = d2xConvertFrom
         self.d2xconvertTo = d2xConvertTo
         self.cSheetName = ""
@@ -89,13 +106,17 @@ class DbfXlsEngine(object):
 
     def __enter__(self):
         if self.dbfmgr is None:
-            self.dbfmgr=cbTools()
+            self.dbfmgr = cbTools()
         self.xlmgr=xlWrap()
         self.xlmgr.SetCellDelimiter("\a\v\a")  # Bell, VTab, Bell
         self.cCellDelim = "\a\v\a"
         return self
         
     def makeHeaderFormat(self):
+        """
+        Format creator for the column header cells containing the field names.
+        :return: Format Object
+        """
         lpFmat = XLFORMAT()
         lpFmat.nBorderTop = xlBorder["BORDERSTYLE_THIN"]
         lpFmat.nBorderLeft = xlBorder["BORDERSTYLE_THIN"]
@@ -103,13 +124,18 @@ class DbfXlsEngine(object):
         lpFmat.nBorderBottom = xlBorder["BORDERSTYLE_THIN"]
         lpFmat.nAlignV = xlAlignV["ALIGNV_TOP"]
         lpFmat.bBold = 1
-        lpFmat.cFontName = "Arial"
+        lpFmat.cFontName = b"Arial"
         lpFmat.nColor = xlColor["COLOR_BLACK"]
         lpFmat.nWordWrap = 1
-        lpFmat.nPointSize = 10 # Changed to 10 points from previous 11, which is too big. 01/04/2013. JSH.
+        lpFmat.nPointSize = 10  # Changed to 10 points from previous 11, which is too big. 01/04/2013. JSH.
         return copy.copy(lpFmat)
 
     def makeHeaderFormatXLSX(self):
+        """
+        Format creator for the column header cells containing the field names.  Uses default fonts from
+        XLSX type files.
+        :return: Format Object
+        """
         lpFmat = XLFORMAT()
         lpFmat.nBorderTop = xlBorder["BORDERSTYLE_THIN"]
         lpFmat.nBorderLeft = xlBorder["BORDERSTYLE_THIN"]
@@ -117,13 +143,19 @@ class DbfXlsEngine(object):
         lpFmat.nBorderBottom = xlBorder["BORDERSTYLE_THIN"]
         lpFmat.nAlignV = xlAlignV["ALIGNV_TOP"]
         lpFmat.bBold = 1
-        lpFmat.cFontName = "Calibri"
+        lpFmat.cFontName = b"Calibri"
         lpFmat.nColor = xlColor["COLOR_BLACK"]
         lpFmat.nWordWrap = 1
-        lpFmat.nPointSize = 10 # Changed to 10 points from previous 11, which is too big. 01/04/2013. JSH.
+        lpFmat.nPointSize = 10  # Changed to 10 points from previous 11, which is too big. 01/04/2013. JSH.
         return copy.copy(lpFmat)
 
     def makeBodyHiddenFormat(self):
+        """
+        Format creator for the cells in a hidden row.  The hidden row option allows the raw DBF field names to
+        be included in the XLS file without actually displaying them -- the column headings can then display
+        human readable names.
+        :return: Format Object
+        """
         lpFmat = XLFORMAT()
         lpFmat.nBorderTop = xlBorder["BORDERSTYLE_NONE"]
         lpFmat.nBorderLeft = xlBorder["BORDERSTYLE_NONE"]
@@ -131,13 +163,17 @@ class DbfXlsEngine(object):
         lpFmat.nBorderBottom = xlBorder["BORDERSTYLE_NONE"]
         lpFmat.nAlignV = xlAlignV["ALIGNV_TOP"]
         lpFmat.bBold = 1
-        lpFmat.cFontName = "Arial"
+        lpFmat.cFontName = b"Arial"
         lpFmat.nColor = xlColor["COLOR_WHITE"]
         lpFmat.nWordWrap = 0
         lpFmat.nPointSize = 10
         return copy.copy(lpFmat)
 
     def makeTitleFormat(self):
+        """
+        Format creator for the top-of-the-page title if one is to be displayed.
+        :return: Format Object
+        """
         lpFmat = XLFORMAT()
         lpFmat.nBorderTop = xlBorder["BORDERSTYLE_NONE"]
         lpFmat.nBorderLeft = xlBorder["BORDERSTYLE_NONE"]
@@ -145,13 +181,17 @@ class DbfXlsEngine(object):
         lpFmat.nBorderBottom = xlBorder["BORDERSTYLE_NONE"]
         lpFmat.nAlignV = xlAlignV["ALIGNV_TOP"]
         lpFmat.bBold = 1
-        lpFmat.cFontName = "Arial"
+        lpFmat.cFontName = b"Arial"
         lpFmat.nColor = xlColor["COLOR_BLACK"]
         lpFmat.nWordWrap = 0
         lpFmat.nPointSize = 12
         return copy.copy(lpFmat)
 
     def makeBodyFormat(self):
+        """
+        Format creator for the standard body cells containing data displayed in text format (including dates)
+        :return: Format Object
+        """
         lpFmat = XLFORMAT()
         lpFmat.nBorderTop = xlBorder["BORDERSTYLE_THIN"]
         lpFmat.nBorderLeft = xlBorder["BORDERSTYLE_THIN"]
@@ -162,6 +202,11 @@ class DbfXlsEngine(object):
         return copy.copy(lpFmat)
 
     def makeBodyDecimalFormat(self):
+        """
+        Format creator for the standard body cells containing data in numeric format.  Defaults to 2 decimal places
+        and the standard thousands separator character.
+        :return: Format Object
+        """
         lpFmat = XLFORMAT()
         lpFmat.nBorderTop = xlBorder["BORDERSTYLE_THIN"]
         lpFmat.nBorderLeft = xlBorder["BORDERSTYLE_THIN"]
@@ -173,6 +218,11 @@ class DbfXlsEngine(object):
         return copy.copy(lpFmat)
 
     def makeBodyFormatXLSX(self):
+        """
+        Format creator for the standard body cells containing data displayed in text format (including dates).
+        This version uses font types standard for XLSX files.
+        :return: Format Object
+        """
         lpFmat = XLFORMAT()
         lpFmat.nBorderTop = xlBorder["BORDERSTYLE_THIN"]
         lpFmat.nBorderLeft = xlBorder["BORDERSTYLE_THIN"]
@@ -181,12 +231,17 @@ class DbfXlsEngine(object):
         lpFmat.nAlignV = xlAlignV["ALIGNV_TOP"]
         lpFmat.nWordWrap = 1
         lpFmat.bBold = 0
-        lpFmat.cFontName = "Calibri"
+        lpFmat.cFontName = b"Calibri"
         lpFmat.nColor = xlColor["COLOR_BLACK"]
         lpFmat.nPointSize = 11
         return copy.copy(lpFmat)
 
     def makeBodyDecimalFormatXLSX(self):
+        """
+        Format creator for the standard body cells containing data in numeric format.  Defaults to 2 decimal places
+        and the standard thousands separator character.  This version uses font types standard for XLSX files.
+        :return: Format Object
+        """
         lpFmat = XLFORMAT()
         lpFmat.nBorderTop = xlBorder["BORDERSTYLE_THIN"]
         lpFmat.nBorderLeft = xlBorder["BORDERSTYLE_THIN"]
@@ -195,7 +250,7 @@ class DbfXlsEngine(object):
         lpFmat.nAlignV = xlAlignV["ALIGNV_TOP"]
         lpFmat.nWordWrap = 1
         lpFmat.bBold = 0
-        lpFmat.cFontName = "Calibri"
+        lpFmat.cFontName = b"Calibri"
         lpFmat.nColor = xlColor["COLOR_BLACK"]
         lpFmat.nPointSize = 11
         lpFmat.nNumFormat = xlNumFormat["NUMFORMAT_NUMBER_SEP_D2"]
@@ -420,8 +475,8 @@ class DbfXlsEngine(object):
                 if bXLSXmode:
                     xFmatT = self.makeTitleFormat()
                     xFmatH = self.makeHeaderFormat()
-                    xFmatT.cFontName = "Calibri"
-                    xFmatH.cFontName = "Calibri"
+                    xFmatT.cFontName = b"Calibri"
+                    xFmatH.cFontName = b"Calibri"
                     xFmatB = self.makeBodyFormatXLSX()
                     xFmatD = self.makeBodyDecimalFormatXLSX()
                 else:
@@ -482,7 +537,8 @@ class DbfXlsEngine(object):
                 for valDict in xRecs:
                     xRow = list()
                     for ii, lv in enumerate(fList):
-                        xRow.append(convList[ii](valDict[lv]))
+                        cItem = str(convList[ii](valDict[lv]))
+                        xRow.append(cItem)
                     cRow = self.cCellDelim.join(xRow)
 
                     self.xlmgr.WriteRowValues(nSheet, nCurRow, 0, nColCount, cRow, cTypes)
@@ -593,8 +649,8 @@ class DbfXlsEngine(object):
             if ".XLSX" in lcExcelName.upper():
                 xFmatT = self.makeTitleFormat()
                 xFmatH = self.makeHeaderFormat()
-                xFmatT.cFontName = "Calibri"
-                xFmatH.cFontName = "Calibri"
+                xFmatT.cFontName = b"Calibri"
+                xFmatH.cFontName = b"Calibri"
                 xFmatB = self.makeBodyFormatXLSX()
                 xFmatD = self.makeBodyDecimalFormatXLSX()
             else:
@@ -685,6 +741,7 @@ class DbfXlsEngine(object):
                     for jj in range(0, lnRecs):
                         if (not self.dbfmgr.eof()) and (not self.dbfmgr.deleted()):
                             valDict = self.dbfmgr.scatter(alias=lcLoadAlias, converttypes=False, stripblanks=True)
+
                             if valDict is None:
                                 lbReturn = False
                                 self.cErrorMessage = self.dbfmgr.cErrorMessage
@@ -696,7 +753,7 @@ class DbfXlsEngine(object):
 
                             xRow = list()
                             for lv in lfList:
-                                xRow.append(valDict[lv])
+                                xRow.append(valDict[lv].strip("\x00 "))
                             lcRow = self.cCellDelim.join(xRow)
 
                             self.xlmgr.WriteRowValues(lnSheet, lnCurRow, 0, lnColCount, lcRow, lcTypes)
@@ -713,7 +770,8 @@ class DbfXlsEngine(object):
                 else:  # Copy the field data directly into the spreadsheet for maximum speed
                     for jj in range(0, lnRecs):
                         if not self.dbfmgr.deleted():
-                            lcRow = self.dbfmgr.scatterraw(converttypes=False, stripblanks=True, lcDelimiter=self.cCellDelim)
+                            lcRow = self.dbfmgr.scatterraw(converttypes=False, stripblanks=True,
+                                                           lcDelimiter=self.cCellDelim)
                             if lcRow is not None:
                                 self.xlmgr.WriteRowValues(lnSheet, lnCurRow, 0, lnColCount, lcRow, lcTypes)
                                 lnCurRow += 1
@@ -947,11 +1005,10 @@ class DbfXlsEngine(object):
             lcDBFtemplate = lcDbfName
             lbDBFexists = True
             lbMakeNewTable = False
-        if (templatedbf != "") and (templatedbf is not None) and (lbDBFexists == False):
+        if (templatedbf != "") and (templatedbf is not None) and (not lbDBFexists):
             if os.path.exists(templatedbf):
                 lcDBFtemplate = templatedbf
                 lbUseTemplate = True
-                print("Using Template dbf", lcDBFtemplate)
                 lbMakeNewTable = True
         laFlds = None
         if lbUseTemplate:
@@ -967,7 +1024,7 @@ class DbfXlsEngine(object):
                     print(self.cErrorMessage)
                 return -1
 
-        if (lbUseTemplate == False) and (lbMakeNewTable == True):
+        if (not lbUseTemplate) and lbMakeNewTable:
             #  we have to figure out the structure from the data in the spreadsheet
             lxTypeList = ["X" for jj in range(0, (lnToCol + 1))]
             lxWidthList = [0 for jj in range(0, (lnToCol + 1))]
@@ -1127,7 +1184,7 @@ class DbfXlsEngine(object):
                     lxDict[cFldName] = cFldValue
 
             lbResult = loDB.gatherdict(cAlias=lcAlias, dData=lxDict)
-            #  gatherdict() provides better field error reporting that gatherfromarray().
+
             if lbSetDefaults:
                 for xFld, xDef in self.xDefaultValues.items():
                     if xFld in aFldList:  # Added this to prevent a crash if the field is not found in the table.
@@ -1159,4 +1216,389 @@ class DbfXlsEngine(object):
         # self.dbfmgr.cb_shutdown() ## EXTREMELY SLOW... Doesn't seem to hurt not to call this
         self.dbfmgr = None
         self.xlmgr = None
+
+
+class dbfxlTools(mTools.baseService):
+    """
+    This is a COM wrapper around the DbfXlsEngine object above.  It is a bit of a hybrid, as it can be called stand-alone
+    as a COM object, OR it can be launched by the PlanToolsPythonsService manager as a COM service object.
+
+    The conversion tools in this module are somewhat simpler than for the main DbfXlsEngine class, but all the
+    same functionality is available by setting properties of the class after creating the instance.  In Python
+    this can be done directly.  In VFP via COM, it can be done by calling the set_property() method.
+
+    Note that this class is no longer intended to be a stand alone COM object but is to be created and delivered
+    to COM clients by an object factory dispatcher.  To make this a COM object, see the documentation in the
+    book Python Programming on Win32 for details.
+    """
+    _public_methods_ = [ 'dbftoexcel', 'exceltodbf', 'getexcelcolumns', 'gettestdictionary', 'gettestcompound',
+                         'gettestlist', 'setfielddefault', 'set_property', 'get_property', 'setwidthlist',
+                         'setheaderlist', 'setoneproperty']
+    _public_attrs_ = ['cSheetName', 'cWidthList', 'cErrorMessage', 'cTempFilePath', 'nErrorNumber', 'name',
+                      'cHeaderList', 'cTitleOne', 'cTitleTwo', 'cFieldList']
+
+    def __init__(self, oVFP=None, oCfg=None, bIsCOM=False):  # Parms fit signature of python services.
+        bComTest = bIsCOM
+        # super(dbfxlTools, self).__init__(bIsCOM=bComTest)
+        self.cSheetName = ""
+        self.bAppendFlag = False
+        self.cTemplateDbf = ""
+        self.lFieldList = None  # For Excel to DBF
+        self.cFieldList = ""  # For DBF to Excel
+        self.lAppendSheet = False  # If TRUE then if the file name passed exists, the new data will be added
+        # as a new sheet in the sheets collection, leaving any existing sheets intact.
+        self.cErrorMessage = ""
+        self.nErrorNumber = 0
+        self.cHeaderList = ""
+        self.cTitleOne = ""
+        self.cTitleTwo = ""
+        self.name = "dbfxlTools COM Object"
+        self.cWidthList = ""  # A tab delimited list of width numbers preceded by "PIXEL:" or "EXCEL:" which
+        # indicates the metric associated with the width values.  Must be set by the caller prior to calling
+        # dbftoexcel().
+        self.xDefaultValues = dict()
+        self.bForceDefault = False  # Passed to the underlying engine.
+        self.cHiddenCellValue = None
+        self.nHiddenCellRow = None
+        self.nHiddenCellCol = None
+        self.oVFP = (oVFP or None)
+        self.oCfg = (oCfg or None)
+        if self.oCfg:
+            self.cErrorFilePath = self.oCfg.cErrorFilePath
+        self.cTempFilePath = ""
+        mTools.baseService.__init__(self, bIsCOM=bComTest)
+        return
+
+    def setoneproperty(self, cTheProp="", xTheValue=None):
+        """
+        Method used by a COM client to set the property value required to be changed.  Note that this value
+        IS case sensitive
+        :param cTheProp: String containing the name of the property to set
+        :param xTheValue: Value to set it to
+        :return: Nothing
+        """
+        if cTheProp:
+            mTools.baseService.__setattr__(self, cTheProp, xTheValue)
+        return
+
+    def setheaderlist(self, cTheList=""):
+        """
+        To override the standard column header values (the field names from the DBF table), pass a comma separated
+        list of column captions. The number of items in the list should equal the number of fields to be output.
+        :param cTheList: The list string
+        :return: True, always.
+        """
+        self.cHeaderList = cTheList
+        return True
+
+    def setwidthlist(self, cTheList=""):
+        """
+        The engine will attempt to set Excel column widths appropriate to the content of each field.  To override this
+        behavior pass a comma separated list of number values specifying the widths of all the columns.  These values
+        must be in Excel width units which are approximately 8.4 pixels each.  Widths may be specified by floating
+        point decimal values like "5.5".
+        :param cTheList: Comma separated list of width numbers.
+        :return: True
+        """
+        self.cWidthList = cTheList
+        return True
+
+    def setfielddefault(self, lpcFieldName, lpcDefaultValue):
+        """
+        This function allows you to set default values for data table fields which may be empty or missing in the
+        source XLS file, but for which there must be a value in the DBF table.
+        :param lpcFieldName: Field name for the default value
+        :param lpcDefaultValue: Value to supply if the XLS(X) source doesn't have a value.
+        :return: 1 always
+        """
+        self.xDefaultValues[lpcFieldName.upper()] = lpcDefaultValue
+        return 1
+
+    def unpackWidths(self):
+        """
+        Internal Use
+        :return: tuple of width information
+        """
+        loList = None
+        lbPixels = False
+        xParts = self.cWidthList.split(":")
+        if len(xParts) != 2:
+            return (loList, lbPixels)  # Nothing to do, they didn't provide the pixel indicator
+        lbPixels = (True if (xParts[0].upper() == "PIXEL") else False)
+        loList = xParts[1].split("\t")
+        for lx in loList:
+            try:
+                lx = float(lx)
+            except:
+                lx = 0.0
+
+        return (loList, lbPixels)
+
+    def dbftoexcel(self, lcDbf, lcExcel, rawcopy=False, addHiddenNames=False):
+        """
+        Converts the DBF table specified into an Excel spreadsheet specified.  Both must be provided as fully
+        qualified path names.  The file name extension for the Excel sheet tells the engine whether to produce
+        an XLS ro an XLSX output.  XLS outputs are faster, but the result files are considerably larger than the
+        XLSX version.  Also XLS sheets are limited to about 64,000 rows, while XLSX sheets are limited to a bit over
+        1 million rows.
+
+        The sheet name applied will be the alias name of the DBF table.  If you want a different sheet name, you'l
+        need to set the value of the class property cSheetName prior to running this method.  By default, this
+        process will create a new spreadsheet file, overwriting any existing file by that name.  If you set the
+        property lAppendSheet to True, then if the Excel file exists, the engine will attempt to add the specified
+        sheet to the end of the sheets collection in the existing file.
+
+        :param lcDbf: Fully qualified path name of the DBF table.  Must be able to be opened in shared mode.
+        :param lcExcel: Fully qualified path name of the Excel spreadsheet
+        :param rawcopy: Set to True (default is False) to gain speed but give up some output error checking and data
+        format control.
+        This is relatively safe if all the data is standard string or simple numeric values.
+        :param addHiddenNames: If True (default is False), then a hidden row will be added right after the column
+        header row which will contain the actual field names in each column.  May be needed for loading an Excel
+        sheet back into a DBF table when the column headings must contain human readable, meaningful captions.
+        :return: Value >= 1 on success, 0 on failure.
+        """
+        if not _ver3x:
+            if mTools.isunicode(lcDbf):
+                lcDbf = lcDbf.encode('cp1252', 'ignore')
+            if mTools.isunicode(lcExcel):
+                lcExcel = lcExcel.encode('cp1252', 'ignore')
+        else:
+            pass
+            # No else.  In the case of 3x, these will be passed by COM as unicode which is the native 3x string format.
+
+        global cErrorMessage
+        lxHdr = None
+        lnReturn = 1
+        if self.cHeaderList != "":
+            # May be set by the caller.  Has to be tab delimited list.
+            lxHdr = self.cHeaderList.split("\t")
+        if self.cWidthList != "":
+            loWidths, lbPixels = self.unpackWidths()
+        else:
+            loWidths = None
+            lbPixels = False
+        cTestHdr = str(lxHdr)
+
+        xRaw = rawcopy
+        xHiddenNames = addHiddenNames
+
+        with DbfXlsEngine(self.oVFP) as dbcvrt:
+            dbcvrt.xWidthList = loWidths
+            dbcvrt.bWidthPixels = lbPixels
+            if self.cSheetName:
+                dbcvrt.cSheetName = self.cSheetName
+            dbcvrt.lAppendSheet = self.lAppendSheet
+            if not (self.cHiddenCellValue is None):
+                dbcvrt.cHiddenCellValue = self.cHiddenCellValue
+                dbcvrt.nHiddenCellRow = self.nHiddenCellRow - 1
+                # We assume these col and row values are Excel 1-based values.
+                dbcvrt.nHiddenCellCol = self.nHiddenCellCol - 1
+            lbReturn = dbcvrt.dbf2excel(lcDbf, lcExcel, headerlist=lxHdr, titleone=self.cTitleOne,
+                                        titletwo=self.cTitleTwo, rawcopy=xRaw, hiddenNames=xHiddenNames,
+                                        fieldList=self.cFieldList)
+            if not lbReturn:
+                self.cErrorMessage = dbcvrt.cErrorMessage
+                lnReturn = 0
+        return lnReturn
+
+    def exceltodbf(self, lcExcel, lcDbf, lcSheetName):
+        """
+        Writes the contents of the specified Excel spreadsheet into the specified table.  By default, the contents
+        of the DBF file are deleted (Zapped) and replaced with the contents of the Excel spreadsheet.  If the
+        lcSheetName is not provided, then the first sheet in the XLS(X) file will be used.  Each column heading
+        must contain the name of a field found in the table.  Column headings with unrecognized field names will
+        be ignored.
+
+        If the 2nd row of the sheet is hidden, then an attempt will be made to read the field names from that row.
+
+        :param lcExcel: Fully qualified path name to the spreadsheet file
+        :param lcDbf: Fully qualified path name to the DBF table.
+        :param lcSheetName: Optional sheet name from which to read the data.
+        :return: Positive integer on success, negative integer on error.
+        """
+        if not _ver3x:
+            if mTools.isunicode(lcDbf):
+                lcDbf = lcDbf.encode('cp1252', 'ignore')
+            if mTools.isunicode(lcExcel):
+                lcExcel = lcExcel.encode('cp1252', 'ignore')
+        else:
+            pass
+            # No else.  Python 3.x handles unicode from COM natively.
+
+        global cErrorMessage
+        if mTools.isstr(self.lFieldList):
+            if not ("~~" in self.lFieldList):
+                self.cErrorMessage = "Bad Field List, no ~~ delimiters"
+                return -1
+            lxFieldList = self.lFieldList.split("~~")
+        else:
+            lxFieldList = None
+        with DbfXlsEngine(self.oVFP) as dbcvrt:
+            if len(self.xDefaultValues) > 0:
+                dbcvrt.xDefaultValues = self.xDefaultValues
+            dbcvrt.bForceDefault = self.bForceDefault
+            lnReturn = dbcvrt.excel2dbf(lcExcel, lcDbf, sheetname=lcSheetName, appendflag=self.bAppendFlag,
+                                        templatedbf=self.cTemplateDbf, fieldlist=lxFieldList)
+            if lnReturn < 0:
+                self.cErrorMessage = dbcvrt.cErrorMessage
+                self.nErrorNumber = dbcvrt.nErrorNumber
+
+        return lnReturn
+
+    def geterrormessage(self):
+        """
+        If this object is used by a Python module, all error information is available.  However COM clients will
+        need to use this method to determine what when wrong when an error condition is reported by a method.
+        :return: Text of the error message.
+        """
+        return self.cErrorMessage
+
+    def getexcelcolumns(self, lcExcel, lcSheetName):
+        """
+        This method opens a spreadsheet and reads the first row of cells to get the column headers, which should
+        normally be the field names defined for each column.  No data is read.
+        :param lcExcel: Fully qualified path name of the XLS(X) file.
+        :param lcSheetName: Name of the sheet to read if not the first one.
+        :return: List of field names on success, and empty string on failure.
+        """
+        global cErrorMessage
+        lcDbf = "sometable.dbf"
+        with DbfXlsEngine(self.oVFP) as dbcvrt:
+            lxReturn = dbcvrt.excel2dbf(lcExcel, lcDbf, sheetname=lcSheetName, columnsonly=True)
+            if not isinstance(lxReturn, list):
+                self.cErrorMessage = dbcvrt.cErrorMessage
+                return ""
+        return lxReturn
+
+
+__all__ = ["DbfXlsEngine", "dbfxlTools"]
+
+classToWrap = dbfxlTools
+
+
+def dtTest():
+    global cErrorMessage
+    import random
+    oDB = cbTools()
+    random.seed()
+
+    xFirstNames = ["Robert", "James", "Terry", "Janice", "Mary", "Elizabeth", "Bobbie"]
+    xLastNames = ["Jones", "Wang", "Smith", "Carsky", "Johnson", "Goldman", "Thompson"]
+    xCities = [("Rockford", "IL"), ("Minneapolis", "MN"), ("Portland", "OR"), ("Dallas", "TX")]
+
+    xFlds = list()
+    xFlds.append(oDB.newfield("FIRSTNAME", "C", 20, 0, False))
+    xFlds.append(oDB.newfield("LASTNAME", "C", 20, 0, False))
+    xFlds.append(oDB.newfield("CITY", "C", 15, 0, False))
+    xFlds.append(oDB.newfield("STATE", "C", 2, 0, False))
+    xFlds.append(oDB.newfield("BIRTHDATE", "D", 0, 0, False))
+    xFlds.append(oDB.newfield("ACCOUNTNUM", "I", 4, 0, False))
+    xFlds.append(oDB.newfield("BALANCE", "N", 8, 2, False))
+
+    bDirOK = os.path.exists(r"c:\temp")
+    if not bDirOK:
+        print("SORRY, you need a C:\\TEMP directory to hold the outputs of this test.")
+        return False
+
+    cTestNameTable = r"c:\temp\customers.dbf"
+    bTest = oDB.createtable(cTestNameTable, xFlds)
+    if bTest:
+        cAlias = oDB.alias()
+        oDB.closetable(cAlias)
+    else:
+        print("Table Create Failed! " + oDB.cErrorMessage)
+        return False
+
+    bTest = oDB.use(cTestNameTable, alias="CUSTOMERS")
+    if not bTest:
+        print("Table re-open failed! " + oDB.cErrorMessage)
+        return False
+
+    for jj in range(0, 500):
+        xData = dict()
+        xData["FIRSTNAME"] = random.choice(xFirstNames)
+        xData["LASTNAME"] = random.choice(xLastNames)
+        xLoc = random.choice(xCities)
+        xData["CITY"] = xLoc[0]
+        xData["STATE"] = xLoc[1]
+        dBase = date(1948, 1, 1)
+        nDaysAge = random.randint(3000, 10000)
+        xData["BIRTHDATE"] = dBase + datetime.timedelta(days=nDaysAge)
+        xData["ACCOUNTNUM"] = random.randint(10000, 20000)
+        xData["BALANCE"] = random.random() * 20000.0
+        bTest = oDB.insertdict(xData, "CUSTOMERS")
+        if not bTest:
+            print("Data Insert Failed:", oDB.cErrorMessage)
+            return False
+
+    print("Records Created:", oDB.reccount())
+    oDB.closetable("CUSTOMERS")
+
+    xTools = dbfxlTools(oVFP=oDB)
+    print(xTools.name)
+    cExcelOutput = r"c:\temp\customers1.xlsx"
+    nRet = xTools.dbftoexcel(cTestNameTable, cExcelOutput, rawcopy=False)
+    print(nRet)
+
+    if nRet > -1:
+        cTargetNameTable = r"c:\temp\newcustomers.dbf"
+        bTest = oDB.createtable(cTargetNameTable, xFlds)
+        if not bTest:
+            print("Unable to create test output DBF:", oDB.cErrorMessage)
+            return False
+        else:
+            cAlias = oDB.alias()
+            oDB.closetable(cAlias)
+    else:
+        print("Excel Output Failed: " + xTools.cErrorMessage)
+        return False
+
+    nRet = xTools.exceltodbf(cExcelOutput, cTargetNameTable, "")
+    if nRet < 0:
+        print("Copy to DBF table failed: ", xTools.cErrorMessage)
+        return False
+
+    bTest = oDB.use(cTargetNameTable, alias="NEWTABLE")
+    print("Records copied to DBF:", oDB.reccount())
+    oDB.closetable("NEWTABLE")
+    return True
+
+
+# def mongoTest():
+#     print("Running mongoTest()")
+#     global cErrorMessage
+#     from LoadOptWeb.FreightDataManager.TLRateTable import TLRateTableBizObj
+#     from MPSSCommon.LOConfigurator import LOConfig
+#     from time import time
+#     oCFG = LOConfig()
+#     bTest = oCFG.init("live")
+#     nStart = time()
+#     if bTest:
+#         with DbfXlsEngine() as oEng:
+#             oBiz = TLRateTableBizObj("MASTER")
+#             bTest = oBiz.initialize(oCFG=oCFG, oVFP=oCFG.VFP, oParent=oEng)
+#             xTest = oBiz.attachtable()
+#             oBiz.nMaxQueryCount = 75000
+#             print(xTest)
+#             if xTest is None:
+#                 print(oBiz.cErrorMessage)
+#             else:
+#                 bTest = oEng.bizobj2excel(oBiz, cExcelName="c:\\temp\\myrates.xlsx", cForExpr="rts_key==11027",
+#                                           cSortOrder="from_geo")
+#                 print("RESULT: ", bTest)
+#     nEnd = time()
+#     print("TOTAL TIME:", (nEnd - nStart))
+#     return bTest
+
+
+if __name__ == "__main__":
+    print("***** Testing DBFXLStools2.py components")
+    bResult = dtTest()
+    print(bResult)
+
+    # Only uncomment this if MongoDB is available and then only if the table biz objects are defined.
+    # bResult = mongoTest()
+    # print(bResult)
+
 
