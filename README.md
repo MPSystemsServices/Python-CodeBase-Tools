@@ -30,10 +30,6 @@ For all functionality see the HTML documentation of this module.
 The .PY files in Python-CodeBase-Tools package are designed to be cross platform, functional on all versions of Python from 2.7 and up.  However the compiled library .pyd file is specific to the Python version you are using.  Currently, Python 2.7, 3.6, and 3.7 are supported.  Support for earlier Python versions can be made available if interest is strong enough.
 # Python-CodeBase-Tools Licensing
 This package is copyright M-P Systems Services, Inc., and is released to Open Source under the GNU Lesser GPL V.3.0 license, a copy of which is found in this repository.  The CodeBase-for-DBF module, is covered by this same license.  The CodeBase package, including the core library c4dll.dll is copyright Sequiter, Inc., and is licensed under the GNU Lesser GPL v.3.0.
-=======
-This package is copyright M-P Systems Services, Inc., and is released to Open Source under the GNU Lesser GPL V.3.0 license, a copy of which is found in this repository.  The CodeBase-for-DBF module, is covered by this same license.
->>>>>>> 7aa1ff82fc56fb54a6ff54b3b495b221faac1bde
-=======
 # Integration with Visual FoxPro Applications
 DBF tables can be opened both by Visual FoxPro applications and Python applications using CodeBaseTools simultaneously.  Record and table locking and buffering work correctly to support multi-user applications where both Python and VFP applications are accessing the tables.  For more information on how to integrate Python components with existing Visual FoxPro applications, see our white paper at http://www.mpss-pdx.com/Documents/Heuer_WhitePaper_PythonAsAWayForward.pdf
 # OS Compatibility
