@@ -1,0 +1,1036 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>codebasetools.ExcelTools &mdash; CodeBaseTools 2.06 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../CodeBaseToolsIndex.html" class="icon icon-home"> CodeBaseTools
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">codebasetools.ExcelTools</span></code></a><ul>
+<li><a class="reference internal" href="#exceltools-module-high-performance-access-to-xls-and-xlsx-spreadsheets">This Module, ExcelTools.py, provides a Python wrapper around the MPSS, Inc., developed LibXLWrapper.DLL, which in turn
+is a wrapper around the LIBXL.DLL ‘C’ Library from XLWare at www.LibXL.com.  LIBXL is a powerful alternative to using
+MS Excel and controlling it with COM.  COM provides full access to all Excel features but at a significant cost in
+time and licensing.</a></li>
+<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#classes">Classes</a></li>
+<li><a class="reference internal" href="#functions">Functions</a><ul>
+<li><a class="reference internal" href="#codebasetools.ExcelTools._ver3x">_ver3x</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.isstr">isstr</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.DTOT">DTOT</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlColor">xlColor</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlNumFormat">xlNumFormat</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlAlignH">xlAlignH</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlAlignV">xlAlignV</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlBorder">xlBorder</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlFill">xlFill</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlUnderline">xlUnderline</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlMargins">xlMargins</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlAspect">xlAspect</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlPaperSize">xlPaperSize</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.XLFORMAT">XLFORMAT</a><ul>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.XLFORMAT._fields_">_fields_</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap">xlWrap</a><ul>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.makeStringPointer">makeStringPointer</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.procStringResult">procStringResult</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.SetPrintAspect">SetPrintAspect</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.SetPageMargins">SetPageMargins</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.SetPrintArea">SetPrintArea</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.SplitSheet">SplitSheet</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.SetPaperSize">SetPaperSize</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.SetPrintPageCountFit">SetPrintPageCountFit</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.SetRowGroupBottom">SetRowGroupBottom</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.SetColGroupRight">SetColGroupRight</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.GroupRows">GroupRows</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.GroupCols">GroupCols</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.InsertRows">InsertRows</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.InsertCols">InsertCols</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.DeleteRows">DeleteRows</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.DeleteCols">DeleteCols</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.SetRowFormats">SetRowFormats</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.SetColWidths">SetColWidths</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.SetRowHeight">SetRowHeight</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.AddFormat">AddFormat</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.FormatCells">FormatCells</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.SetCellDelimiter">SetCellDelimiter</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.OpenWorkbook">OpenWorkbook</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.CloseWorkbook">CloseWorkbook</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.CreateWorkbook">CreateWorkbook</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.ImportSheetFrom">ImportSheetFrom</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.AddSheet">AddSheet</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.GetCellValue">GetCellValue</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.GetErrorMessage">GetErrorMessage</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.GetErrorNumber">GetErrorNumber</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.__getattr__">__getattr__</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.GetSheetStats">GetSheetStats</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.GetSheetFromName">GetSheetFromName</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.WriteCellValue">WriteCellValue</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.WriteRowValues">WriteRowValues</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.ReadRowValues">ReadRowValues</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.TransformExcelValue">TransformExcelValue</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.GetRowValues">GetRowValues</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.MergeCells">MergeCells</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.SetColorByName">SetColorByName</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.SetCellColor">SetCellColor</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.IsRowHidden">IsRowHidden</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.IsColHidden">IsColHidden</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.SetRowHidden">SetRowHidden</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.SetColHidden">SetColHidden</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.makeHeaderFormat">makeHeaderFormat</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.makeTitleFormat">makeTitleFormat</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.makeBodyFormat">makeBodyFormat</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.makeBodyHiddenFormat">makeBodyHiddenFormat</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.makeTitleCenterFormat">makeTitleCenterFormat</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.makeMainTitleFormat">makeMainTitleFormat</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.makeBodyBoldFormat">makeBodyBoldFormat</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.makeBodyBoldDateFormat">makeBodyBoldDateFormat</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.makeBodyNoWrapFormat">makeBodyNoWrapFormat</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.makeBodyDateFormat">makeBodyDateFormat</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.makeBodyAccountsFormat">makeBodyAccountsFormat</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.makeBodyMoneyFormat">makeBodyMoneyFormat</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.makeBodyPercentFormat">makeBodyPercentFormat</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.makeBodyNumberFormat">makeBodyNumberFormat</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.makeBodyNumber2DFormat">makeBodyNumber2DFormat</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.setStandardFormat">setStandardFormat</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.applyStandardFormat">applyStandardFormat</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.makeCustomFormat">makeCustomFormat</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.prepDateTime">prepDateTime</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.prepDate">prepDate</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap.prepLogical">prepLogical</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.xlTest">xlTest</a></li>
+<li><a class="reference internal" href="#codebasetools.ExcelTools.lbResult">lbResult</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../CodeBaseToolsIndex.html">CodeBaseTools</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../CodeBaseToolsIndex.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">codebasetools.ExcelTools</span></code></li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../../../_sources/autoapi/codebasetools/ExcelTools/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-codebasetools.ExcelTools">
+<span id="codebasetools-exceltools"></span><h1><a class="reference internal" href="#module-codebasetools.ExcelTools" title="codebasetools.ExcelTools"><code class="xref py py-mod docutils literal notranslate"><span class="pre">codebasetools.ExcelTools</span></code></a><a class="headerlink" href="#module-codebasetools.ExcelTools" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="exceltools-module-high-performance-access-to-xls-and-xlsx-spreadsheets">
+<p>This Module, ExcelTools.py, provides a Python wrapper around the MPSS, Inc., developed LibXLWrapper.DLL, which in turn
+is a wrapper around the LIBXL.DLL ‘C’ Library from XLWare at www.LibXL.com.  LIBXL is a powerful alternative to using
+MS Excel and controlling it with COM.  COM provides full access to all Excel features but at a significant cost in
+time and licensing.</p>
+<p>LIBXL is a commercial product, but has no run-time distribution fees and is considerably faster for common tasks
+than Excel 2007 and higher.  It is available for non-Microsoft OS platforms as well.</p>
+<p>Unfortunately for programming convenience LIBXL is highly granular and structured around the internal constructs of
+the Excel file model.  These wrappers are designed to simplify the access and to allow Python modules to access it
+without explicit use of ctypes – although ctypes is the foundation on which this is built.</p>
+<p>A copy of the LIBXL product, libxl.dll is included here.  It is a recent version of the freely downloadable module
+found at <a class="reference external" href="https://www.libxl.com/">https://www.libxl.com/</a>
+This will allow you to run the application, however, without a license key the capability is dramatically reduced.</p>
+<p>Once you have a license key, you’ll need to edit the file LibXLLicenseInfo.TXT which is part of this package to
+replace the dummy information with your actual licensed user name and license key.  That is where this module
+finds the license information which it hands to the libxl.dll module.</p>
+<p>Why use this wrapper:
+1 - First, the job of setting up ctypes for a large subset of the libxl functions is already done for you.  This has
+been done in a way that is x-version compatible between Py 2.x and Py 3.x.
+2 - As with many ‘c’ DLL modules libxl.dll is very granular, and a large number of function calls may be required
+to accomplish simple things.  To simplify things, and to make sure that ctypes requirements are fully met, a .DLL
+wrapper called LibXLWrapper.dll has been developed to cushion the complexities.  The source for LibXLWrapper.c is
+found on GitHub in the CodeBaseTools repository and is free for download.</p>
+<p>The work is performed by the object class xlWrap which uses ctypes to access the higher level methods in
+LibXLWrapper.dll.  The methods in this module are documented fully in the docstrings
+contained in it.  Also the test function at the bottom provides many examples of how to call the methods.</p>
+<dl class="simple">
+<dt>General Concepts:</dt><dd><ul class="simple">
+<li><p>This module only allows one XLS or XLSX to be worked on at one time.  If you need to access multiple spreadsheets
+simultaneously, you’ll need to access LIBXL directly as it can handle multiple instances.  HOWEVER, it does
+allow you to import worksheets from one spreadsheet to another, so this may not be a significan issue for you.</p></li>
+<li><p>Spreadsheet contents is accessed by addressing the individual worksheets within the workbook.  Every workbook has at
+minimum one worksheet.  Worksheets are referenced by an integer index.  There is a method that returns the index
+if you pass the worksheet name.</p></li>
+<li><p>Cells are accessed within a worksheet by referencing their row and column (0 based) offsets.</p></li>
+<li><p>Each cell has three components which can be managed separately: Value, Format (including Font), and Formula.</p></li>
+<li><p>Each cell has three components which can be managed separately: Value, Format (including Font), and Formula.</p></li>
+<li><p>Formats are applied by first defining the format and adding it to the workbook and saving the format index
+value returned.  Then formats can be applied to individual cells and/or rows by referring to the worksheet,
+the rows and columns and the format index value.</p></li>
+<li><p>The complexities of libxl.dll format management have been wrapped into the XLFORMAT object.  You create
+instances of this object to control cell formats.  Note that many common formats have already been defined
+to simplify basic output, but you can customize formats and make them arbitrarily complex.</p></li>
+<li><p>Either XLS or XLSX formats can be read and written, but this module doesn’t allow for conversions since
+it doesn’t permit two or more workbooks to be open at the same time.  You could, however read the contents
+of one workbook (returned as plain ASCII character strings) save them, then close the first workbook and open
+the target workbook.  Note that the internal representation of the data (and some of the format defaults)
+are dependent on XLS versus XLSX, and the file name extension determines how the data is stored internally.</p></li>
+</ul>
+</dd>
+</dl>
+<p>2012 Jan 13 - Corrected documentation for GetRowValues(). JSH.
+2012 May 30 JMc more accurate location method to find .dll
+2013 Jan 04 JSH added ascii value protection with encoding to writecell() and writerow().
+2018 Sep 28 JSH added xlwSetLicense function to store license for LibXL externally.
+2018 Sep 29 JSH Implemented cross version features for Python 2.x and 3.x
+2020 June 23 JSH Removed all dependencies on MPSS modules.  Now part of the CodeBaseTools services.</p>
+</div>
+<div class="section" id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#codebasetools.ExcelTools.XLFORMAT" title="codebasetools.ExcelTools.XLFORMAT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">XLFORMAT</span></code></a></p></td>
+<td><p>A Data structure using the ctypes Structure construct.  This allows a single function call to pass all format</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#codebasetools.ExcelTools.xlWrap" title="codebasetools.ExcelTools.xlWrap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xlWrap</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#codebasetools.ExcelTools.isstr" title="codebasetools.ExcelTools.isstr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">isstr</span></code></a>(cTestStr)</p></td>
+<td><p>For Py2.x and Py3.x compatibility</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#codebasetools.ExcelTools.DTOT" title="codebasetools.ExcelTools.DTOT"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DTOT</span></code></a>(dTheDate)</p></td>
+<td><p>Quick conversion utility to convert a Python datetime.date() object to a datetime.datetime() object,</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#codebasetools.ExcelTools.xlTest" title="codebasetools.ExcelTools.xlTest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xlTest</span></code></a>()</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py data">
+<dt id="codebasetools.ExcelTools._ver3x">
+<code class="sig-prename descclassname">codebasetools.ExcelTools.</code><code class="sig-name descname">_ver3x</code><em class="property"> = False</em><a class="headerlink" href="#codebasetools.ExcelTools._ver3x" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="codebasetools.ExcelTools.isstr">
+<code class="sig-prename descclassname">codebasetools.ExcelTools.</code><code class="sig-name descname">isstr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cTestStr</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.isstr" title="Permalink to this definition">¶</a></dt>
+<dd><p>For Py2.x and Py3.x compatibility
+:param cTestStr: any value that may or may not be a string
+:return: True or False</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="codebasetools.ExcelTools.DTOT">
+<code class="sig-prename descclassname">codebasetools.ExcelTools.</code><code class="sig-name descname">DTOT</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dTheDate</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.DTOT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Quick conversion utility to convert a Python datetime.date() object to a datetime.datetime() object,
+like the corresponding VFP DTOT() function.  Returns the datetime value or None on error</p>
+</dd></dl>
+
+<dl class="py data">
+<dt id="codebasetools.ExcelTools.xlColor">
+<code class="sig-prename descclassname">codebasetools.ExcelTools.</code><code class="sig-name descname">xlColor</code><a class="headerlink" href="#codebasetools.ExcelTools.xlColor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt id="codebasetools.ExcelTools.xlNumFormat">
+<code class="sig-prename descclassname">codebasetools.ExcelTools.</code><code class="sig-name descname">xlNumFormat</code><a class="headerlink" href="#codebasetools.ExcelTools.xlNumFormat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt id="codebasetools.ExcelTools.xlAlignH">
+<code class="sig-prename descclassname">codebasetools.ExcelTools.</code><code class="sig-name descname">xlAlignH</code><a class="headerlink" href="#codebasetools.ExcelTools.xlAlignH" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt id="codebasetools.ExcelTools.xlAlignV">
+<code class="sig-prename descclassname">codebasetools.ExcelTools.</code><code class="sig-name descname">xlAlignV</code><a class="headerlink" href="#codebasetools.ExcelTools.xlAlignV" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt id="codebasetools.ExcelTools.xlBorder">
+<code class="sig-prename descclassname">codebasetools.ExcelTools.</code><code class="sig-name descname">xlBorder</code><a class="headerlink" href="#codebasetools.ExcelTools.xlBorder" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt id="codebasetools.ExcelTools.xlFill">
+<code class="sig-prename descclassname">codebasetools.ExcelTools.</code><code class="sig-name descname">xlFill</code><a class="headerlink" href="#codebasetools.ExcelTools.xlFill" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt id="codebasetools.ExcelTools.xlUnderline">
+<code class="sig-prename descclassname">codebasetools.ExcelTools.</code><code class="sig-name descname">xlUnderline</code><a class="headerlink" href="#codebasetools.ExcelTools.xlUnderline" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt id="codebasetools.ExcelTools.xlMargins">
+<code class="sig-prename descclassname">codebasetools.ExcelTools.</code><code class="sig-name descname">xlMargins</code><a class="headerlink" href="#codebasetools.ExcelTools.xlMargins" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt id="codebasetools.ExcelTools.xlAspect">
+<code class="sig-prename descclassname">codebasetools.ExcelTools.</code><code class="sig-name descname">xlAspect</code><a class="headerlink" href="#codebasetools.ExcelTools.xlAspect" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt id="codebasetools.ExcelTools.xlPaperSize">
+<code class="sig-prename descclassname">codebasetools.ExcelTools.</code><code class="sig-name descname">xlPaperSize</code><a class="headerlink" href="#codebasetools.ExcelTools.xlPaperSize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt id="codebasetools.ExcelTools.XLFORMAT">
+<em class="property">class </em><code class="sig-prename descclassname">codebasetools.ExcelTools.</code><code class="sig-name descname">XLFORMAT</code><a class="headerlink" href="#codebasetools.ExcelTools.XLFORMAT" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ctypes.Structure</span></code></p>
+<p>A Data structure using the ctypes Structure construct.  This allows a single function call to pass all format
+information for one or more cells rather than a separate one for each characteristic.  The default values of -1
+or “” are ignored when xlWrap sets cell formats.  Only members with other values are considered in format setting,
+so need only set the member properties that you need.</p>
+<dl class="py attribute">
+<dt id="codebasetools.ExcelTools.XLFORMAT._fields_">
+<code class="sig-name descname">_fields_</code><em class="property"> = [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]</em><a class="headerlink" href="#codebasetools.ExcelTools.XLFORMAT._fields_" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="codebasetools.ExcelTools.xlWrap">
+<em class="property">class </em><code class="sig-prename descclassname">codebasetools.ExcelTools.</code><code class="sig-name descname">xlWrap</code><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.makeStringPointer">
+<code class="sig-name descname">makeStringPointer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">cText</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.makeStringPointer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provides conversion from unicode string to byte string if this is running under Python 3.x.  This is
+required because we cannot pass Python 3.x strings to the C DLL functions.  They first must be converted
+to a string of simple bytes.  This function uses an encoding of “cp1252” to make the conversion in Py 3.x,
+as that is the Windows standard for Western European languages.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cText</strong> – The unicode string to prepare to pass to the DLL.  The assumption will be that            the string can be converted to CodePage 1252 from Unicode.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Pointer for use by the DLL</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.procStringResult">
+<code class="sig-name descname">procStringResult</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">cBytes</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.procStringResult" title="Permalink to this definition">¶</a></dt>
+<dd><p>When the DLL returns a string it is in the form of a sequence of bytes.  Python 2.x is OK with that
+but Python 3.x wants it converted to a representation of text, not bytes.  This function does
+nothing at all but pass through the value for Python 2.x, but for Python 3.x, it tries a series of
+decode steps with “strict” turned on.  For each failure it tries another decoding until in desperation
+it creates the string as ASCII with the “replace” feature turned on.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cBytes</strong> – The bytes returned by the DLL which are to be converted to an appropriate string format.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A Python string with the appropriate encoding.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.SetPrintAspect">
+<code class="sig-name descname">SetPrintAspect</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">lnSheet</span></em>, <em class="sig-param"><span class="n">lpcHow</span><span class="o">=</span><span class="default_value">'PORTRAIT'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.SetPrintAspect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the output printing format to either “PORTRAIT” or “LANDSCAPE”.  Pass the string as the second
+parameter.  If unrecognized value is passed, defaults to PORTRAIT.  Returns 1 if the lnSheet value is
+recognized as a valid work sheet index, otherwise returns 0.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.SetPageMargins">
+<code class="sig-name descname">SetPageMargins</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">lnSheet</span></em>, <em class="sig-param"><span class="n">lcWhich</span></em>, <em class="sig-param"><span class="n">lnWidth</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.SetPageMargins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the printed output page margins for the specified worksheet.  The values to pass in lcWhich
+are TOP, BOTTOM, LEFT, RIGHT, or ALL.  Width of the margins is affected based on that selection and should
+be specified in inches as a decimal fraction.  Returns 1 if the lnSheet value is recognized as a valid
+work sheet index, otherwise returns 0.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.SetPrintArea">
+<code class="sig-name descname">SetPrintArea</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">lnSheet</span></em>, <em class="sig-param"><span class="n">lnFromRow</span></em>, <em class="sig-param"><span class="n">lnToRow</span></em>, <em class="sig-param"><span class="n">lnFromCol</span></em>, <em class="sig-param"><span class="n">lnToCol</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.SetPrintArea" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the Excel “print area” or portion of the worksheet that is “printable”.  Returns 1 if the lnSheet
+value is recognized as a valid work sheet index, otherwise returns 0. Note that row and column counters
+are 0 (zero) based.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.SplitSheet">
+<code class="sig-name descname">SplitSheet</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">lnSheet</span></em>, <em class="sig-param"><span class="n">lnRow</span></em>, <em class="sig-param"><span class="n">lnCol</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.SplitSheet" title="Permalink to this definition">¶</a></dt>
+<dd><p>The LibXL docs aren’t very clear on what “Split” does, but it actually locks header rows and or left side
+label columns into position while the body scrolls.  In Excel-speak, this is “Freeze Panes”, not “Split”, which
+is something different.  To lock in place the first 4 rows, pass lnRow as 4 (the 5th physical row) and
+lnCol as 0.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.SetPaperSize">
+<code class="sig-name descname">SetPaperSize</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">lnSheet</span></em>, <em class="sig-param"><span class="n">lpcType</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.SetPaperSize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determines the paper size for any printed output.  This overrides the printer setting based on Excel
+typical operation.  The lpcType value may be one of three text values: LETTER, LEGAL, and A3.  If the text
+string is unrecognized, the default will be set to LETTER.  Returns 1 if the lnSheet value is recognized as a
+valid work sheet index, otherwise returns 0.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.SetPrintPageCountFit">
+<code class="sig-name descname">SetPrintPageCountFit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">lnSheet</span></em>, <em class="sig-param"><span class="n">lnPageWidth</span></em>, <em class="sig-param"><span class="n">lnPageHeight</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.SetPrintPageCountFit" title="Permalink to this definition">¶</a></dt>
+<dd><p>In the Excel print preview it is possible to specify that the print area to be output must fit in a
+specified number of pages wide and pages high.  This function provides that functionality.  Specify the
+work sheet index number and the number of pages of width for the output followed by the pages of height.
+The governing dimension is the width, typically set a one page (a value of 1 in the lnPageWidth
+parameter.  Height may be set to any non-zero value, but may be set to a value greater than the likely
+actual output height in pages so as to avoid unnecessary compression.  Again, note these values are set
+in numbers of pages.  Returns 1 if the lnSheet value is recognized as a valid work sheet index, otherwise
+returns 0.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.SetRowGroupBottom">
+<code class="sig-name descname">SetRowGroupBottom</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">nSheet</span></em>, <em class="sig-param"><span class="n">bBottom</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.SetRowGroupBottom" title="Permalink to this definition">¶</a></dt>
+<dd><p>When Rows are Grouped, typically the extra “Summary” row is assumed to be the one directly below the range
+of grouped rows.  Call this function with bBottom = True to ensure that.  Call it with False to force
+the “Summary” row to be the one immediately above the defined Group of Rows.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.SetColGroupRight">
+<code class="sig-name descname">SetColGroupRight</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">nSheet</span></em>, <em class="sig-param"><span class="n">bRight</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.SetColGroupRight" title="Permalink to this definition">¶</a></dt>
+<dd><p>When Cols are Grouped, typically the extra “Summary” column is assumed to be the one immediately to the right
+of the specified group of Columns.  Call this function with bRight = True to ensure that.  Call it with False
+to force the “Summary” column to be the one immediately to the left of the Group of Rows.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.GroupRows">
+<code class="sig-name descname">GroupRows</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">nSheet</span></em>, <em class="sig-param"><span class="n">nFromRow</span></em>, <em class="sig-param"><span class="n">nToRow</span></em>, <em class="sig-param"><span class="n">bCollapse</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.GroupRows" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets up a group of rows to allow them to be opened and closed above or below a summary row.  Pass
+bCollapse as True to ensure that the Grouped rows are collapsed when the sheet is opened.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.GroupCols">
+<code class="sig-name descname">GroupCols</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">nSheet</span></em>, <em class="sig-param"><span class="n">nFromCol</span></em>, <em class="sig-param"><span class="n">nToCol</span></em>, <em class="sig-param"><span class="n">bCollapse</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.GroupCols" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like Group Rows, but does it for Columns.  Once set, there is an expand/collapse button at the top of the
+spreadsheet for this Group.  Pass bCollapse as True to collapse the group prior to opening it.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.InsertRows">
+<code class="sig-name descname">InsertRows</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">lnSheet</span></em>, <em class="sig-param"><span class="n">lnFromRow</span></em>, <em class="sig-param"><span class="n">lnToRow</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.InsertRows" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inserts rows into the specified worksheet.  Indicate the starting row where the insertion begins and
+the last row to be inserted below that.  Returns 1 on success, 0 on failure.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.InsertCols">
+<code class="sig-name descname">InsertCols</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">lnSheet</span></em>, <em class="sig-param"><span class="n">lnFromCol</span></em>, <em class="sig-param"><span class="n">lnToCol</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.InsertCols" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inserts columns into the specified worksheet.  Indicate the starting column (0 based count) where the
+insertion begins and the last column to the right of that.  Returns 1 on success, 0 on failure.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.DeleteRows">
+<code class="sig-name descname">DeleteRows</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">lnSheet</span></em>, <em class="sig-param"><span class="n">lnFromRow</span></em>, <em class="sig-param"><span class="n">lnToRow</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.DeleteRows" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes the rows from the lnFromRow row to the lnToRow row.  Row numbers are 0-based.  Returns 1 on
+success, 0 on failure.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.DeleteCols">
+<code class="sig-name descname">DeleteCols</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">lnSheet</span></em>, <em class="sig-param"><span class="n">lnFromCol</span></em>, <em class="sig-param"><span class="n">lnToCol</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.DeleteCols" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes the specified columns from the specified worksheet.  Specify the from col and the to col (0-based
+column counts).  Returns 1 on success, 0 on failure.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.SetRowFormats">
+<code class="sig-name descname">SetRowFormats</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">lnSheet</span></em>, <em class="sig-param"><span class="n">lnFromRow</span></em>, <em class="sig-param"><span class="n">lnToRow</span></em>, <em class="sig-param"><span class="n">lnFmatIndex</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.SetRowFormats" title="Permalink to this definition">¶</a></dt>
+<dd><p>An alternative way to apply formats to all cells in one or more rows.  You’ll need to test to see if the
+format characteristics you need are allowed to be set at the Row level.  If not, no error is raised.
+Returns 1 on success, 0 on failure.  Failure could be caused by not having any open spreadsheet workbooks.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.SetColWidths">
+<code class="sig-name descname">SetColWidths</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">lnSheet</span></em>, <em class="sig-param"><span class="n">lnFromCol</span></em>, <em class="sig-param"><span class="n">lnToCol</span></em>, <em class="sig-param"><span class="n">ldWidth</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.SetColWidths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the width (in Excel column width units passed as a double) of one or more adjacent columns.
+Returns 1 on success, 0 on failure.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.SetRowHeight">
+<code class="sig-name descname">SetRowHeight</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">lnSheet</span></em>, <em class="sig-param"><span class="n">lnRow</span></em>, <em class="sig-param"><span class="n">ldHeight</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.SetRowHeight" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the height of one row in pixels.  Returns 1 on success, 0 on failure.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.AddFormat">
+<code class="sig-name descname">AddFormat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">lxFmat</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.AddFormat" title="Permalink to this definition">¶</a></dt>
+<dd><p>You define a format by creating an instance of the Format structure like:
+someFormat = XLFORMAT()
+Then set the properties (members) of the structure that you need to define for one or more cells.
+This method returns a Format index value that you’ll use to refer to this Format.  If it returns
+-1, something went wrong.</p>
+<p>The first format you define with AddFormat is saved and becomes the Default Format.  This Format
+is automatically applied to any cells filled with WriteCellValue() or WriteRowValues() after it has
+been defined.  Defining a Default Format for the workbook prior to extensive writing can save
+considerable processing time when there are large numbers of identically formatted body cells
+to be loaded – in comparison to writing the cell contents and adding the formatting in a second pass.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.FormatCells">
+<code class="sig-name descname">FormatCells</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">lnSheet</span></em>, <em class="sig-param"><span class="n">lnFromRow</span></em>, <em class="sig-param"><span class="n">lnToRow</span></em>, <em class="sig-param"><span class="n">lnFromCol</span></em>, <em class="sig-param"><span class="n">lnToCol</span></em>, <em class="sig-param"><span class="n">lnFmatIndex</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.FormatCells" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allows you to apply a previously defined Format to a rectangular collection of cells.  Returns 1
+on success, 0 on failure.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.SetCellDelimiter">
+<code class="sig-name descname">SetCellDelimiter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">lcDelim</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.SetCellDelimiter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides the default value of the delimiter used to separate cell values both in the get and the
+write of multiple cells.  Should be a string value of up to 10 characters unlikely to be found in
+any text string cell value.  The default value, if this is not called is tab: ‘ ‘.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.OpenWorkbook">
+<code class="sig-name descname">OpenWorkbook</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">lcFileName</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.OpenWorkbook" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes a new spreadsheet, starting with an existing spreadsheet file on the disk.  The worksheet
+is immediately read into memory and information is captured on the number of worksheets it contains.
+This number is the return value.  If the return value is &lt; 1, something is wrong.</p>
+<p>The Excel version assumed is determined by the file name extension: XLS or XLSX.</p>
+<p>You can access the existing worksheets by using sheet index values from 0 (the first sheet) to
+one less than the number of worksheets returned by this method.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.CloseWorkbook">
+<code class="sig-name descname">CloseWorkbook</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">lbSave</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.CloseWorkbook" title="Permalink to this definition">¶</a></dt>
+<dd><p>Terminates work with the currently active spreadsheet.  If the spreadsheet has been changed during processing
+and you pass 1 for lbSave, then the workbook will be saved prior to the shutdown.  Once this method
+has executed, you can open or create another workbook (spreadsheet).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.CreateWorkbook">
+<code class="sig-name descname">CreateWorkbook</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">lcFileName</span></em>, <em class="sig-param"><span class="n">lcFirstSheetName</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">bNoSheet</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.CreateWorkbook" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes a new spreadsheet – creating a new, empty one in memory.  The lcFileName parameter MUST
+be passed.  It must have an extension of XLS or XLSX, which tells the module what version of Excel to
+use.</p>
+<p>A Worksheet is immediately added to the workbook.  This worksheet will have the name as given in the
+second parameter lcFirstSheetName.  If you don’t supply lcFirstSheetName, the sheet will be named
+“Sheet1”.  Returns the sheet index value for that newly created sheet.</p>
+<p>01/19/2013 - Added bNoSheet parm.  If you set this to True, then no initial sheet will be added
+to the workbook, so you will need to start off by creating sheets with the AddSheet() or the
+ImportSheetFrom() methods.  Trying to save the Workbook without adding sheets will likely trigger
+an error.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.ImportSheetFrom">
+<code class="sig-name descname">ImportSheetFrom</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">cFile</span></em>, <em class="sig-param"><span class="n">cSheet</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.ImportSheetFrom" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a copy of the sheet cSheet in XLS/XLSX file cFile as the next sheet in the current worksheet.
+You can create a workbook without sheets using CreateWorkbook() and specifying bNoSheet=True.
+Added 01/19/2013. JSH.
+Returns the index of the new sheet or -1 on failure.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.AddSheet">
+<code class="sig-name descname">AddSheet</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">lcSheetName</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.AddSheet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a new worksheet at the end of the set of worksheets.  The name lcSheetName is required.</p>
+<p>Returns the worksheet index value of the sheet you added.  This index will be required for all
+manipulation of that sheet.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.GetCellValue">
+<code class="sig-name descname">GetCellValue</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">lnSheet</span></em>, <em class="sig-param"><span class="n">lnRow</span></em>, <em class="sig-param"><span class="n">lnCol</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.GetCellValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pass this method a sheet index number and a row/column pair.  It will return the cell value as a tuple:
+The first element of the tuple will be a string representation of the value.  The second element of
+the tuple will be a string value indicating the type of the cell value.  Cell value types are:
+- “S” - character string
+- “N” - number (always a double)
+- “D” - date (including date, datetime, and time)
+- “L” - boolean or logical
+- “B” - Blank
+- “E” - Empty
+- “X” - Error
+Date values are returned in the form YYYYMMDDHHMMSSnnn where the year is YYYY, month MM, day DD, hour HH,
+minute MM, seconds SS, and milliseconds nnn.  Time values will have all 0 (zeros) in the date portion of the
+string.  Date values will have all 0 (zeros) in the time portion of the string.</p>
+<p>Boolean values are returned as “TRUE” or “FALSE”.</p>
+<p>Returns None if there is no current spreadsheet.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.GetErrorMessage">
+<code class="sig-name descname">GetErrorMessage</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.GetErrorMessage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the text string explaining the most recent error condition.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.GetErrorNumber">
+<code class="sig-name descname">GetErrorNumber</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.GetErrorNumber" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the last error number.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.__getattr__">
+<code class="sig-name descname">__getattr__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">cAttr</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.__getattr__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.GetSheetStats">
+<code class="sig-name descname">GetSheetStats</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">lnSheet</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.GetSheetStats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a tuple with 5 pieces of information about the worksheet specified in the lnSheet parameter:
+- Sheet Name
+- Topmost row with contents
+- Bottommost row with contents
+- Leftmost column with contents
+- Rightmost column with contents</p>
+<p>Returns an empty string for the Sheet Name if the Sheet Index is invalid or if there is no active workbook.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.GetSheetFromName">
+<code class="sig-name descname">GetSheetFromName</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">lcName</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.GetSheetFromName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the worksheet index value for the worksheet with the name passed to the function.  Returns
+-1 on error (no such sheet or no active workbook).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.WriteCellValue">
+<code class="sig-name descname">WriteCellValue</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">lnSheet</span></em>, <em class="sig-param"><span class="n">lnRow</span></em>, <em class="sig-param"><span class="n">lnCol</span></em>, <em class="sig-param"><span class="n">lcStrValue</span></em>, <em class="sig-param"><span class="n">lcCellType</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.WriteCellValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Places a value or a formula into a specified cell.  There are five required parameters:
+- Worksheet index
+- Row number (0 based)
+- Column number (0 based)
+- Value represented as a text string.  See GetCellValue() for formatting date and logical values.
+- Desired cell type: “S”, “N”, “D”, “L”, “B”, or “F”.</p>
+<p>In the case of cell type “B” pass an empty string as the value (blank).</p>
+<p>In the case of “F” the string should contain a formula in the “letter number” type notation of cell
+reference.  In other words you might pass “=A1+B1” as the formula.</p>
+<p>Returns 1 on success, 0 on failure.
+Changed handling of unicode conversions to ascii for greater reliability.  Also added code to convert
+right and left quote signs to simple ascii quotes. jsh. 03/07/2013.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.WriteRowValues">
+<code class="sig-name descname">WriteRowValues</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">lnSheet</span></em>, <em class="sig-param"><span class="n">lnRow</span></em>, <em class="sig-param"><span class="n">lnColFrom</span></em>, <em class="sig-param"><span class="n">lnColTo</span></em>, <em class="sig-param"><span class="n">lcStrValues</span></em>, <em class="sig-param"><span class="n">lcCellTypes</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.WriteRowValues" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exactly like WriteCellValue() except that the lcStrValues parameter must be a TAB
+delimited string containing one value for each cell you specify to be filled.  The
+parameter lcCellTypes is a string with one character for each cell to be filled, containing
+the corresponding data type to be stored.  See WriteCellValue() for valid types.
+Changed handling of unicode conversions to ascii for greater reliability. JSH. 03/07/2013.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.ReadRowValues">
+<code class="sig-name descname">ReadRowValues</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">lnSheet</span></em>, <em class="sig-param"><span class="n">lnRow</span></em>, <em class="sig-param"><span class="n">lnColFrom</span></em>, <em class="sig-param"><span class="n">lnColTo</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.ReadRowValues" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like GetRowValues except returns a simple list of values (or None on error) containing
+the values of each cell specified in native Python format.  Not for use in high performance situations.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.TransformExcelValue">
+<code class="sig-name descname">TransformExcelValue</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">lpxVal</span></em>, <em class="sig-param"><span class="n">lpcType</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.TransformExcelValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes the raw value from a cell plus the type lpcType and returns the native Python value which
+these represent. Allowed lpcType values:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>“S” = character string - returns a string</p></li>
+<li><p>“N” = number (always a double) - returns a double</p></li>
+<li><p>“D” = date (including date, datetime, and time) - returns a datetime.            If the date value in Excel is empty or invalid, (year 0), returns None.</p></li>
+<li><p>“L” = boolean or logical - returns a logical</p></li>
+<li><p>“B” = Blank returns “”</p></li>
+<li><p>“E” = Empty returns “”</p></li>
+<li><p>“X” = Error returns “ERROR”</p></li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.GetRowValues">
+<code class="sig-name descname">GetRowValues</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">lnSheet</span></em>, <em class="sig-param"><span class="n">lnRow</span></em>, <em class="sig-param"><span class="n">lnColFrom</span></em>, <em class="sig-param"><span class="n">lnColTo</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.GetRowValues" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the values from a portion of a row from lnColFrom to lnColTo.  Exactly like GetCellValue()
+except that the tuple contains a TAB-delimited string of values and a value type string
+with one character per cell indicating the type found in the cell.</p>
+<p>On error returns an empty string as the first element of the tuple.
+CORRECTION: On error returns None as the first element of the tuple. Jan 13, 2012. JSH.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.MergeCells">
+<code class="sig-name descname">MergeCells</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">lnSheet</span></em>, <em class="sig-param"><span class="n">lnFromRow</span></em>, <em class="sig-param"><span class="n">lnToRow</span></em>, <em class="sig-param"><span class="n">lnFromCol</span></em>, <em class="sig-param"><span class="n">lnToCol</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.MergeCells" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies the Excel ‘Cell Merge’ feature to the specified cells.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.SetColorByName">
+<code class="sig-name descname">SetColorByName</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">lnSheet</span></em>, <em class="sig-param"><span class="n">lnFromRow</span></em>, <em class="sig-param"><span class="n">lnToRow</span></em>, <em class="sig-param"><span class="n">lnFromCol</span></em>, <em class="sig-param"><span class="n">lnToCol</span></em>, <em class="sig-param"><span class="n">lcColor</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.SetColorByName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pass the name in the xlColor dict() rather than the number.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.SetCellColor">
+<code class="sig-name descname">SetCellColor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">lnSheet</span></em>, <em class="sig-param"><span class="n">lnFromRow</span></em>, <em class="sig-param"><span class="n">lnToRow</span></em>, <em class="sig-param"><span class="n">lnFromCol</span></em>, <em class="sig-param"><span class="n">lnToCol</span></em>, <em class="sig-param"><span class="n">lnColor</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.SetCellColor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies the specified cell background color to the indicated range of cells.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.IsRowHidden">
+<code class="sig-name descname">IsRowHidden</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">lnSheet</span></em>, <em class="sig-param"><span class="n">lnRow</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.IsRowHidden" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests to see if the specified row in the specified sheet is hidden.
+Returns True if hidden, False otherwise.  Note that a False may also be returned
+if an error was encountered.  If you get False and were expecting True, then
+call the GetErrorMessage() method or GetErrorNumber() method to see if an
+error was reported.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.IsColHidden">
+<code class="sig-name descname">IsColHidden</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">lnSheet</span></em>, <em class="sig-param"><span class="n">lnCol</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.IsColHidden" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tests to see if the specified column in the specified sheet is hidden.
+Returns True if hidden, False otherwise.  Note that a False may also be returned
+if an error was encountered.  If you get False and were expecting True, then
+call the GetErrorMessage() method or GetErrorNumber() method to see if an
+error was reported.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.SetRowHidden">
+<code class="sig-name descname">SetRowHidden</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">lnSheet</span></em>, <em class="sig-param"><span class="n">lnRow</span></em>, <em class="sig-param"><span class="n">lbHide</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.SetRowHidden" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the specified row in the specified sheet to hidden or NOT hidden,
+based on the True/False status of lbHide.  Returns 1 on success, 0 on failure.
+If 0 is returned, call GetErrorMessage() or GetErrorNumber() to determine the
+reason for the problem.  Does not report an error if the specified row’s
+hidden status is already set to the value of lbHide.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.SetColHidden">
+<code class="sig-name descname">SetColHidden</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">lnSheet</span></em>, <em class="sig-param"><span class="n">lnCol</span></em>, <em class="sig-param"><span class="n">lbHide</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.SetColHidden" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the specified column in the specified sheet to hidden or NOT hidden,
+based on the True/False status of lbHide.  Returns 1 on success, 0 on failure.
+If 0 is returned, call GetErrorMessage() or GetErrorNumber() to determine the
+reason for the problem.  Does not report an error if the specified column’s
+hidden status is already set to the value of lbHide.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.makeHeaderFormat">
+<code class="sig-name descname">makeHeaderFormat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.makeHeaderFormat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.makeTitleFormat">
+<code class="sig-name descname">makeTitleFormat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.makeTitleFormat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.makeBodyFormat">
+<code class="sig-name descname">makeBodyFormat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.makeBodyFormat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.makeBodyHiddenFormat">
+<code class="sig-name descname">makeBodyHiddenFormat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.makeBodyHiddenFormat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.makeTitleCenterFormat">
+<code class="sig-name descname">makeTitleCenterFormat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.makeTitleCenterFormat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.makeMainTitleFormat">
+<code class="sig-name descname">makeMainTitleFormat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.makeMainTitleFormat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.makeBodyBoldFormat">
+<code class="sig-name descname">makeBodyBoldFormat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.makeBodyBoldFormat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.makeBodyBoldDateFormat">
+<code class="sig-name descname">makeBodyBoldDateFormat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.makeBodyBoldDateFormat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.makeBodyNoWrapFormat">
+<code class="sig-name descname">makeBodyNoWrapFormat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.makeBodyNoWrapFormat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.makeBodyDateFormat">
+<code class="sig-name descname">makeBodyDateFormat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.makeBodyDateFormat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.makeBodyAccountsFormat">
+<code class="sig-name descname">makeBodyAccountsFormat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.makeBodyAccountsFormat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.makeBodyMoneyFormat">
+<code class="sig-name descname">makeBodyMoneyFormat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.makeBodyMoneyFormat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.makeBodyPercentFormat">
+<code class="sig-name descname">makeBodyPercentFormat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.makeBodyPercentFormat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.makeBodyNumberFormat">
+<code class="sig-name descname">makeBodyNumberFormat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.makeBodyNumberFormat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.makeBodyNumber2DFormat">
+<code class="sig-name descname">makeBodyNumber2DFormat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.makeBodyNumber2DFormat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.setStandardFormat">
+<code class="sig-name descname">setStandardFormat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.setStandardFormat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.applyStandardFormat">
+<code class="sig-name descname">applyStandardFormat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">lnSheet</span></em>, <em class="sig-param"><span class="n">lnFromRow</span></em>, <em class="sig-param"><span class="n">lnToRow</span></em>, <em class="sig-param"><span class="n">lnFromCol</span></em>, <em class="sig-param"><span class="n">lnToCol</span></em>, <em class="sig-param"><span class="n">lcType</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.applyStandardFormat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.makeCustomFormat">
+<code class="sig-name descname">makeCustomFormat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">lcBaseFormat</span></em>, <em class="sig-param"><span class="n">lcNewName</span></em>, <em class="sig-param"><span class="n">lcNewBackColor</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">lcNewAlignH</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">lcNewFont</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">lnNewPointSize</span><span class="o">=</span><span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">lcNewFontColor</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.makeCustomFormat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.prepDateTime">
+<code class="sig-name descname">prepDateTime</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">tDateTimeVal</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.prepDateTime" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.prepDate">
+<code class="sig-name descname">prepDate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">dDateVal</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.prepDate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.ExcelTools.xlWrap.prepLogical">
+<code class="sig-name descname">prepLogical</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">bVal</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlWrap.prepLogical" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="codebasetools.ExcelTools.xlTest">
+<code class="sig-prename descclassname">codebasetools.ExcelTools.</code><code class="sig-name descname">xlTest</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.ExcelTools.xlTest" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt id="codebasetools.ExcelTools.lbResult">
+<code class="sig-prename descclassname">codebasetools.ExcelTools.</code><code class="sig-name descname">lbResult</code><a class="headerlink" href="#codebasetools.ExcelTools.lbResult" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright M-P Systems Services, Inc..
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -2,7 +2,7 @@
  * C language program for new modules for PlanTools(tm) and BidTools(tm) accessed from Python.
  * --------------------------------------------------------------------------------------------- */
  /* *****************************************************************************
-Copyright (C) 2010-2018 by M-P Systems Services, Inc.,
+Copyright (C) 2010-2020 by M-P Systems Services, Inc.,
 PMB 136, 1631 NE Broadway, Portland, OR 97232.
 
 This program is free software: you can redistribute it and/or modify
@@ -21,10 +21,15 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
    The result of trying to do that could be drastic data corruption.  Tables opened in this mode will still be openable by VFP
    until they grow in size beyond that supported by VFP after which point VFP will generate an error when attempting to open them. */
    
-/* October, 2014, rebuilt this module to use Python functions and to be compiled to a .PYD file for direct use by
+/* October, 2014, rebuilt this module to use Python functions via the Python API and to be compiled to a .PYD file for direct use by
    Python modules. Jim Heuer, M-P Systems Services, Inc. */
    
 /* Jan. 9, 2015 - Added cbwCOPYTAGS(). JSH. */
+
+/* November 10, 2020 - Added #defines for Python 3.9 */
+
+/* November 16, 2020 - Fixed memory leaks for Py2 and Py3 versions of cbxPyToChar() which resulted in gather and replace
+   functions consuming ever more memory.  Also cleaned up bugs in cbwSCATTER(). JSH. MPSS, Inc. */
 #define TRUE 1
 #define FALSE 0
 #define DOEXPORT __declspec(dllexport)
@@ -42,9 +47,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #define MAXALIASNAMESIZE 100
 #define MAXOPENTABLECOUNT 500
 
-#include <Python.h>
-#include <datetime.h>
-#include <d4all.h>
+#include "c:\\Python312\\include\\Python.h"
+#include "c:\\Python312\\include\datetime.h"
+#include "d:\\codebase\\WorkingSource\\d4all.h"
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -52,10 +57,46 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 #if PY_MAJOR_VERSION >= 3
 #define IS_PY3K
+    #if PY_MINOR_VERSION == 6
+    #define IS_PY36
+    #endif
+    
+    #if PY_MINOR_VERSION == 7
+    #define IS_PY37
+    #endif
+    
+    #if PY_MINOR_VERSION == 8
+    #define IS_PY38
+    #endif
+    
+    #if PY_MINOR_VERSION == 9
+    #define IS_PY39
+    #endif
+    
+    #if PY_MINOR_VERSION == 10
+    #define IS_PY310
+    #endif
+    
+    #if PY_MINOR_VERSION == 11
+    #ifndef MS_WIN64
+        #define IS_PY311
+    #else 
+        #define IS_PY311_64
+    #endif
+    #endif
+    
+    #if PY_MINOR_VERSION == 12
+    #define IS_PY312
+    #endif
+    
 #endif
+
 
 #if PY_MAJOR_VERSION < 3
 #define IS_PY2K
+    #if PY_MINOR_VERSION == 7
+    #define IS_PY27
+    #endif
 #endif
 
 
@@ -172,6 +213,8 @@ long gnExclMax = MAXEXCLCOUNT;
 long gnExclLimit = 20;
 long gnExclCnt = 0;
 
+long gbDebugMode = FALSE;
+
 char *gaFieldList[MAXFIELDCOUNT];
 
 //typedef struct AliasTrackTD {
@@ -240,7 +283,13 @@ static PyObject* cbNameToPy(const char *cName)
    Note that CodeBase ONLY supports CodePage 1252, Western European languages.      */
 const char *Unicode2Char(PyObject* cFromUnicode)
 {
-	return(PyBytes_AsString(PyUnicode_AsEncodedString(cFromUnicode, "cp1252", "replace")));
+    PyObject* cCodedString = NULL;
+    const char *cRet = NULL;
+    
+    cCodedString = PyUnicode_AsEncodedString(cFromUnicode, "cp1252", "replace");
+    cRet = PyBytes_AsString(cCodedString);
+    Py_DECREF(cCodedString);
+	return(cRet);
 }
 
 /* ******************************************************************************** */
@@ -248,9 +297,13 @@ const char *Unicode2Char(PyObject* cFromUnicode)
    Extended Ascii using Code Page 1252.                                             */
 const char *Char2ExtendedAscii(char* cFromChar)
 {
-	PyObject* cIsUnicode;
+	PyObject* cIsUnicode = NULL;
+	const char* cRet = NULL;
+	
 	cIsUnicode = Py_BuildValue("s", cFromChar);
-	return(Unicode2Char(cIsUnicode));
+	cRet = Unicode2Char(cIsUnicode);
+	Py_DECREF(cIsUnicode);
+	return(cRet);
 }
 
 const unsigned char *testStringTypes(PyObject* pxValue)
@@ -463,8 +516,8 @@ char* strtokX(char* lpcSource, char* lpcDelim)
 {
 	static char* lpStr; /* Pointer to allocated memory where we'll hold the working source string */
 	static char* lpPtr; /* Pointer we'll move through the source string as we tokenize it */
-	char* lpTest;
-	char* lpReturn;
+	char* lpTest = NULL;
+	char* lpReturn = NULL;
 	
 	if (lpcSource != NULL)
 		{
@@ -512,7 +565,7 @@ static char* justFilePath(char* lpcFileName)
 	long lnLen;
 	memset(lcName, 0, (size_t) 500 * sizeof(char));
 	strcpy(lcName, lpcFileName);
-	lnLen = strlen(lcName);
+	lnLen = (long) strlen(lcName);
 	for (jj = lnLen - 1; jj >= 0; jj--)
 		{
 		if (lcName[jj] != (char) 92)
@@ -545,7 +598,7 @@ char* MPStrTrim(char cHow, char* cString)
 	long lbAtStart = TRUE;
 	long lnStartSpaceCount = 0;
 	
-	lnLen = strlen(cString);
+	lnLen = (long) strlen(cString);
 	if ((cHow == 'A') || (cHow == 'L'))
 		{
 		pPtr = cString;
@@ -606,7 +659,7 @@ static char* MPStrRand(long lpnLen)
 
 	for (jj = 0;jj < lnLen; jj++)
 		{
-		lnVal = floor((double) rand() * lnChrCnt / (double) RAND_MAX);
+		lnVal = (long) floor((double) rand() * lnChrCnt / (double) RAND_MAX);
 		lcStr[jj] = lcChars[lnVal];
 		}
 	lcStr[lnLen] = (char) 0;
@@ -627,8 +680,8 @@ static char* MPStrRand(long lpnLen)
 char* MPSSStrTran(char* lpcSource, char* lpcTarget, char* lpcAlternative, long lpnCount)
 {
 	static char* lpBuff;
-	char* lpPtr;
-	char* lpStart;
+	char* lpPtr = NULL;
+	char* lpStart = NULL;
 	long lnFromLen, lnToLen;
 	long lnDiffLen;
 	long lnNewBuffLen;
@@ -638,8 +691,8 @@ char* MPSSStrTran(char* lpcSource, char* lpcTarget, char* lpcAlternative, long l
 	
 	if (lpBuff != NULL) free(lpBuff);
 	lpBuff = NULL;
-	lnFromLen = strlen(lpcTarget);
-	lnToLen = strlen(lpcAlternative);
+	lnFromLen = (long) strlen(lpcTarget);
+	lnToLen = (long) strlen(lpcAlternative);
 	lnDiffLen = lnToLen - lnFromLen;
 	if (lnDiffLen > 0) /* The result can be longer than the source string, so we have to make a larger buffer */
 		{
@@ -652,11 +705,11 @@ char* MPSSStrTran(char* lpcSource, char* lpcTarget, char* lpcAlternative, long l
 			lpStart = lpPtr;
 			lnOccurances += 1;
 			}
-		lnNewBuffLen = strlen(lpcSource) + 1 + (lnOccurances * lnDiffLen); /* worst case */
+		lnNewBuffLen = (long) strlen(lpcSource) + 1 + (lnOccurances * lnDiffLen); /* worst case */
 		}
 	else
 		{
-		lnNewBuffLen = strlen(lpcSource) + 1;	
+		lnNewBuffLen = (long) strlen(lpcSource) + 1;	
 		}
 	lnNewBuffLen += 15; /* Just a little safety factor */
 	lpBuff = malloc((size_t) lnNewBuffLen * sizeof(char));
@@ -704,7 +757,7 @@ long isAlnum1252(unsigned char cByte)
 
 /* ****************************************************************************** */
 /* Converts cp1252 strings to plain ascii by using the closest match for high
-   order non-ASCII cgaracters to Latin alphabet characters.  This function makes
+   order non-ASCII characters to Latin alphabet characters.  This function makes
    the substitutions in-place, as the resulting string is guaranteed not to get
    longer.                                                                        */
 unsigned char *Conv1252ToASCII(unsigned char *c1252, long bRemoveNonPrint)
@@ -715,8 +768,8 @@ unsigned char *Conv1252ToASCII(unsigned char *c1252, long bRemoveNonPrint)
 		{
 		for (jj = 0; jj <= 127; jj++)
 			{
-			aMap[jj] = jj;
-			aMap[jj + 128] = 95; // underscore
+			aMap[jj] = (unsigned char) jj;
+			aMap[jj + 128] =(unsigned char) 95; // underscore
 			}
 		aMap[138] = 'S';
 		aMap[140] = 'O';
@@ -787,7 +840,7 @@ static unsigned char* MakeLegalAlias(unsigned char* lpcBaseName)
 	strncpy(lcWorkAlias, MPStrTrim('A', lpcBaseName), 299);
 	lcWorkAlias[299] = (char) 0;
 	Conv1252ToASCII(lcWorkAlias, TRUE);
-	lnWorkLen = strlen(lcWorkAlias);
+	lnWorkLen = (long) strlen(lcWorkAlias);
 	if (isdigit(lcWorkAlias[0]))
 		{
 		lcGoodAlias[lnOutCount++] = '_';
@@ -954,13 +1007,14 @@ static PyObject *cbwINITDATASESSION(PyObject *self, PyObject *args)
 		codeBase.singleOpen = FALSE; //FALSE;
 		codeBase.autoOpen = TRUE;
 		codeBase.ignoreCase = TRUE;
-		codeBase.errDefaultUnique = r4uniqueContinue; // The default.  Shouldn't need to set this but ??
+		// codeBase.errDefaultUnique = r4uniqueContinue; // The default.  Shouldn't need to set this but ??
+		codeBase.errDefaultUnique = 15; // r4uniqueContinue; 
 		if (lnLargeFlag == 1)
 			{
 			code4largeOn(&codeBase);
 			gbLargeMode = TRUE;
 			}
-		srand(time(NULL));
+		srand((unsigned int) time(NULL));
 		strcpy(gcDateFormatCode, "MM/DD/YY"); // The CodeBase Default
 		}
 	else
@@ -977,12 +1031,12 @@ static PyObject *cbwINITDATASESSION(PyObject *self, PyObject *args)
 /* success, otherwise -1.                                                         */
 static PyObject *cbwSWITCHDATASESSION(PyObject *self, PyObject *args)
 {
-	long jj;
-	long kk;
+	register long kk;
 	long lnTargetSession;
 	long lnReturn = -1;
 	long lnPtr = 0;
-	CODEBASESTATUS *lpStat;	
+	CODEBASESTATUS *lpStat = NULL;
+	CODE4 cb4Test;
 	
 	gcErrorMessage[0] = (char) 0;
 	gnLastErrorNumber = 0;
@@ -1001,7 +1055,7 @@ static PyObject *cbwSWITCHDATASESSION(PyObject *self, PyObject *args)
 		}
 	else
 		{
-		if (lnTargetSession > (MAXDATASESSIONS - 1))
+		if (lnTargetSession > (MAXDATASESSIONS - 1) || (lnTargetSession < 0))
 			{
 			strcpy(gcErrorMessage, "Invalid target Session Number");
 			gnLastErrorNumber = -10001;
@@ -1043,7 +1097,15 @@ static PyObject *cbwSWITCHDATASESSION(PyObject *self, PyObject *args)
 					strncpy(lpStat->aExclList[kk], gaExclList[kk], MAXALIASNAMESIZE);
 					}
 				}
-			codeBase = gaCodeBases[lnTargetSession];
+			cb4Test = gaCodeBases[lnTargetSession];
+			if (cb4Test.compatibility != 30) // 30 is VFP 6+ compatibility which is ALWAYS set for active codebase instances
+			    {
+        		strcpy(gcErrorMessage, "The Data Session Number passed has NOT BEEN ACTIVATED!");
+        		gnLastErrorNumber = -10000;
+        		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+        		return NULL;			    
+			    }
+			codeBase = cb4Test;
 			lpStat = &(gaCodeBaseEnvironments[lnTargetSession]);
 			gpCurrentTable = lpStat->pCurrentTable;
 			gpCurrentIndexTag = lpStat->pCurrentIndexTag;
@@ -1084,13 +1146,13 @@ static PyObject *cbwSWITCHDATASESSION(PyObject *self, PyObject *args)
 /* success, otherwise -1.                                                         */
 static PyObject *cbwCLOSEDATASESSION(PyObject *self, PyObject *args)
 {
-	long jj;
 	long lnTargetSession;
 	long lnReturn = 99;
 	long lnResult = 0;
 	long kk;
-	CODEBASESTATUS *lpStat;
+	CODEBASESTATUS *lpStat = NULL;
 	CODE4 lxCodeBase;
+	CODE4 cb4Test;
 		
 	gcErrorMessage[0] = (char) 0;
 	gnLastErrorNumber = 0;
@@ -1101,6 +1163,7 @@ static PyObject *cbwCLOSEDATASESSION(PyObject *self, PyObject *args)
 		gnLastErrorNumber = -10000;
 		return NULL;
 		}
+		
 	if (lnTargetSession > (MAXDATASESSIONS - 1))
 		{
 		strcpy(gcErrorMessage, "Invalid target Session Number");
@@ -1146,7 +1209,14 @@ static PyObject *cbwCLOSEDATASESSION(PyObject *self, PyObject *args)
 		else
 			{
 			lxCodeBase = codeBase;
-			codeBase = gaCodeBases[lnTargetSession];
+			cb4Test = gaCodeBases[lnTargetSession];
+			if (cb4Test.compatibility != 30)
+			    {
+        		strcpy(gcErrorMessage, "The Data Session Number passed has NOT BEEN ACTIVATED! Can't close.");
+        		gnLastErrorNumber = -10000;
+        		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+        		return NULL;			    
+			    }
 			lnResult = code4initUndo(&codeBase); // Requires this exact variable because it has internal pointers to itself.
 			memset(&codeBase, 0, sizeof(CODE4));
 			gaCodeBases[lnTargetSession] = codeBase; // Storing the un-inited version.
@@ -1227,8 +1297,8 @@ static PyObject *cbwSETDATEFORMAT(PyObject *self, PyObject *args)
 	long lnReturn = 1;
 	unsigned char cDateFmat[30];
 	unsigned char lcFormat[45];
-	const unsigned char *cTest;
-	PyObject *lxFormat;
+	const unsigned char *cTest = NULL;
+	PyObject *lxFormat = NULL;
 
 	if (!PyArg_ParseTuple(args, "O", &lxFormat))
 		{
@@ -1237,6 +1307,14 @@ static PyObject *cbwSETDATEFORMAT(PyObject *self, PyObject *args)
 		PyErr_Format(PyExc_ValueError, gcErrorMessage);
 		return NULL;
 		}
+
+    if (codeBase.compatibility != 30)
+        {
+		strcpy(gcErrorMessage, "CodeBase Tools has been closed.  Can't set date format.");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;        
+        }
 		
 	cTest = testStringTypes(lxFormat);
 	if (*cTest != (const unsigned char) 0)
@@ -1341,6 +1419,7 @@ static PyObject *cbwGETDATEFORMAT(PyObject *self, PyObject *args)
 //char* cbwERRORMSG(void)
 static PyObject *cbwERRORMSG(PyObject *self, PyObject *args)
 {
+    //printf("TESTING WRITING TO SCREEN\n");
 	return Py_BuildValue("s", gcErrorMessage);	
 }
 
@@ -1359,6 +1438,41 @@ static PyObject *cbwISLARGEMODE(PyObject *self, PyObject *args)
 {
 return Py_BuildValue("N", PyBool_FromLong(gbLargeMode));	
 }
+
+/* ******************************************************************************* */
+/* Sets the status of the gbDebugMode flag meaning that if TRUE, debug statements  */
+/* may be echoed to STDOUT via a printf() call, otherwise these debug statements   */
+/* are ignored.  Pass -1 (None in Python scripts) and this will return the current */
+/* value of the gbDebugMode flag (TRUE or FALSE).                                  */
+/* Returns TRUE if TRUE or FALSE has been passed to set the current mode.          */
+/* Added June 3, 2025. J. Heuer.                                                   */
+static PyObject *cbwSETDEBUG(PyObject *self, PyObject *args)
+{
+	long lbHow;
+	long lnDebugOn = 0;
+	
+	if (!PyArg_ParseTuple(args, "l", &lbHow))
+		{
+		strcpy(gcErrorMessage, "Bad or missing parameter passed");
+		gnLastErrorNumber = -10000;
+		return NULL;
+		}	
+	lnDebugOn = lbHow;
+	if (lnDebugOn == -1)
+		{
+		return Py_BuildValue("N", PyBool_FromLong(gbDebugMode));	
+		}
+	else
+		{
+		gbDebugMode = lbHow;
+		if (gbDebugMode)
+		    {
+		    printf("Setting Debug Mode: %ld\n", lbHow);
+		    }
+		return Py_BuildValue("N", PyBool_FromLong(TRUE));
+		}	
+}
+
 
 /* ******************************************************************************* */
 /* Sets the status of the DELETED flag meaning that if TRUE, deleted records are   */
@@ -1416,12 +1530,12 @@ long cbxUSE(char *lpcTable, char *lpcAlias, long lpnReadOnlyFlag, long lbNoBuffe
 	DATA4 *lpTable;
 	long lbReturn = TRUE;
 	long lnResult;
-	long lnAliasLen;
 	char cWorkTable[300];
 	char cWorkAlias[300];
 	char cTempTable[500];
 	char cBaseName[300];
 	register long jj;
+	
 	//printf("THIS IS THE USE \n");
 	if (lpbExclusive)
 		{
@@ -1559,9 +1673,9 @@ static PyObject *cbwUSE(PyObject *self, PyObject *args)
 	long lpnNoBuffering;
 	char lcAlias[MAXALIASNAMESIZE + 1];
 	char lcTable[500];
-	const unsigned char *cTest;
-	PyObject *lxAlias;
-	PyObject *lxTable;
+	const unsigned char *cTest = NULL;
+	PyObject *lxAlias = NULL;
+	PyObject *lxTable = NULL;
 
 	if (!PyArg_ParseTuple(args, "OOll", &lxTable, &lxAlias, &lpnReadOnlyFlag, &lpnNoBuffering))
 		{
@@ -1570,6 +1684,14 @@ static PyObject *cbwUSE(PyObject *self, PyObject *args)
 		PyErr_Format(PyExc_ValueError, gcErrorMessage);
 		return NULL;
 		}
+
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't use()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }
 		
 	cTest = testStringTypes(lxTable);
 	if (*cTest != (const unsigned char) 0)
@@ -1682,8 +1804,8 @@ static PyObject *cbwDBF(PyObject *self, PyObject *args)
 	long lnReturn = TRUE;
 	DATA4 *lpTable = NULL;
 	char lcAlias[MAXALIASNAMESIZE + 1];
-	PyObject *lxAlias;
-	const unsigned char *cTest;
+	PyObject *lxAlias = NULL;
+	const unsigned char *cTest = NULL;
 
 	if (!PyArg_ParseTuple(args, "O", &lxAlias))
 		{
@@ -1692,7 +1814,13 @@ static PyObject *cbwDBF(PyObject *self, PyObject *args)
 		PyErr_Format(PyExc_ValueError, gcErrorMessage);
 		return NULL;
 		}
-
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't get DBF name.");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }
 	cTest = testStringTypes(lxAlias);
 	if (*cTest != (const unsigned char) 0)
 		{
@@ -1716,13 +1844,12 @@ static PyObject *cbwDBF(PyObject *self, PyObject *args)
 /* Updated 02/19/2015 to make use of the common cbxUSE() function.                 */
 static PyObject *cbwUSEEXCL(PyObject *self, PyObject *args)
 {
-	DATA4 *lpTable;
-	PyObject *lxTable;
-	PyObject *lxAlias;
+	PyObject *lxTable = NULL;
+	PyObject *lxAlias = NULL;
 	long lbReturn = TRUE;
 	char lcAlias[MAXALIASNAMESIZE + 1];
 	char lcTable[500];
-	const unsigned char *cTest;
+	const unsigned char *cTest = NULL;
 
 	if (!PyArg_ParseTuple(args, "OO", &lxTable, &lxAlias))
 		{
@@ -1731,7 +1858,14 @@ static PyObject *cbwUSEEXCL(PyObject *self, PyObject *args)
 		PyErr_Format(PyExc_ValueError, gcErrorMessage);
 		return NULL;
 		}
-		
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't useexcl()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }
+	    		
 	cTest = testStringTypes(lxTable);
 	if (*cTest != (const unsigned char) 0)
 		{
@@ -1820,15 +1954,15 @@ static PyObject *cbwTEMPINDEX(PyObject *self, PyObject *args)
 	char lcTagExpr[1000];
 	char lcTagFilter[1000];
 	char lcTagName[20];
-	PyObject* lxTagExpr;
-	PyObject* lxTagFltr;
+	PyObject* lxTagExpr = NULL;
+	PyObject* lxTagFltr = NULL;
 	long lpnDescending;
 	TAG4INFO laTagInfo[3];
 	TAG4* lpTag = NULL;
-	INDEX4 *lpIndex;
+	INDEX4 *lpIndex = NULL;
 	long jj;
 	long lnDescending = 0;
-	const unsigned char *cTest;
+	const unsigned char *cTest = NULL;
 
 	if (!PyArg_ParseTuple(args, "OOl", &lxTagExpr, &lxTagFltr, &lpnDescending))
 		{
@@ -1837,7 +1971,13 @@ static PyObject *cbwTEMPINDEX(PyObject *self, PyObject *args)
 		PyErr_Format(PyExc_ValueError, gcErrorMessage);
 		return NULL;
 		}
-
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't create temp indexes.");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }
 	cTest = testStringTypes(lxTagExpr);
 	if (*cTest != (const unsigned char) 0)
 		{
@@ -1886,7 +2026,7 @@ static PyObject *cbwTEMPINDEX(PyObject *self, PyObject *args)
 		if (strlen(lcTagFilter) == 0) laTagInfo[0].filter = NULL;
 		else laTagInfo[0].filter = (char*) lcTagFilter;
 		laTagInfo[0].unique = 0;
-		laTagInfo[0].descending = lnDescending;
+		laTagInfo[0].descending = (unsigned short) lnDescending;
 		
 		// Now look for an empty index in the temp index array
 		for (jj = 0; jj < gnMaxTempIndexes; jj++)
@@ -1965,7 +2105,6 @@ static PyObject *cbwTEMPINDEX(PyObject *self, PyObject *args)
 /* the current ordering on the table associated with this temp index.                     */
 static PyObject *cbwTEMPINDEXSELECT(PyObject *self, PyObject *args)
 {
-	long jj;
 	long lnIndx;
 	long lnReturn = 1;
 	TAG4* lpTag = NULL;
@@ -2009,7 +2148,6 @@ static PyObject *cbwTEMPINDEXSELECT(PyObject *self, PyObject *args)
 /* PRIVATE VERSION of cbwTEMPINDEXCLOSE() */
 long cbxTEMPINDEXCLOSE(long lpnIndx)
 {
-	long jj;
 	long lnReturn = 1;
 	long lnResult;
 		
@@ -2055,9 +2193,7 @@ long cbxTEMPINDEXCLOSE(long lpnIndx)
 /* meaning "no order".  Returns True on OK, False on failure.                         */
 static PyObject *cbwTEMPINDEXCLOSE(PyObject *self, PyObject *args)
 {
-	long jj;
 	long lnReturn = 1;
-	long lnResult;
 	long lnIndx;
 
 	if (!PyArg_ParseTuple(args, "l", &lnIndx))
@@ -2077,7 +2213,7 @@ static PyObject *cbwTEMPINDEXCLOSE(PyObject *self, PyObject *args)
 /* store the proper index information for the table.                               */
 long cbxReopenCurrentTable(void)
 {
-	DATA4* lpTable;
+	DATA4* lpTable = NULL;
 	long lbReturn = TRUE;
 	long lbResult;
 	long nAccessMode = OPEN4DENY_NONE;
@@ -2117,7 +2253,7 @@ long cbxReopenCurrentTable(void)
 			}	
 		}
 	
-	codeBase.accessMode = nAccessMode;
+	codeBase.accessMode = (char) nAccessMode;
 	strcpy(cTableName, d4fileName(gpCurrentTable));
 	lbResult = d4close(gpCurrentTable);
 	if (lbResult < 0)
@@ -2164,9 +2300,8 @@ long cbxReopenCurrentTable(void)
 long cbxTAGCOUNT(void)
 {
 	long lnReturn = -1;
-	long lnResult;
-	INDEX4* lpIndex;
-	TAG4INFO* laTags;
+	INDEX4* lpIndex = NULL;
+	TAG4INFO* laTags = NULL;
 	long lnCount = 0;
 	long jj;
 	
@@ -2226,6 +2361,126 @@ static PyObject *cbwTAGCOUNT(PyObject *self, PyObject *args)
 }
 
 /* *********************************************************************************** */
+/* Special function to add a candidate index to a table where there is already a CDX
+   file in place.  There's a bug in CodeBase which will only add such a tag as a
+   'unique' status, not 'candidate' unless we define all tags in one process.   
+   EXPERIMENTAL CODE.  DOES NOT WORK AS OF MAY 5, 2024. JSH.       */
+long cbxAddCandidateTag(TAG4INFO *laTagInfo, TAG4* lpCurrentTag)
+{
+    long lnReturn = TRUE;
+    TAG4INFO* laSrcTags = NULL;
+	INDEX4* lpSrcIndex = NULL;
+	TAG4* lpWorkTag = NULL;
+	long lnExistingCount = 0;
+	long lnCount = 0;
+	long lnTemp = 0;
+	long bExists = 0;
+	register long jj;
+	INDEX4* lpTrgIndex = NULL;
+	TAG4INFO laNewTags[200];
+	printf("IN THE ADD INDEX %s \n", laTagInfo[0].name);
+	
+	memset(laNewTags, 0, (size_t) (200 * sizeof(TAG4INFO)));
+	lpSrcIndex = d4index(gpCurrentTable, NULL);
+	if (lpSrcIndex == NULL)
+		{
+		lnCount = 0;
+		}
+	else
+		{
+		laSrcTags = i4tagInfo(lpSrcIndex);
+		if (laSrcTags != NULL)			
+			{
+            if (lpCurrentTag != NULL)
+                {
+                printf("UPDATING THE EXISTING...count = %ld \n", (long) lnCount);
+                // The tag name is currently found in the tag list, so we update it
+                for (jj = 0; jj < 300; jj++)
+                    {
+                    if (laSrcTags[jj].name == 0) break;
+                        
+                    if (strcmp(laSrcTags[jj].name, laTagInfo[0].name) == 0)
+                        {
+                        printf("OLD UNIQUE %ld  NEW UNIQUE %ld \n", (long) laSrcTags[jj].unique, (long) laTagInfo[0].unique);
+                        laSrcTags[jj].expression = laTagInfo[0].expression;
+                        laSrcTags[jj].filter = laTagInfo[0].filter;
+                        laSrcTags[jj].unique = laTagInfo[0].unique;
+                        laSrcTags[jj].descending = laTagInfo[0].descending;
+                        }
+                    lpWorkTag = d4tag(gpCurrentTable, laSrcTags[jj].name);
+                    if (lpWorkTag != NULL)
+                        {
+                        printf("DELETE OLD TAG %s \n", laSrcTags[jj].name);
+                        lnTemp = i4tagRemove(lpWorkTag);    
+                        printf("REMOVE RETURNED %ld \n", lnTemp);
+                        }
+                    }
+                  for (jj = 0; jj <= 300; jj++)
+                    {
+                    
+                    printf("ALL TAGS: %s %s %s %ld %ld \n", laSrcTags[jj].name, laSrcTags[jj].expression, laSrcTags[jj].filter, (long) laSrcTags[jj].unique, (long) laSrcTags[jj].descending);
+                    if (laSrcTags[jj].name == 0)
+                        break;
+                    }
+                
+                lpTrgIndex = i4create(gpCurrentTable, NULL, laSrcTags); 
+                printf("THE RESULT INDEX: %p \n", lpTrgIndex);
+                printf("Err Number %ld \n", (long) codeBase.errorCode);
+                }
+		    else
+		        {
+		        // Not found in the tag list, so we have to add it.
+		        printf("THIS IS A TEST %ld \n", lnCount);
+
+		        for (jj = 0; jj < lnCount; jj++)
+		            {
+		            laNewTags[jj].name = laSrcTags[jj].name;
+		            		            laNewTags[jj].expression = laSrcTags[jj].expression;
+		            laNewTags[jj].filter = laSrcTags[jj].filter;
+		            laNewTags[jj].unique = laSrcTags[jj].unique;
+		            laNewTags[jj].descending = laSrcTags[jj].descending;
+                    printf("%ld OLD NAME %s EXPR %s  UNIQUE %ld \n", jj, laNewTags[jj].name, laNewTags[jj].expression, (long) laNewTags[jj].unique);
+                    lpWorkTag = d4tag(gpCurrentTable, laSrcTags[jj].name);
+                    if (lpWorkTag != NULL)
+                        {
+                        lnTemp = i4tagRemove(lpWorkTag);    
+                        printf("Remove Result %ld \n", lnTemp);
+                        }
+                    printf("%ld XX OLD NAME %s EXPR %s  UNIQUE %ld \n", jj, laNewTags[jj].name, laNewTags[jj].expression, (long) laNewTags[jj].unique);                        
+		            }
+                  		            
+		        laNewTags[lnCount].name = laTagInfo[0].name;
+		        laNewTags[lnCount].expression = laTagInfo[0].expression;
+		        laNewTags[lnCount].filter = laTagInfo[0].filter;
+		        laNewTags[lnCount].unique = laTagInfo[0].unique;
+		        laNewTags[lnCount].descending = laTagInfo[0].descending;
+		        printf("NEW ITEM %ld NEW NAME %s NEW EXPR %s NEW UNIQUE %ld \n", lnCount, laNewTags[lnCount].name, laNewTags[lnCount].expression, (long) laNewTags[lnCount].unique);
+		        laNewTags[lnCount + 1].name = (char*) NULL;
+		        laNewTags[lnCount + 1].expression = (const char*) NULL;
+		        laNewTags[lnCount + 1].filter = (const char*) NULL;
+		        laNewTags[lnCount + 1].unique = 0;
+		        laNewTags[lnCount + 1].descending = 0;
+		        
+		        //lpTrgIndex = i4create(gpCurrentTable, NULL, laNewTags);
+		        //printf("THE POINTER: %p \n", lpTrgIndex);
+		        //u4free(lpTrgIndex);
+		        }
+
+    		if (lpTrgIndex == NULL)
+    			{
+    			gnLastErrorNumber = codeBase.errorCode;
+    			strcpy(gcErrorMessage, error4text(&codeBase, codeBase.errorCode));	
+    			printf("THE ERROR MESSAGE %s Code %ld \n", gcErrorMessage, (long) codeBase.errorCode);
+    			lnReturn = FALSE;
+    			}
+    		u4free(laSrcTags);
+			}
+		} 
+	printf("THE RETURN %ld \n", lnReturn);  
+    return lnReturn;
+}
+
+/* *********************************************************************************** */
 /* Equivalent to VFP INDEX ON command.  Operates on the currently selected table.      */
 /* The index expression may contain VFP type functions recognized by the CodeBase      */
 /* engine.  See the CodeBase documentation for more information.                       */
@@ -2236,20 +2491,18 @@ static PyObject *cbwINDEXON(PyObject *self, PyObject *args)
 	int  lnResult = 0;
 	long lnTagCount = 0;
 	long lnTagLength = 0;
-	long lnOldAccess;
 	long lpnDescending;
 	long lnDescending = 0;
 	long lpnUnique = 0;
-	char *lpcTagName;
-	PyObject* lxTagName;
-	PyObject* lxTagExpr;
-	PyObject* lxTagFltr;
+	PyObject* lxTagName = NULL;
+	PyObject* lxTagExpr = NULL;
+	PyObject* lxTagFltr = NULL;
 	char lcTagName[100];
 	char lcTagExpr[500];
 	char lcTagFltr[500];
 	TAG4INFO laTagInfo[3];
 	TAG4* lpTag = NULL;
-	INDEX4* lpIndex;
+	INDEX4* lpIndex = NULL;
 	char lcTableName[256];
 	char lcIndexName[256];
 	const unsigned char *cTest;
@@ -2261,6 +2514,14 @@ static PyObject *cbwINDEXON(PyObject *self, PyObject *args)
 		PyErr_Format(PyExc_ValueError, gcErrorMessage);		
 		return NULL;
 		}
+
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't index()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }
 
 	cTest = testStringTypes(lxTagExpr);
 	if (*cTest != (const unsigned char) 0)
@@ -2300,13 +2561,13 @@ static PyObject *cbwINDEXON(PyObject *self, PyObject *args)
 	gcErrorMessage[0] = (char) 0;
 	gcStrReturn[0] = (char) 0;
 	gnLastErrorNumber = 0;
-	memset(&laTagInfo, 0, (size_t) 3 * sizeof(TAG4INFO));
+	memset(laTagInfo, 0, (size_t) 3 * sizeof(TAG4INFO));
 	memset(lcTableName, 0, (size_t) 256 * sizeof(char));
 	memset(lcIndexName, 0, (size_t) 256 * sizeof(char));
 	
 	if (gpCurrentTable != NULL)
 		{
-		lnTagLength = strlen(lcTagName);
+		lnTagLength = (long) strlen(lcTagName);
 		if ((lnTagLength == 0) || (lnTagLength > 10))
 			{
 			lnReturn = 0;
@@ -2329,8 +2590,8 @@ static PyObject *cbwINDEXON(PyObject *self, PyObject *args)
 			laTagInfo[0].name = lcTagName;
 			laTagInfo[0].expression = lcTagExpr;
 			laTagInfo[0].filter = lcTagFltr;
-			laTagInfo[0].unique = lpnUnique;
-			laTagInfo[0].descending = lnDescending;
+			laTagInfo[0].unique = (int) lpnUnique;
+			laTagInfo[0].descending = (unsigned short) lnDescending;
 			
 			while(TRUE) /* Not a real loop, just a complex switch setup. */
 				{
@@ -2350,6 +2611,13 @@ static PyObject *cbwINDEXON(PyObject *self, PyObject *args)
 						}
 					break;	
 					}
+					
+//				if ((lnTagCount > 0) && (laTagInfo[0].unique == 15))  /* We have to add the tag to the existing CDX, but it is
+//				    a candidate key, which can only be added by replacing all tags. */ 
+//				    {
+//				     lnReturn = cbxAddCandidateTag(laTagInfo, lpTag); 
+//				     break;  
+//				    }
 					
 				if ((lnTagCount > 0) && (lpTag == NULL)) /* There is an index CDX file, but not with that tag.  So we Add it. */
 					{
@@ -2538,11 +2806,11 @@ long cbxFINDUNDELETED(DATA4 *lpTable, long lnDirection, long lnSeekFlag)
 static PyObject *cbwSELECT(PyObject *self, PyObject *args)
 {
 	long lbReturn = TRUE;
-	DATA4 *lpTable;
+	DATA4 *lpTable = NULL;
 	//char *lpcAlias;
-	PyObject* lpxAlias;
+	PyObject* lpxAlias = NULL;
 	char lcAlias[MAXALIASNAMESIZE + 1];
-	const unsigned char *cTest;
+	const unsigned char *cTest = NULL;
 		
 	codeBase.errorCode = 0;
 	gcErrorMessage[0] = (char) 0;
@@ -2555,7 +2823,13 @@ static PyObject *cbwSELECT(PyObject *self, PyObject *args)
 		PyErr_Format(PyExc_ValueError, gcErrorMessage);
 		return NULL;
 		}
-	
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't select()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }	
 	cTest = testStringTypes(lpxAlias);
 	if (*cTest != (const unsigned char) 0)
 		{
@@ -2627,10 +2901,9 @@ static PyObject *cbwSETCODEPAGE(PyObject *self, PyObject *args)
 static PyObject *cbwUSED(PyObject *self, PyObject *args)
 {
 	long lnReturn = FALSE;
-	char *lpcAlias;
-	DATA4 *lpTable;
+	DATA4 *lpTable = NULL;
 	char lcAliasName[MAXALIASNAMESIZE + 1];
-	PyObject* lxAlias;
+	PyObject* lxAlias = NULL;
 	const unsigned char *cTest;
 	
 	if (!PyArg_ParseTuple(args, "O", &lxAlias))
@@ -2647,6 +2920,13 @@ static PyObject *cbwUSED(PyObject *self, PyObject *args)
 		PyErr_Format(PyExc_ValueError, gcErrorMessage);
 		return NULL;			
 		}
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't test used()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }		
 	strncpy(lcAliasName, Unicode2Char(lxAlias), MAXALIASNAMESIZE);
 	lcAliasName[MAXALIASNAMESIZE] = (char) 0;
 	Conv1252ToASCII(lcAliasName, TRUE);
@@ -3006,7 +3286,13 @@ static PyObject *cbwSKIP(PyObject *self, PyObject *args)
 		gnLastErrorNumber = -10000;
 		return NULL;
 		}	
-	
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't skip()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }	
 	if (gpCurrentTable)
 		{
 		if (lpnCount == 0) lpnCount = 1; /* Just in case, we at least skip 1 forward */
@@ -3035,10 +3321,9 @@ static PyObject *cbwSKIP(PyObject *self, PyObject *args)
 static PyObject *cbwGOTO(PyObject *self, PyObject *args)
 {
 	long lpnCount;
-	long lnReturn;
 	long lbReturn = TRUE;
 	char lcHow[20];
-	PyObject* lxHow;
+	PyObject* lxHow = NULL;
 	const unsigned char *cTest;	
 	
 	if (!PyArg_ParseTuple(args, "Ol", &lxHow, &lpnCount))
@@ -3048,7 +3333,13 @@ static PyObject *cbwGOTO(PyObject *self, PyObject *args)
 		PyErr_Format(PyExc_ValueError, gcErrorMessage);		
 		return NULL;
 		}	
-
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't goto()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }
 	cTest = testStringTypes(lxHow);
 	if (*cTest != (const unsigned char) 0)
 		{
@@ -3106,10 +3397,9 @@ static PyObject *cbwCALCSTATS(PyObject *self, PyObject *args)
 	long lnOldRecord = 0;
 	unsigned char lcFieldExpr[250];
 	unsigned char lcForVFPexpr[250];
-	PyObject* lxFieldExpr;
-	PyObject* lxForVFPexpr;
-	const unsigned char *cTest;	
-	double lpnValue;
+	PyObject* lxFieldExpr = NULL;
+	PyObject* lxForVFPexpr = NULL;
+	const unsigned char *cTest = NULL;
 	long lpnStat;
 	RELATE4 *xpQuery = NULL;
 	EXPR4 *xpExpr = NULL;
@@ -3124,7 +3414,13 @@ static PyObject *cbwCALCSTATS(PyObject *self, PyObject *args)
 		PyErr_Format(PyExc_ValueError, gcErrorMessage);		
 		return NULL;
 		}
-
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't calcstats()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }
 	cTest = testStringTypes(lxFieldExpr);
 	if (*cTest != (const unsigned char) 0)
 		{
@@ -3315,7 +3611,7 @@ static PyObject *cbwCOUNT(PyObject *self, PyObject *args)
 	long lnCount = 0;
 	long lnOldRecord = 0;
 	unsigned char lcVFPexpr[400];
-	PyObject *lxVFPexpr;
+	PyObject *lxVFPexpr = NULL;
 	const unsigned char *cTest;	
 	RELATE4 *xpQuery = NULL;
 	
@@ -3330,7 +3626,13 @@ static PyObject *cbwCOUNT(PyObject *self, PyObject *args)
 		PyErr_Format(PyExc_ValueError, gcErrorMessage);		
 		return NULL;
 		}	
-
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't count()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }
 	cTest = testStringTypes(lxVFPexpr);
 	if (*cTest != (const unsigned char) 0)
 		{
@@ -3422,8 +3724,9 @@ static PyObject *cbwLOCATE(PyObject *self, PyObject *args)
 {
 	long lnReturn = 0;
 	long lnResult = 0;
+	long lnOldErrorAction = 0;
 	unsigned char lcVFPexpr[400];
-	PyObject *lxVFPexpr;
+	PyObject *lxVFPexpr = NULL;
 	const unsigned char *cTest;	
 
 	if (!PyArg_ParseTuple(args, "O", &lxVFPexpr))
@@ -3433,7 +3736,13 @@ static PyObject *cbwLOCATE(PyObject *self, PyObject *args)
 		PyErr_Format(PyExc_ValueError, gcErrorMessage);			
 		return NULL;
 		}
-	
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't locate()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }	
 	codeBase.errorCode = 0;
 	gcErrorMessage[0] = (char) 0;
 	gnLastErrorNumber = 0;
@@ -3451,9 +3760,14 @@ static PyObject *cbwLOCATE(PyObject *self, PyObject *args)
 	
 	if (gpCurrentTable != NULL)
 		{
+		if (gbDebugMode)
+		    {
+		    // printf("Valid Table - Starting Locate Process\n");
+		    }
 		if (gpCurrentQuery != NULL)
 			{
 			relate4free(gpCurrentQuery, 0); // Doesn't close any tables
+			gpCurrentQuery = NULL;  // Added June 3, 2025. JSH.
 			}	
 		gpCurrentQuery = relate4init(gpCurrentTable);
 		if (gpCurrentQuery == NULL)
@@ -3464,22 +3778,48 @@ static PyObject *cbwLOCATE(PyObject *self, PyObject *args)
 			}
 		else
 			{
+			// lnOldErrorAction = relate4errorAction(gpCurrentQuery, relate4terminate);
+			if (gbDebugMode)
+			    {
+			    printf("Valid Query Created for Expr: <%s> \n", lcVFPexpr);
+			    // printf("Set relate action to relate4terminate\n");
+			    }
 			lnResult = relate4querySet(gpCurrentQuery, lcVFPexpr);
+			if (gbDebugMode)
+			    {
+			    printf("relate4querySet returned %ld \n", (long) lnResult);
+			    }
 			if (lnResult != r4success)
 				{
 				strcpy(gcErrorMessage, error4text(&codeBase, codeBase.errorCode)); /* Error */
 				gnLastErrorNumber = codeBase.errorCode;
-				lnReturn = -1;					
+				lnReturn = -1;
+				if (gbDebugMode)
+				    {
+				    printf("No matching records found... Error Code %ld\n", (long) gnLastErrorNumber);
+				    }					
 				}
 			else
 				{
+				if (gbDebugMode)
+				    {
+				    printf("relate4query success, doing relate4top()\n");
+				    }
 				lnResult = relate4top(gpCurrentQuery);
 				if (lnResult == r4success) // Found a matching record.  Still need to check deletion status.
 					{
+					if (gbDebugMode)
+					    {
+					    printf("Matching Record Found with Global Deleted Flag Status %ld\n", gnDeletedFlag);
+					    }
 					lnReturn = TRUE;	
 					}
 				else
 					{
+					if (gbDebugMode)
+					    {
+					    printf("relate4top FAILED with %ld \n", (long) lnResult);
+					    }
 					if ((lnResult == r4eof) || (lnResult == r4terminate)) // No matching records.
 						{
 						lnReturn = FALSE;	
@@ -3488,7 +3828,11 @@ static PyObject *cbwLOCATE(PyObject *self, PyObject *args)
 						{
 						strcpy(gcErrorMessage, error4text(&codeBase, codeBase.errorCode)); /* Error */
 						gnLastErrorNumber = codeBase.errorCode;
-						lnReturn = -1;							
+						lnReturn = -1;
+						if (gbDebugMode)
+						    {
+						    printf("Returning -1 failure signal for error %ld \n", (long) gnLastErrorNumber);
+						    }						
 						}
 					}	
 				}	
@@ -3507,6 +3851,10 @@ static PyObject *cbwLOCATE(PyObject *self, PyObject *args)
 			{
 			// This "FOUND" record has been deleted, so we try for the next non-deleted one...
 			lnReturn = FALSE; // be pessimistic
+			if (gbDebugMode)
+			    {
+			    printf("FOUND record was deleted, so we loop until success\n");
+			    }
 			while (relate4skip(gpCurrentQuery, 1) == r4success)
 				{
 				if (!cbxDELETED())
@@ -3517,6 +3865,15 @@ static PyObject *cbwLOCATE(PyObject *self, PyObject *args)
 				}
 			}	
 		}
+	if (gbDebugMode)
+	    {
+	    printf("Locate is Returning %ld \n", lnReturn);
+	    }
+    //lnOldErrorAction = relate4errorAction(gpCurrentQuery, relate4terminate)
+    if (lnOldErrorAction != 0 && gpCurrentQuery != NULL)
+        {
+        relate4errorAction(gpCurrentQuery, lnOldErrorAction);
+        }
 	if (lnReturn == -1) return Py_BuildValue("");
 	else return Py_BuildValue("N", PyBool_FromLong(lnReturn));	
 }
@@ -3647,17 +4004,17 @@ static PyObject *cbwCOPYTAGS(PyObject *self, PyObject *args)
 	char lcSrcAlias[MAXALIASNAMESIZE + 1];
 	char lcTrgAlias[MAXALIASNAMESIZE + 1];
 	TAG4INFO* laSrcTags = NULL;
-	INDEX4* lpSrcIndex;
+	INDEX4* lpSrcIndex = NULL;
 	TAG4INFO* laTrgTags = NULL;
-	TAG4INFO* lpTagPtr;
-	INDEX4* lpTrgIndex;
+	TAG4INFO* lpTagPtr = NULL;
+	INDEX4* lpTrgIndex = NULL;
 	long lnCount = 0;
 	long lnTrgCount = 0;
 	long jj;
 	TAG4* lpTag = NULL;
-	PyObject *lxSourceAlias;
-	PyObject *lxTargetAlias;
-	const unsigned char *cTest;	
+	PyObject *lxSourceAlias = NULL;
+	PyObject *lxTargetAlias = NULL;
+	const unsigned char *cTest = NULL;
 		
 	
 	if (!PyArg_ParseTuple(args, "OO", &lxSourceAlias, &lxTargetAlias))
@@ -3667,7 +4024,13 @@ static PyObject *cbwCOPYTAGS(PyObject *self, PyObject *args)
 		PyErr_Format(PyExc_ValueError, gcErrorMessage);		
 		return NULL;
 		}	
-	
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't copytags()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }	
 	cTest = testStringTypes(lxSourceAlias);
 	if (*cTest != (const unsigned char) 0)
 		{
@@ -3792,11 +4155,10 @@ static PyObject *cbwDELETETAG(PyObject *self, PyObject *args)
 {
 	long lnReturn = TRUE;
 	int  lnResult = 0;
-	PyObject *lxTagName;
+	PyObject *lxTagName = NULL;
 	unsigned char lcTagName[100];
-	const unsigned char *cTest;
+	const unsigned char *cTest = NULL;
 	TAG4* lpTag = NULL;
-	INDEX4* lpIndex;
 
 	if (!PyArg_ParseTuple(args, "O", &lxTagName))
 		{
@@ -3805,7 +4167,13 @@ static PyObject *cbwDELETETAG(PyObject *self, PyObject *args)
 		PyErr_Format(PyExc_ValueError, gcErrorMessage);		
 		return NULL;
 		}
-
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't deletetag()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }
 	cTest = testStringTypes(lxTagName);
 	if (*cTest != (const unsigned char) 0)
 		{
@@ -3870,10 +4238,10 @@ static PyObject *cbwDELETETAG(PyObject *self, PyObject *args)
 static PyObject *cbwSETORDERTO(PyObject *self, PyObject *args)
 {
 	long lnReturn = TRUE;
-	TAG4 *lpTag;
+	TAG4 *lpTag = NULL;
 	char lcTagName[100];
-	PyObject* lxTagName;
-	const unsigned char *cTest;
+	PyObject* lxTagName = NULL;
+	const unsigned char *cTest = NULL;
 	
 	if (!PyArg_ParseTuple(args, "O", &lxTagName))
 		{
@@ -3882,7 +4250,13 @@ static PyObject *cbwSETORDERTO(PyObject *self, PyObject *args)
 		PyErr_Format(PyExc_ValueError, gcErrorMessage);
 		return NULL;
 		}
-
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't setorderto()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }
 	cTest = testStringTypes(lxTagName);
 	if (*cTest != (const unsigned char) 0)
 		{
@@ -3938,9 +4312,9 @@ static PyObject *cbwATAGINFO(PyObject *self, PyObject *args)
 	long lnCount = 0;
 	register long jj;
 	long lnTest;
-	INDEX4* lpIndex;
-	TAG4INFO* laTags;
-	TAG4INFO* laTagPtr;
+	INDEX4* lpIndex = NULL;
+	TAG4INFO* laTags = NULL;
+	TAG4INFO* laTagPtr = NULL;
 	PyObject *tagList = (PyObject*) NULL;
 	PyObject *infoDict = NULL;
 	PyObject *xValue = NULL;
@@ -3948,7 +4322,13 @@ static PyObject *cbwATAGINFO(PyObject *self, PyObject *args)
 	codeBase.errorCode = 0;
 	gcErrorMessage[0] = (char) 0;
 	gnLastErrorNumber = 0;
-	
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't get taginfo()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }	
 	if (gpCurrentTable != NULL)
 		{
 		lpIndex = d4index(gpCurrentTable, NULL);
@@ -3971,7 +4351,7 @@ static PyObject *cbwATAGINFO(PyObject *self, PyObject *args)
 					infoDict = PyDict_New();
 
 #ifdef IS_PY3K
-					lnTest = strlen(laTagPtr->name);			
+					lnTest = (long) strlen(laTagPtr->name);			
 					xValue = PyUnicode_DecodeLatin1((const char*) laTagPtr->name, lnTest, "replace");
 					if (xValue == (void*) NULL)
 						{
@@ -3991,7 +4371,7 @@ static PyObject *cbwATAGINFO(PyObject *self, PyObject *args)
 					xValue = NULL;
 
 #ifdef IS_PY3K
-					lnTest = strlen(laTagPtr->expression);			
+					lnTest = (long) strlen(laTagPtr->expression);			
 					xValue = PyUnicode_DecodeLatin1((const char*) laTagPtr->expression, lnTest, "replace");
 					if (xValue == (void*) NULL)
 						{
@@ -4011,7 +4391,7 @@ static PyObject *cbwATAGINFO(PyObject *self, PyObject *args)
 					xValue = NULL;
 
 #ifdef IS_PY3K
-					lnTest = strlen(laTagPtr->filter);			
+					lnTest = (long) strlen(laTagPtr->filter);			
 					xValue = PyUnicode_DecodeLatin1((const char*) laTagPtr->filter, lnTest, "replace");
 					if (xValue == (void*) NULL)
 						{
@@ -4077,7 +4457,7 @@ static PyObject *cbwATAGINFO(PyObject *self, PyObject *args)
 /* Returns NULL on error.  Buffer may be an empty string if no tag is set.       */
 static PyObject *cbwORDER(PyObject *self, PyObject *args)
 {
-	TAG4* lpTag;
+	TAG4* lpTag = NULL;
 	long lnTest;
 	unsigned char lcTagName[45];
 	PyObject *xValue = NULL;
@@ -4086,7 +4466,13 @@ static PyObject *cbwORDER(PyObject *self, PyObject *args)
 	gcErrorMessage[0] = (char) 0;
 	gnLastErrorNumber = 0;
 	gcStrReturn[0] = (char) 0;
-	
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't get order()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }	
 	if (gpCurrentTable != NULL)
 		{
 		lpTag = d4tagSelected(gpCurrentTable);
@@ -4095,7 +4481,7 @@ static PyObject *cbwORDER(PyObject *self, PyObject *args)
 			strncpy(lcTagName, t4alias(lpTag), 44);
 			lcTagName[44] = (char) 0;
 #ifdef IS_PY3K
-			lnTest = strlen(lcTagName);			
+			lnTest = (long) strlen(lcTagName);			
 			xValue = PyUnicode_DecodeLatin1((const char*) lcTagName, lnTest, "replace");
 			if (xValue == (void*) NULL)
 				{
@@ -4132,13 +4518,12 @@ static PyObject *cbwORDER(PyObject *self, PyObject *args)
 FIELD4* cbxGetFieldFromName(char* lpcFieldName)
 {
 	FIELD4* lpReturn = NULL;
-	DATA4*   lpTable;
+	DATA4*   lpTable = NULL;
 	long lnReturn = TRUE;
-	char lcAliasName[MAXALIASNAMESIZE + 1];
 	char lcFieldName[MAXALIASNAMESIZE + 30];
 	char lcWorking[MAXALIASNAMESIZE + 30];
-	char* lcPtrDot;
-	char* lcPtrDash;
+	char* lcPtrDot = NULL;
+	char* lcPtrDash = NULL;
 	char *lcPtr = NULL;
 	long nOffset = 1;
 	long lnRecord;
@@ -4184,7 +4569,8 @@ FIELD4* cbxGetFieldFromName(char* lpcFieldName)
 		}
 	if (lnReturn)
 		{
-		lnRecord = d4recNo(lpTable);
+		if (lpTable != NULL) lnRecord = d4recNo(lpTable);
+		else lnRecord = -1;
 		if ((lnRecord < 1) || (lnRecord > d4recCount(lpTable)))
 			{
 			strcpy(gcErrorMessage, "No Current Record");
@@ -4227,16 +4613,16 @@ static PyObject *cbwSEEK(PyObject *self, PyObject *args)
 	long lnReturn = FALSE;
 	long lnResult;
 	DATA4 *lpTable = NULL;
-	INDEX4 *lpIndex;
-	TAG4   *lpTag;
+	INDEX4 *lpIndex = NULL;
+	TAG4   *lpTag = NULL;
 	TAG4   *lpOldTag = NULL; /* The tag prior to when we did our seek */
-	PyObject *lxMatch;
-	PyObject *lxAlias;
-	PyObject *lxTagName;
+	PyObject *lxMatch = NULL;
+	PyObject *lxAlias = NULL;
+	PyObject *lxTagName = NULL;
 	char lcAlias[MAXALIASNAMESIZE + 1];
 	char lcMatch[400];
 	char lcTagName[50];
-	const unsigned char *cTest;
+	const unsigned char *cTest = NULL;
 
 	if (!PyArg_ParseTuple(args, "OOO", &lxMatch, &lxAlias, &lxTagName))
 		{
@@ -4245,7 +4631,13 @@ static PyObject *cbwSEEK(PyObject *self, PyObject *args)
 		gnLastErrorNumber = -10000;
 		return NULL;
 		}	
-
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't seek()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }
 	cTest = testStringTypes(lxMatch);
 	if (*cTest != (const unsigned char) 0)
 		{
@@ -4414,16 +4806,16 @@ static PyObject *cbwSEEK(PyObject *self, PyObject *args)
 static PyObject *cbwSCATTERFIELDCHAR(PyObject *self, PyObject *args)
 {
 	char *lcPtr;
-	FIELD4 *lpField;
+	FIELD4 *lpField = NULL;
 	long lbTrim;
-	PyObject *lxRawField;
-	static PyObject *lxRet;
+	PyObject *lxRawField = NULL;
+	static PyObject *lxRet = NULL;
 	char lcFieldName[MAXALIASNAMESIZE + 30];
 	const unsigned char *cTest;	
 	long lbGoodData = TRUE;
 	long lnTest;
 	long bCopyFlag = FALSE;
-	unsigned char *cTempBuff;
+	unsigned char *cTempBuff = NULL;
 
 	if (!PyArg_ParseTuple(args, "Ol", &lxRawField, &lbTrim))
 		{
@@ -4432,7 +4824,13 @@ static PyObject *cbwSCATTERFIELDCHAR(PyObject *self, PyObject *args)
 		PyErr_Format(PyExc_ValueError, gcErrorMessage);		
 		return NULL;
 		}
-		
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't scatter()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }		
 	cTest = testStringTypes(lxRawField);
 	if (*cTest != (const unsigned char) 0)
 		{
@@ -4468,7 +4866,7 @@ static PyObject *cbwSCATTERFIELDCHAR(PyObject *self, PyObject *args)
 				}
 			else
 				{
-				lnTest = strlen(lcPtr);	
+				lnTest = (long) strlen(lcPtr);	
 				if (lbTrim)
 					{
 					cTempBuff = calloc((size_t) (lnTest + 1), sizeof(char));
@@ -4479,7 +4877,7 @@ static PyObject *cbwSCATTERFIELDCHAR(PyObject *self, PyObject *args)
 					}
 				else cTempBuff = lcPtr;
 #ifdef IS_PY3K				
-				lnTest = strlen(cTempBuff);						
+				lnTest = (long) strlen(cTempBuff);						
 				lxRet = PyUnicode_DecodeLatin1((const char*) cTempBuff, lnTest, "replace");
 				if (lxRet == (void*) NULL)
 					{
@@ -4532,7 +4930,13 @@ static PyObject *cbwSCATTERFIELD(PyObject *self, PyObject *args)
 		PyErr_Format(PyExc_ValueError, gcErrorMessage);		
 		return NULL;
 		}
-
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't scatter()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }
 	cTest = testStringTypes(lxFieldName);
 	if (*cTest != (const unsigned char) 0)
 		{
@@ -4725,7 +5129,13 @@ static PyObject *cbwRECALLALL(PyObject *self, PyObject *args)
 	gcErrorMessage[0] = (char) 0;
 	gnLastErrorNumber = 0;
 	gnProcessTally = 0;
-	
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't recall()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }	
 	if (gpCurrentTable != NULL)
 		{
 		saveSelected = d4tagSelected(gpCurrentTable) ;
@@ -4814,7 +5224,13 @@ static PyObject *cbwFLUSHALL(PyObject *self, PyObject *args)
 	codeBase.errorCode = 0;
 	gcErrorMessage[0] = (char) 0;
 	gnLastErrorNumber = 0;
-		
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't flush()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }		
 	lnResult = code4flush(&codeBase);
 	if (lnResult != 0)
 		{
@@ -4975,19 +5391,18 @@ long cbxEOF(void)
 static PyObject *cbwSCATTERBLANK(PyObject *self, PyObject *args)
 {
 	long lnReturn = TRUE;
-	long lnFldCnt, lnTest;
+	long lnFldCnt;
 	long bBinaryAsUnicode = FALSE;
 	register long jj;
-	char *lpcAlias;
-	FIELD4 *lpField;
+	FIELD4 *lpField = NULL;
 	DATA4 *lpTable = NULL;
 	PyObject *dataDict = NULL;
 	PyObject *xValue = NULL;
 	PyObject *xKey = NULL;
-	PyObject *lxAlias;
+	PyObject *lxAlias = NULL;
 	char lcAlias[MAXALIASNAMESIZE + 1];
 	char cName[25];
-	const unsigned char *cTest;
+	const unsigned char *cTest = NULL;
 	
 	codeBase.errorCode = 0;
 	gcErrorMessage[0] = (char) 0;
@@ -5000,7 +5415,13 @@ static PyObject *cbwSCATTERBLANK(PyObject *self, PyObject *args)
 		PyErr_Format(PyExc_ValueError, gcErrorMessage);		
 		return NULL;
 		}
-
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't scatterblank()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }
 	cTest = testStringTypes(lxAlias);
 	if (*cTest != (const unsigned char) 0)
 		{
@@ -5147,19 +5568,18 @@ static PyObject *cbwAFIELDS(PyObject *self, PyObject *args)
 	long lnFldCnt;
 	long lnTest;
 	char lcAlias[MAXALIASNAMESIZE + 1];
-	const char *pTest;
 	register long jj;
 	char cType[2];
-	FIELD4 *lpField;
-	DATA4 *lpTable;
-	FIELD4INFO *lpStruct;
-	FIELD4INFO *lpInfo;
+	FIELD4 *lpField = NULL;
+	DATA4 *lpTable = NULL;
+	FIELD4INFO *lpStruct = NULL;
+	FIELD4INFO *lpInfo = NULL;
 	PyObject *fieldList = NULL;
-	PyObject *fieldItem;
-	PyObject *xValue;
-	PyObject *xKey;
-	PyObject *lxAlias;
-	const unsigned char *cTest;
+	PyObject *fieldItem = NULL;
+	PyObject *xValue = NULL;
+	PyObject *xKey = NULL;
+	PyObject *lxAlias = NULL;
+	const unsigned char *cTest = NULL;
 	
 	if (!PyArg_ParseTuple(args, "O", &lxAlias))
 		{
@@ -5168,7 +5588,13 @@ static PyObject *cbwAFIELDS(PyObject *self, PyObject *args)
 		PyErr_Format(PyExc_ValueError, gcErrorMessage);		
 		return NULL;
 		}	
-
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't afields()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }
 	cTest = testStringTypes(lxAlias);
 	if (*cTest != (const unsigned char) 0)
 		{
@@ -5319,10 +5745,9 @@ VFPFIELD* cbxAFIELDS(long* lpnCount)
 	long lnReturn = TRUE;
 	long lnResult;
 	long lnFldCnt;
-	FIELD4INFO *lpStruct;
-	FIELD4INFO *lpInfo;	
-	long jj;
-	FIELD4 *lpField;
+	FIELD4INFO *lpStruct = NULL;
+	FIELD4INFO *lpInfo = NULL;
+	register long jj;
 	codeBase.errorCode = 0;
 	gcErrorMessage[0] = (char) 0;
 	gnLastErrorNumber = 0;
@@ -5401,10 +5826,10 @@ static PyObject *cbwAFIELDTYPES(PyObject *self, PyObject *args)
 {
 	long lnReturn = TRUE;
 	long lnResult;
-	long lnFldCnt, lnTest;
+	long lnFldCnt;
 	register long jj;
 	char cType[2];
-	FIELD4 *lpField;
+	FIELD4 *lpField = NULL;
 	PyObject *fieldTypes = NULL;
 	PyObject *xValue = NULL;
 	PyObject *xKey = NULL;
@@ -5483,11 +5908,18 @@ static PyObject *cbxMakeCharVar(FIELD4 *lppField, unsigned char lcCodeAsc, long 
 	static unsigned char cWorkBuff[1026];
 	long nLen;
 	PyObject *lxRetVal = NULL;
-	unsigned char *cBuffBig;
 	long bBigMode = FALSE;
 	char *cBuff;
 	char *cMsg;
 	
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't makecharvar()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }	
+	    
 	if (cType == 'C') nLen = f4len(lppField);
 	else nLen = f4memoLen(lppField);
 
@@ -5518,7 +5950,11 @@ static PyObject *cbxMakeCharVar(FIELD4 *lppField, unsigned char lcCodeAsc, long 
 		
 	case 'X':
 	default:
-		if (lpbStripBlanks) MPStrTrim('R', cBuff);
+		if (lpbStripBlanks)
+		    {
+		    MPStrTrim('R', cBuff);
+		    nLen = (long) strlen(cBuff);
+		    }
 		lxRetVal = PyUnicode_DecodeLatin1((const char*) cBuff, (Py_ssize_t) nLen, "replace");		
 		cMsg = "Extended ASCII with Code Page 1252";
 		break;
@@ -5567,7 +6003,6 @@ static PyObject *cbxMakeCharBinVar(FIELD4 *lppField, unsigned char lcCodeAsc, lo
 	static unsigned char cWorkBuff[1026];
 	long nLen;
 	PyObject *lxRetVal = NULL;
-	unsigned char *cBuffBig;
 	long bBigMode = FALSE;
 	char *cBuff;
 	char cMsg[100];
@@ -5657,18 +6092,19 @@ static PyObject *cbxMakeCharBinVar(FIELD4 *lppField, unsigned char lcCodeAsc, lo
 /* into the specified field using the requested conversion.                           */
 long cbxPyToCharFld(FIELD4 *lppField, PyObject *lpxString, unsigned char cType, unsigned char lcCodeAsc)
 {
-	long nLen;
 	char *cMsg;
-	size_t nSourceLen;
 	long bIsBinary = FALSE; // Any bytearray or bytes value is, by definition and is stored without encoding.
 	long lnRet = r4success;
 	long bDone = FALSE;
 	char cFldName[30];
-	PyObject *pyBytes;
-	PyObject *pyString;
-	char *cBuff;
+	char cCharString[1000];
+	// PyObject *pyBytes = NULL;
+	PyObject *pyString = NULL;
+	char *cBuff = NULL;
+	char *cLocalBuff = NULL;
 	Py_ssize_t nDataSize;
 
+    memset(cCharString, 0, (size_t) (sizeof(char) * 1000));
 #ifdef IS_PY3K
 
 	if(PyBytes_Check(lpxString)) // Alwas raw copy
@@ -5707,7 +6143,8 @@ long cbxPyToCharFld(FIELD4 *lppField, PyObject *lpxString, unsigned char cType, 
 					else
 						{
 						lnRet = f4memoAssignN(lppField, cBuff, (unsigned long) nDataSize);	
-						}					
+						}
+					Py_DECREF(pyString);				
 					break;
 					
 				case '8':
@@ -5722,12 +6159,15 @@ long cbxPyToCharFld(FIELD4 *lppField, PyObject *lpxString, unsigned char cType, 
 						return  -1;;
 						}					
 					nDataSize = PyBytes_Size(pyString);
-					cBuff = PyBytes_AsString(pyString);
-					if (cType == 'C') f4assignN(lppField, cBuff, (unsigned long) nDataSize);
+					cLocalBuff = (char*) calloc(nDataSize + 5, sizeof(char));
+					
+					if (cType == 'C') f4assignN(lppField, strncpy(cLocalBuff, PyBytes_AsString(pyString), nDataSize), (unsigned long) nDataSize);
 					else
 						{
-						lnRet = f4memoAssignN(lppField, cBuff, (unsigned long) nDataSize);	
-						}					
+						lnRet = f4memoAssignN(lppField, strncpy(cLocalBuff, PyBytes_AsString(pyString), nDataSize), (unsigned long) nDataSize);	
+						}
+					free(cLocalBuff);
+					Py_DECREF(pyString);				
 					break;
 					
 				case 'X':
@@ -5742,9 +6182,17 @@ long cbxPyToCharFld(FIELD4 *lppField, PyObject *lpxString, unsigned char cType, 
 						PyErr_Format(PyExc_ValueError, gcErrorMessage);	
 						return -1;
 						}
-					cBuff = PyBytes_AsString(pyString);
-					if (cType == 'C') f4assign(lppField, cBuff);
-					else lnRet = f4memoAssign(lppField, cBuff);				
+
+					if (cType == 'C') f4assign(lppField, strncpy(cCharString, PyBytes_AsString(pyString), 999));
+					else 
+					    {
+					    nDataSize = PyBytes_Size(pyString);
+					    cLocalBuff = (char*) calloc(nDataSize + 5, sizeof(char));
+					    
+					    lnRet = f4memoAssign(lppField, strncpy(cLocalBuff, PyBytes_AsString(pyString), nDataSize));
+					    free(cLocalBuff);
+					    }				
+					Py_DECREF(pyString);			
 					break;
 				}
 			bDone = TRUE;				
@@ -5759,6 +6207,7 @@ long cbxPyToCharFld(FIELD4 *lppField, PyObject *lpxString, unsigned char cType, 
 			{
 			cBuff = PyBytes_AsString(pyString);
 			lnRet = f4memoAssign(lppField, cBuff);
+			Py_DECREF(pyString);
 			}	
 		else
 			{
@@ -5819,7 +6268,8 @@ long cbxPyToCharFld(FIELD4 *lppField, PyObject *lpxString, unsigned char cType, 
 					else
 						{
 						lnRet = f4memoAssignN(lppField, cBuff, (unsigned long) nDataSize);	
-						}					
+						}
+					Py_DECREF(pyString);				
 					break;
 					
 				case '8':
@@ -5839,7 +6289,8 @@ long cbxPyToCharFld(FIELD4 *lppField, PyObject *lpxString, unsigned char cType, 
 					else
 						{
 						lnRet = f4memoAssignN(lppField, cBuff, (unsigned long) nDataSize);	
-						}					
+						}	
+					Py_DECREF(pyString);				
 					break;
 					
 				case 'R':
@@ -5865,9 +6316,16 @@ long cbxPyToCharFld(FIELD4 *lppField, PyObject *lpxString, unsigned char cType, 
 						PyErr_Format(PyExc_ValueError, gcErrorMessage);	
 						return  -1;;
 						}
-					cBuff = PyString_AsString(pyString);
-					if (cType == 'C') f4assign(lppField, cBuff);
-					else lnRet = f4memoAssign(lppField, cBuff);				
+
+					if (cType == 'C') f4assign(lppField, strncpy(cCharString, PyString_AsString(pyString), 999));
+					else 
+					    {
+					    nDataSize = PyString_Size(pyString);
+					    cLocalBuff = (char*) calloc(nDataSize + 5, sizeof(char));
+					    lnRet = f4memoAssign(lppField, strncpy(cLocalBuff, PyString_AsString(pyString), nDataSize));
+					    free(cLocalBuff);	
+					    }
+    				Py_DECREF(pyString);			
 					break;
 				}
 			bDone = TRUE;				
@@ -5898,20 +6356,17 @@ long cbxPyToCharFld(FIELD4 *lppField, PyObject *lpxString, unsigned char cType, 
 /* type code 'X'.                                                                     */
 long cbxPyToCharFldBin(FIELD4 *lppField, PyObject *lpxString, unsigned char cType, unsigned char lcCodeAsc)
 {
-	long nLen;
 	char cMsg[150];
-	size_t nSourceLen;
 	long bIsBinary = FALSE; // Any bytearray or bytes value is, by definition and is stored without encoding.
 	long lnRet = r4success;
 	long bDone = FALSE;
 	char cFldName[100];
 	static char cBinBuff[1000];
-	char *cWorkBuff;
+	char *cWorkBuff = NULL;
 	long bNeedFree = FALSE;
 	long nFldSize = 0;
-	PyObject *pyBytes;
-	PyObject *pyString;
-	char *cBuff;
+	PyObject *pyString = NULL;
+	char *cBuff = NULL;
 	Py_ssize_t nDataSize;
 
 	if (cType == 'C')
@@ -5936,8 +6391,15 @@ long cbxPyToCharFldBin(FIELD4 *lppField, PyObject *lpxString, unsigned char cTyp
 		nDataSize = PyBytes_Size(lpxString);
 		if (cType == 'C')
 			{
-			memcpy(cWorkBuff, PyBytes_AsString(lpxString), (size_t) nDataSize);
-			f4assignN(lppField, cWorkBuff, nFldSize); // result is padded with nulls, not spaces.
+			if (cWorkBuff != NULL)
+				{
+				memcpy(cWorkBuff, PyBytes_AsString(lpxString), (size_t) nDataSize);
+				f4assignN(lppField, cWorkBuff, nFldSize); // result is padded with nulls, not spaces.
+				}
+			else
+				{
+				lnRet = f4memoAssignN(lppField, PyBytes_AsString(lpxString), (unsigned long)nDataSize);
+				}
 			}
 		else lnRet = f4memoAssignN(lppField, PyBytes_AsString(lpxString), (unsigned long) nDataSize);
 		bDone = TRUE;
@@ -5980,7 +6442,8 @@ long cbxPyToCharFldBin(FIELD4 *lppField, PyObject *lpxString, unsigned char cTyp
 					else
 						{
 						lnRet = f4memoAssignN(lppField, cWorkBuff, (unsigned long) nDataSize);	
-						}					
+						}
+					Py_DECREF(pyString);				
 					break;
 					
 				case 'U':
@@ -6003,7 +6466,8 @@ long cbxPyToCharFldBin(FIELD4 *lppField, PyObject *lpxString, unsigned char cTyp
 					else
 						{
 						lnRet = f4memoAssignN(lppField, cWorkBuff, (unsigned long) nDataSize);	
-						}					
+						}
+					Py_DECREF(pyString);					
 					break;
 
 				case 'C':
@@ -6025,7 +6489,8 @@ long cbxPyToCharFldBin(FIELD4 *lppField, PyObject *lpxString, unsigned char cTyp
 					else
 						{
 						lnRet = f4memoAssignN(lppField, cWorkBuff, (unsigned long) nDataSize);	
-						}					
+						}
+					Py_DECREF(pyString);				
 					break;
 				
 				case 'X':
@@ -6043,7 +6508,8 @@ long cbxPyToCharFldBin(FIELD4 *lppField, PyObject *lpxString, unsigned char cTyp
 						}
 					cBuff = PyBytes_AsString(pyString);
 					if (cType == 'C') f4assign(lppField, cBuff);
-					else lnRet = f4memoAssign(lppField, cBuff);				
+					else lnRet = f4memoAssign(lppField, cBuff);	
+					Py_DECREF(pyString);			
 					break;
 				}
 			bDone = TRUE;				
@@ -6058,6 +6524,7 @@ long cbxPyToCharFldBin(FIELD4 *lppField, PyObject *lpxString, unsigned char cTyp
 			{
 			cBuff = PyBytes_AsString(pyString);
 			lnRet = f4memoAssign(lppField, cBuff);
+			Py_DECREF(pyString);
 			}
 		else return -1;
 		}
@@ -6183,23 +6650,21 @@ long cbxPyToCharFldBin(FIELD4 *lppField, PyObject *lpxString, unsigned char cTyp
 static PyObject *cbxGetPythonValue(FIELD4 *lpField, long lpbConvertTypes, long lpbStripBlanks, unsigned char *lpcCoding)
 {
 	PyObject *lxValue = NULL;
-	PyObject *tempDict;
+	PyObject *tempDict = NULL;
 	PyObject *xTest = NULL;
-	PyObject *modDecimal;
+	PyObject *modDecimal = NULL;
 	int lcType;
 	char lcBuff[500];
 	char lcNum[20];
 	const char cAscCodes[] = "W8";
 	const char cBinCodes[] = "DUCPA";
-	double lnDoubleValue;
-	char *lcPtr;
+	char *lcPtr = NULL;
 	long lnYear;
 	long lnMonth;
 	long lnDay;
 	long lnHour;
 	long lnMinute;
 	long lnSecond;
-	long lnTest;
 	unsigned char lcCodeBin = 'X';
 	unsigned char lcCodeAsc = 'X';
 
@@ -6424,37 +6889,35 @@ static PyObject *cbxGetPythonValue(FIELD4 *lpField, long lpbConvertTypes, long l
 /*   back into it so that the caller can make the proper conversions.                   */
 /* Pass TRUE in lpbByList to force return of a list of values, not a dict.              */
 
-static PyObject *cbwSCATTER(PyObject *self, PyObject *args)
+//static PyObject *cbwSCATTER(PyObject *self, PyObject *args)
+PyObject *cbwSCATTER(PyObject *self, PyObject *args)
 {
 	long lpbConvertTypes;
 	long lpbStripBlanks;
-	char *lpcAlias;
-	char *lpcFieldList;
+	char *lpcAlias = NULL;
+	char *lpcFieldList = NULL;
 	long lpbByList = FALSE;
 	long lnReturn = TRUE;
 	long lnFldCnt;
-	long lnLen;
 	register long jj;
 	long lnRecord;
-	double lnDoubleValue;
-	long lnLongValue, lnTest;
-	char *lcPtr;
-	FIELD4 *lpField;
+	char *lcPtr = NULL;
+	FIELD4 *lpField = NULL;
 	DATA4 *lpTable = NULL;
-	char lcName[25];
 	char lcBuff[250];
 	char cfList[4000];
-	char *lpTest;
+	char *lpTest = NULL;
 	long lbIsList = FALSE;
 	PyObject *recordDict = NULL;
-	PyObject *lxValue;
-	PyObject *lxKey;	
-	PyObject *lxTemp;
+	PyObject *recordList = NULL;
+	PyObject *lxValue = NULL;
+	PyObject *lxKey = NULL;
+	PyObject *lxTemp = NULL;
 	char lcAlias[MAXALIASNAMESIZE + 1];
 	char lcCodes[6];
-	PyObject *lxAlias;
-	PyObject *lxFieldList;
-	PyObject *lxCodes;
+	PyObject *lxAlias = NULL;
+	PyObject *lxFieldList = NULL;
+	PyObject *lxCodes = NULL;
 	const unsigned char *cTest;
 	
 	if (!PyArg_ParseTuple(args, "OllOlO", &lxAlias, &lpbConvertTypes, &lpbStripBlanks, &lxFieldList, &lpbByList, &lxCodes))
@@ -6464,7 +6927,13 @@ static PyObject *cbwSCATTER(PyObject *self, PyObject *args)
 		PyErr_Format(PyExc_ValueError, gcErrorMessage);
 		return NULL;
 		}
-
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't scatter()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }
 	cTest = testStringTypes(lxAlias);
 	if (*cTest != (const unsigned char) 0)
 		{
@@ -6473,6 +6942,13 @@ static PyObject *cbwSCATTER(PyObject *self, PyObject *args)
 		PyErr_Format(PyExc_ValueError, gcErrorMessage);
 		return NULL;			
 		}
+		
+
+// DO NOT try to do this with static pointers to the Python objects.  You'll come to grief with no
+// relief from potential memory leaks that this routine can cause.
+	//if (lpbByList) recordList = PyList_New(0);
+	//else recordDict = PyDict_New();
+	
 	strncpy(lcAlias, Unicode2Char(lxAlias), MAXALIASNAMESIZE);
 	lcAlias[MAXALIASNAMESIZE] = (char) 0;
 	Conv1252ToASCII(lcAlias, TRUE);
@@ -6580,7 +7056,7 @@ static PyObject *cbwSCATTER(PyObject *self, PyObject *args)
 			else
 				{
 				if (!lpbByList)	recordDict = PyDict_New();
-				else recordDict = PyList_New(0);
+				else recordList = PyList_New(0);
 
 				if (!lbIsList)
 					{
@@ -6589,8 +7065,11 @@ static PyObject *cbwSCATTER(PyObject *self, PyObject *args)
 						{
 						lpField = d4fieldJ(lpTable, (short) jj);
 						lxTemp = cbxGetPythonValue(lpField, lpbConvertTypes, lpbStripBlanks, lcCodes);
-						if (lxTemp == NULL) return(NULL); // error already set.
-
+						if (lxTemp == NULL) 
+						    {
+						    lnReturn = FALSE;
+						    break;  // Error Message Already Set.
+						    }
 						if (!lpbByList)
 							{
 							lxKey = cbNameToPy(f4name(lpField));
@@ -6598,7 +7077,7 @@ static PyObject *cbwSCATTER(PyObject *self, PyObject *args)
 							Py_DECREF(lxKey);
 							lxKey = NULL;							
 							} 
-						else PyList_Append(recordDict, lxTemp);
+						else PyList_Append(recordList, lxTemp);
 
 						Py_DECREF(lxTemp);
 						lxTemp = NULL;
@@ -6609,6 +7088,7 @@ static PyObject *cbwSCATTER(PyObject *self, PyObject *args)
 					// Iterate through the field list.
 					for (jj = 0; jj < lnFldCnt; jj++)
 						{
+						//printf("FIELD NAME %s\n", gaFieldList[jj]);
 						lpField = d4field(lpTable, gaFieldList[jj]);
 						if (lpField == NULL)
 							{
@@ -6619,13 +7099,32 @@ static PyObject *cbwSCATTER(PyObject *self, PyObject *args)
 							sprintf(lcBuff, "%ld", jj + 1);
 							strcat(gcErrorMessage, " Cnt: ");
 							strcat(gcErrorMessage, lcBuff);
-							lnReturn = FALSE;
-							break;								
+							//printf("ERROR MESSAGE %s \n", gcErrorMessage);
+                    		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+                    		if (recordDict != (PyObject*) NULL)
+                    		    {
+                    		    //Py_CLEAR(recordDict); // don't need it
+                    		    Py_DECREF(recordDict);
+                    		    recordDict = NULL;
+                    		    }
+                    		if (recordList != (PyObject*) NULL)
+                    		    {
+                    		    //Py_CLEAR(recordList);
+                    		    Py_DECREF(recordList);
+                    		    recordList = NULL;
+                    		    }                    		
+                    		return NULL;  // Allows the error defined above to be raised by the PY Interpreter.
 							}							
 						else
 							{
 							lxTemp = cbxGetPythonValue(lpField, lpbConvertTypes, lpbStripBlanks, lcCodes);
-							if (lxTemp == NULL) return(NULL); // error already set.
+							if (lxTemp == NULL) 
+							    {
+							    // Error Messages already set.
+							    lnReturn = FALSE;
+							    break;
+							    }
+							    
 							
 							if (!lpbByList)
 								{
@@ -6634,7 +7133,7 @@ static PyObject *cbwSCATTER(PyObject *self, PyObject *args)
 								Py_DECREF(lxKey);
 								lxKey = NULL;								
 								}
-							else PyList_Append(recordDict, lxTemp);
+							else PyList_Append(recordList, lxTemp);
 								
 							Py_DECREF(lxTemp);
 							lxTemp = NULL;
@@ -6653,10 +7152,31 @@ static PyObject *cbwSCATTER(PyObject *self, PyObject *args)
 	//if (cfList != NULL) free(cfList);
 	if (!lnReturn)
 		{
-		if (recordDict != (PyObject*) NULL) Py_CLEAR(recordDict); // don't need it.
+		if (recordDict != (PyObject*) NULL)
+		    {
+		    Py_CLEAR(recordDict); // don't need it
+		    Py_DECREF(recordDict);
+		    recordDict = NULL;
+		    }
+		if (recordList != (PyObject*) NULL)
+		    {
+		    Py_CLEAR(recordList);
+		    Py_DECREF(recordList);
+		    recordList = NULL;
+		    }
 		return Py_BuildValue(""); // Return None
 		}
-	else return(recordDict);	
+	else 
+	    {
+	    if (lpbByList)
+	        {
+	        return(recordList);
+	        } 
+	    else
+	        {
+	        return(recordDict);    
+	        } 
+	    }
 }
 
 /* ********************************************************************************** */
@@ -6688,11 +7208,11 @@ char* cbwOLDSCATTER(char* lpcDelimiter, long lpbStripBlanks, char* lpcFieldList)
 	double lnDoubleValue;
 	long lnLongValue;
 	char lcDelim[33];
-	char *lcPtr;
-	FIELD4 *lpField;
+	char *lcPtr = NULL;
+	FIELD4 *lpField = NULL;
 	char lcNumBuff[50];
 	char lcTypeBuff[601]; /* holds a list of field types for the sub-list of fields requested. */
-	char *lpTest;
+	char *lpTest = NULL;
 	long lbIsList = FALSE;
 	
 	codeBase.errorCode = 0;
@@ -6834,7 +7354,7 @@ char* cbwOLDSCATTER(char* lpcDelimiter, long lpbStripBlanks, char* lpcFieldList)
 						{
 						if (lpbStripBlanks == 1)
 							{
-							c4trimN(lcPtr, strlen(lcPtr) + 1);	
+							c4trimN(lcPtr, (int) strlen(lcPtr) + 1);	
 							}
 						strcat(gcStrReturn, lcPtr);
 						}
@@ -6893,7 +7413,14 @@ static PyObject *cbwCURVAL(PyObject *self, PyObject *args)
 		PyErr_Format(PyExc_ValueError, gcErrorMessage);
 		return NULL;
 		}
-
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't curval()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }
+	    
 	cTest = testStringTypes(lxFieldName);
 	if (*cTest != (const unsigned char) 0)
 		{
@@ -7000,13 +7527,12 @@ void cbxClearFieldSpecs(void)
 /* returns -1 on any kind of error.  Returns ERROR if the field is not LOGICAL.        */
 static PyObject *cbwSCATTERFIELDLOGICAL(PyObject *self, PyObject *args)
 {
-	char *lcPtr;
-	FIELD4 *lpField;
+	FIELD4 *lpField = NULL;
 	long lnReturn = TRUE;
 	int lcType;
 	long lbValue;
-	PyObject *lxFieldName;
-	const unsigned char *cTest;
+	PyObject *lxFieldName = NULL;
+	const unsigned char *cTest = NULL;
 	char lcFieldName[MAXALIASNAMESIZE + 40];	
 	
 	codeBase.errorCode = 0;
@@ -7020,7 +7546,14 @@ static PyObject *cbwSCATTERFIELDLOGICAL(PyObject *self, PyObject *args)
 		PyErr_Format(PyExc_ValueError, gcErrorMessage);
 		return NULL;
 		}
-
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't scatterlogical()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }
+	    
 	cTest = testStringTypes(lxFieldName);
 	if (*cTest != (const unsigned char) 0)
 		{
@@ -7083,10 +7616,10 @@ static PyObject *cbwSCATTERFIELDDATE(PyObject *self, PyObject *args)
 	long lnSecond = 0;
 	char *lcPtr;
 	int  lcType = 0;
-	FIELD4 *lpField;
+	FIELD4 *lpField = NULL;
 	char lcNum[30];
-	PyObject *lxFieldName;
-	const unsigned char *cTest;
+	PyObject *lxFieldName = NULL;
+	const unsigned char *cTest = NULL;
 	char lcFieldName[MAXALIASNAMESIZE + 40];
 
 	if (!PyArg_ParseTuple(args, "O", &lxFieldName))
@@ -7096,7 +7629,14 @@ static PyObject *cbwSCATTERFIELDDATE(PyObject *self, PyObject *args)
 		PyErr_Format(PyExc_ValueError, gcErrorMessage);
 		return NULL;
 		}
-
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't scatterdate()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }
+	    
 	codeBase.errorCode = 0;
 	gcErrorMessage[0] = (char) 0;
 	gnLastErrorNumber = 0;
@@ -7230,10 +7770,10 @@ static PyObject *cbwSCATTERFIELDDATETIME(PyObject *self, PyObject *args)
 	long lnSecond = 0;
 	char *lcPtr;
 	int  lcType = 0;
-	FIELD4 *lpField;
+	FIELD4 *lpField = NULL;
 	char lcNum[20];
-	PyObject *lxFieldName;
-	const unsigned char *cTest;
+	PyObject *lxFieldName = NULL;
+	const unsigned char *cTest = NULL;
 	char lcFieldName[MAXALIASNAMESIZE + 40];
 
 	if (!PyArg_ParseTuple(args, "O", &lxFieldName))
@@ -7243,7 +7783,14 @@ static PyObject *cbwSCATTERFIELDDATETIME(PyObject *self, PyObject *args)
 		PyErr_Format(PyExc_ValueError, gcErrorMessage);
 		return NULL;
 		}
-
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't scatterdatetime()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }
+	    
 	codeBase.errorCode = 0;
 	gcErrorMessage[0] = (char) 0;
 	gnLastErrorNumber = 0;
@@ -7363,10 +7910,10 @@ static PyObject *cbwSCATTERFIELDDOUBLE(PyObject *self, PyObject *args)
 	long lnReturn = TRUE;
 	double lnValue = 0.0;
 	char cType;
-	FIELD4 *lpField;
+	FIELD4 *lpField = NULL;
 	PyObject *lxReturn = NULL;
-	PyObject *lxFieldName;
-	const unsigned char *cTest;
+	PyObject *lxFieldName = NULL;
+	const unsigned char *cTest = NULL;
 	char lcFieldName[MAXALIASNAMESIZE + 40];
 
 	if (!PyArg_ParseTuple(args, "O", &lxFieldName))
@@ -7376,7 +7923,14 @@ static PyObject *cbwSCATTERFIELDDOUBLE(PyObject *self, PyObject *args)
 		PyErr_Format(PyExc_ValueError, gcErrorMessage);
 		return NULL;
 		}
-		
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't scatterdouble()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }
+	    		
 	cTest = testStringTypes(lxFieldName);
 	if (*cTest != (const unsigned char) 0)
 		{
@@ -7422,16 +7976,15 @@ static PyObject *cbwSCATTERFIELDDECIMAL(PyObject *self, PyObject *args)
 	long lnReturn = TRUE;
 	double lnValue = 0.0;
 	char cType;
-	FIELD4 *lpField;
+	FIELD4 *lpField = NULL;
 	PyObject *xTest = NULL;
-	PyObject *modDecimal;
+	PyObject *modDecimal = NULL;
 	PyObject *lxValue = NULL;
 	int nDecimals = -1;
 	register long jj;
 	char cBuff[50];
-	char *lcPtr;
-	PyObject *lxFieldName;
-	const unsigned char *cTest;
+	PyObject *lxFieldName = NULL;
+	const unsigned char *cTest = NULL;
 	char lcFieldName[MAXALIASNAMESIZE + 40];
 
 	if (!PyArg_ParseTuple(args, "O", &lxFieldName))
@@ -7441,7 +7994,14 @@ static PyObject *cbwSCATTERFIELDDECIMAL(PyObject *self, PyObject *args)
 		PyErr_Format(PyExc_ValueError, gcErrorMessage);
 		return NULL;
 		}
-		
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't scatterdouble()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }
+	    		
 	cTest = testStringTypes(lxFieldName);
 	if (*cTest != (const unsigned char) 0)
 		{
@@ -7536,10 +8096,10 @@ static PyObject *cbwSCATTERFIELDLONG(PyObject *self, PyObject *args)
 {
 	long lnReturn = TRUE;
 	long lnValue = 0;
-	FIELD4 *lpField;
+	FIELD4 *lpField = NULL;
 	PyObject *lxValue = NULL;
-	PyObject *lxFieldName;
-	const unsigned char *cTest;
+	PyObject *lxFieldName = NULL;
+	const unsigned char *cTest = NULL;
 	char lcFieldName[MAXALIASNAMESIZE + 40];
 
 	if (!PyArg_ParseTuple(args, "O", &lxFieldName))
@@ -7549,7 +8109,14 @@ static PyObject *cbwSCATTERFIELDLONG(PyObject *self, PyObject *args)
 		PyErr_Format(PyExc_ValueError, gcErrorMessage);
 		return NULL;
 		}
-		
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't scatterlong()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }
+	    		
 	cTest = testStringTypes(lxFieldName);
 	if (*cTest != (const unsigned char) 0)
 		{
@@ -7686,8 +8253,8 @@ long cbxUpdateField(FIELD4* lppField, char* lpcValue)
 			break;
 		
 		case 'Z': /* Binary Character */
-			lnLen = strlen(lpcValue); /* In this function only character values (no NULLs) can be handled, but we can still save it into binary fields */
-			if (f4len(lppField) < lnLen) lnLen = f4len(lppField);
+			lnLen = (long) strlen(lpcValue); /* In this function only character values (no NULLs) can be handled, but we can still save it into binary fields */
+			if (f4len(lppField) < (unsigned) lnLen) lnLen = (long) f4len(lppField);
 			strncpy(f4assignPtr(lppField), lpcValue, lnLen); /* Raw copy of the bytes into the field data buffer */
 			break;
 			
@@ -7696,7 +8263,7 @@ long cbxUpdateField(FIELD4* lppField, char* lpcValue)
 			break;
 			
 		case 'X': /* Binary Memo Field */
-			lnLen = strlen(lpcValue);
+			lnLen = (long) strlen(lpcValue);
 			f4memoAssignN(lppField, lpcValue, lnLen); /* we copy in plain text, but it's going into a field that can handle binary. */
 			break;
 				
@@ -7732,14 +8299,14 @@ long cbxGATHERMEMVAR(DATA4 *lppTable, char *lpcFields, char* lpcValues, char* lp
 	long lnFldCnt = 0;   /* The number of fields in the table */
 	long lnFldInCnt = 0; /* The actual number of field names submitted */
 	long lnValueCnt = 0; /* The number of field values found */
-	long jj;
-	register long kk, nn;
+	register long jj;
+	register long nn;
 	FIELD4* laFields[256];
 	char* laValues[256];
 	char  lcFieldName[256];
 	char  lcBadFieldName[256];
-	char* lpPtr;
-	char* lpTemp;
+	char* lpPtr = NULL;
+	char* lpTemp = NULL;
 	
 	codeBase.errorCode = 0;
 	gcErrorMessage[0] = (char) 0;
@@ -7874,10 +8441,10 @@ static PyObject *cbwGATHERMEMVAR(PyObject *self, PyObject *args)
 	char *lpcValues = NULL;
 	char *lpcDelimiters = NULL;
 	const char *cPtr;
-	PyObject *lxFields;
-	PyObject *lxValues;
-	PyObject *lxDelimiters;
-	const unsigned char *cTest;
+	PyObject *lxFields = NULL;
+	PyObject *lxValues = NULL;
+	PyObject *lxDelimiters = NULL;
+	const unsigned char *cTest = NULL;
 	size_t lnSize;
 	
 	if (!PyArg_ParseTuple(args, "OOO", &lxFields, &lxValues, &lxDelimiters))
@@ -7887,7 +8454,14 @@ static PyObject *cbwGATHERMEMVAR(PyObject *self, PyObject *args)
 		PyErr_Format(PyExc_ValueError, gcErrorMessage);
 		return NULL;
 		}	
-
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't gather()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }
+	    
 	cTest = testStringTypes(lxFields);
 	if (*cTest != (const unsigned char) 0)
 		{
@@ -7956,12 +8530,10 @@ long cbxPyObjectToField(PyObject *lpoValue, FIELD4 *lpxField, char *lpcCoding)
 	char cDateBuff[50];
 	const char cAscCodes[] = "W8";
 	const char cBinCodes[] = "DUCP";
-	Py_ssize_t lnLength;
-	PyObject* lxTemp;
-	PyObject* pBytes;
-	char *pCPtr;
-	char *lcPtr;
-	const char *pConst;
+	PyObject* lxTemp = NULL;
+	PyObject* pBytes = NULL;
+	char *pCPtr = NULL;
+	char *lcPtr = NULL;
 	unsigned char lcCodeBin = 'X';
 	unsigned char lcCodeAsc = 'X';
 
@@ -8048,11 +8620,13 @@ long cbxPyObjectToField(PyObject *lpoValue, FIELD4 *lpxField, char *lpcCoding)
 #ifdef IS_PY3K		
 					pBytes = PyUnicode_AsEncodedString(lxTemp, u8"cp1252", u8"ignore");
 					lnDouble = atof(PyBytes_AsString(pBytes));
+					Py_DECREF(pBytes);
 #endif
 #ifdef IS_PY2K
 					lnDouble = atof(PyString_AsString(lxTemp));
 #endif
-					f4assignDouble(lpxField, lnDouble);						
+					f4assignDouble(lpxField, lnDouble);
+					Py_DECREF(lxTemp);				
 					}
 				}
 			break;
@@ -8068,11 +8642,13 @@ long cbxPyObjectToField(PyObject *lpoValue, FIELD4 *lpxField, char *lpcCoding)
 #ifdef IS_PY3K	
 				pBytes = PyUnicode_AsEncodedString(lxTemp, u8"cp1252", u8"ignore");
 				lnLong = atol(PyBytes_AsString(pBytes));
+				Py_DECREF(pBytes);
 #endif
 #ifdef IS_PY2K
 				lnLong = atol(PyString_AsString(lxTemp));
 #endif					
 				f4assignLong(lpxField, lnLong);	
+				Py_DECREF(lxTemp);
 				}
 			break;
 			
@@ -8096,6 +8672,7 @@ long cbxPyObjectToField(PyObject *lpoValue, FIELD4 *lpxField, char *lpcCoding)
 					{	
 					pBytes = PyUnicode_AsEncodedString(lpoValue, u8"cp1252", u8"ignore");
 				    strncpy(cDateBuff, PyBytes_AsString(pBytes), 4);
+				    Py_DECREF(pBytes);
 #endif
 #ifdef IS_PY2K
 				if (PyString_Check(lpoValue))
@@ -8155,6 +8732,7 @@ long cbxPyObjectToField(PyObject *lpoValue, FIELD4 *lpxField, char *lpcCoding)
 					{
 					pBytes = PyUnicode_AsEncodedString(lpoValue, u8"cp1252", u8"ignore");	
 				    strncpy(cDateBuff, PyBytes_AsString(pBytes), 49);
+				    Py_DECREF(pBytes);
 #endif
 #ifdef IS_PY2K
 				if (PyString_Check(lpoValue))
@@ -8202,6 +8780,7 @@ long cbxPyObjectToField(PyObject *lpoValue, FIELD4 *lpxField, char *lpcCoding)
 #ifdef IS_PY3K			
 						pBytes = PyUnicode_AsEncodedString(PyObject_Str(lpoValue), u8"cp1252", u8"ignore");
 				        strncpy(cDateBuff, PyBytes_AsString(pBytes), 49);
+				        Py_DECREF(pBytes);
 #endif
 #ifdef IS_PY2K
 				        strncpy(cDateBuff, PyString_AsString(PyObject_Str(lpoValue)), 49);
@@ -8249,6 +8828,7 @@ long cbxPyObjectToField(PyObject *lpoValue, FIELD4 *lpxField, char *lpcCoding)
 						{
 						pBytes = PyUnicode_AsEncodedString(lpoValue, u8"cp1252", u8"ignore");
 				        strncpy(cDateBuff, PyBytes_AsString(pBytes), 49);
+				        Py_DECREF(pBytes);
 #endif
 #ifdef IS_PY2K
 					if (PyString_Check(lpoValue))
@@ -8298,6 +8878,7 @@ long cbxPyObjectToField(PyObject *lpoValue, FIELD4 *lpxField, char *lpcCoding)
 #ifdef IS_PY3K				
 							pBytes = PyUnicode_AsEncodedString(PyObject_Str(lpoValue), u8"cp1252", u8"ignore");
 				            strncpy(cDateBuff, PyBytes_AsString(pBytes), 49);
+				            Py_DECREF(pBytes);
 #endif
 #ifdef IS_PY2K
 				            strncpy(cDateBuff, PyString_AsString(PyObject_Str(lpoValue)), 49);
@@ -8320,6 +8901,7 @@ long cbxPyObjectToField(PyObject *lpoValue, FIELD4 *lpxField, char *lpcCoding)
 				{	
 				pBytes = PyUnicode_AsEncodedString(lpoValue, u8"cp1252", u8"ignore");
 				strncpy(cDateBuff, PyBytes_AsString(pBytes), 49);
+				Py_DECREF(pBytes);
 #endif
 #ifdef IS_PY2K
 			if (PyString_Check(lpoValue))
@@ -8336,10 +8918,13 @@ long cbxPyObjectToField(PyObject *lpoValue, FIELD4 *lpxField, char *lpcCoding)
 #ifdef IS_PY3K	
 				pBytes = PyUnicode_AsEncodedString(lxTemp, u8"cp1252", u8"ignore");
 				f4assignCurrency(lpxField, PyBytes_AsString(pBytes));
+				Py_DECREF(pBytes);
 #endif
 #ifdef IS_PY2K
+                
 				f4assignCurrency(lpxField, PyString_AsString(lxTemp));
-#endif					
+#endif				
+                Py_DECREF(lxTemp);	
 				}
 			break;			
 				
@@ -8366,28 +8951,30 @@ long cbxPyObjectToField(PyObject *lpoValue, FIELD4 *lpxField, char *lpcCoding)
 static PyObject *cbwGATHERDICT(PyObject *self, PyObject *args)
 {
 	PyObject *dataDict;
-	PyObject *key, *value;
-	PyObject *testKey;
-	char *testString;
-	char *cFieldName;
+	PyObject *key = NULL;
+	PyObject *value = NULL;
+	PyObject *testKey = NULL;
+	char *testString = NULL;
+	char *cFieldName = NULL;
 	char cName[51];
 	Py_ssize_t pos = 0;
 	Py_ssize_t nStrLen = 0;
-	register long jj;
-	DATA4 *lpTable;
-	FIELD4 *lpField;
+	DATA4 *lpTable = NULL;
+	FIELD4 *lpField = NULL;
 	long lnReturn = TRUE;
 	long lnTest;
 	long lbAppendRecord = FALSE;
 	long lnResult = 0;
 	long lnDictCount = 0;
 	long lnSavedCount = 0;
-	PyObject *pBytes;
-	PyObject *lxCodes;
-	PyObject *lxAlias;
+	long lnTempErrorCode = 0;
+	char cTempErrMessage[100];
+	PyObject *pBytes = NULL;
+	PyObject *lxCodes = NULL;
+	PyObject *lxAlias = NULL;
 	char lcCodes[6];
 	char lcAlias[MAXALIASNAMESIZE + 1];
-	const unsigned char *cTest;	
+	const unsigned char *cTest = NULL;
 
 	codeBase.errorCode = 0;
 	gcErrorMessage[0] = (char) 0;
@@ -8402,7 +8989,14 @@ static PyObject *cbwGATHERDICT(PyObject *self, PyObject *args)
 		PyErr_Format(PyExc_ValueError, gcErrorMessage);
 		return NULL;
 		}
-
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't gatherdict()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }
+	    
 	cTest = testStringTypes(lxAlias);
 	if (*cTest != (const unsigned char) 0)
 		{
@@ -8453,6 +9047,12 @@ static PyObject *cbwGATHERDICT(PyObject *self, PyObject *args)
 			{
 			gnLastErrorNumber = codeBase.errorCode;
 			strcpy(gcErrorMessage, error4text(&codeBase, codeBase.errorCode));
+			if (gnLastErrorNumber == 0)
+			    {
+			    gnLastErrorNumber = -10001;
+			    strcpy(gcErrorMessage, "Unable to select alias: ");
+			    strcat(gcErrorMessage, lcAlias);
+			    }
 			lnReturn = FALSE;				
 			}
 		}	
@@ -8521,6 +9121,8 @@ static PyObject *cbwGATHERDICT(PyObject *self, PyObject *args)
 					}
 				lnSavedCount += 1;
 				}
+			value = NULL;
+			key = NULL;
 			}
 
 		if (lnSavedCount == 0)
@@ -8530,10 +9132,14 @@ static PyObject *cbwGATHERDICT(PyObject *self, PyObject *args)
 			gnLastErrorNumber = -9985;	
 			}
 		}
+	
 	if (lnReturn && lbAppendRecord)
 		{
 		// Finish the insertion since all is OK.
 		lnResult = d4append(lpTable);
+		lnTempErrorCode = codeBase.errorCode; // May just be 0
+		strcpy(cTempErrMessage, error4text(&codeBase, lnTempErrorCode));
+		
 		d4recall(lpTable); // Seems to be required sometimes for the above.
 		if (lnResult != 0)
 			{
@@ -8545,9 +9151,12 @@ static PyObject *cbwGATHERDICT(PyObject *self, PyObject *args)
 				}
 			else
 				{
-				gnLastErrorNumber = codeBase.errorCode;
-				strcpy(gcErrorMessage, error4text(&codeBase, codeBase.errorCode));
-				strcat(gcErrorMessage, " ERR from CodeBase");
+				//gnLastErrorNumber = codeBase.errorCode;
+				//strcpy(gcErrorMessage, error4text(&codeBase, codeBase.errorCode));
+				//strcat(gcErrorMessage, " ERR from CodeBase");
+				gnLastErrorNumber = lnTempErrorCode;
+				strcpy(gcErrorMessage, "CodeBase ERR: ");
+				strcat(gcErrorMessage, cTempErrMessage);
 				lnReturn = FALSE; /* We're done... ERROR */					
 				}						
 			}			
@@ -8601,11 +9210,9 @@ long cbxPREPAREFILTER(char *lpcFilter)
 static PyObject *cbwPREPAREFILTER(PyObject *self, PyObject *args)
 {
 	long lnReturn;
-	char *lpcFilter;
-	PyObject *lxResult;
 	unsigned char lcFilter[1000];
-	PyObject *lxFilter;
-	const unsigned char *cTest;	
+	PyObject *lxFilter = NULL;
+	const unsigned char *cTest = NULL;
 	
 	if (!PyArg_ParseTuple(args, "O", &lxFilter))
 		{
@@ -8614,7 +9221,14 @@ static PyObject *cbwPREPAREFILTER(PyObject *self, PyObject *args)
 		PyErr_Format(PyExc_ValueError, gcErrorMessage);		
 		return NULL;
 		}
-		
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't preparefilter()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }
+	    		
 	cTest = testStringTypes(lxFilter);
 	if (*cTest != (const unsigned char) 0)
 		{
@@ -8637,7 +9251,7 @@ static PyObject *cbwPREPAREFILTER(PyObject *self, PyObject *args)
 long cbxTESTFILTER(void)
 {
 	char lcResultBuffer[200];
-	char *lpcResult;
+	char *lpcResult = NULL;
 	int lnLen;
 	long lnReturn = -1;
 	int lnType;
@@ -8735,13 +9349,13 @@ static PyObject *cbwREPLACE_FIELD(PyObject *self, PyObject *args)
 {
 	long lnReturn = TRUE;
 	long lnResult = 0;
-	PyObject *lxValue;
+	PyObject *lxValue = NULL;
 	char lcFieldName[MAXALIASNAMESIZE + 30];
-	FIELD4 *lpField;
-	PyObject *lxCodes;
-	PyObject *lxFieldName;
+	FIELD4 *lpField = NULL;
+	PyObject *lxCodes = NULL;
+	PyObject *lxFieldName = NULL;
 	char lcCodes[6];
-	const unsigned char *cTest;	
+	const unsigned char *cTest = NULL;
 	
 	if (!PyArg_ParseTuple(args, "OOO", &lxFieldName, &lxValue, &lxCodes))
 		{
@@ -8750,7 +9364,14 @@ static PyObject *cbwREPLACE_FIELD(PyObject *self, PyObject *args)
 		PyErr_Format(PyExc_ValueError, gcErrorMessage);
 		return NULL;
 		}
-
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't replace()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }
+	    
 	cTest = testStringTypes(lxFieldName);
 	if (*cTest != (const unsigned char) 0)
 		{
@@ -8804,7 +9425,7 @@ long cbxCLOSETABLE(char *lpcAlias)
 {
 	long lnReturn = TRUE;
 	long lbResult;
-	DATA4 *lpTable;
+	DATA4 *lpTable = NULL;
 	long jj;
 	char lcAlias[240];
 	
@@ -8894,9 +9515,9 @@ long cbxCLOSETABLE(char *lpcAlias)
 static PyObject *cbwCLOSETABLE(PyObject *self, PyObject *args)
 {
 	char lcAlias[MAXALIASNAMESIZE + 1];
-	PyObject *lxAlias;
+	PyObject *lxAlias = NULL;
 	long lnReturn;
-	const unsigned char *cTest;
+	const unsigned char *cTest = NULL;
 
 	if (!PyArg_ParseTuple(args, "O", &lxAlias))
 		{
@@ -8905,7 +9526,14 @@ static PyObject *cbwCLOSETABLE(PyObject *self, PyObject *args)
 		PyErr_Format(PyExc_ValueError, gcErrorMessage);
 		return NULL;
 		}
-		
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't closetable()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }
+	    		
 	cTest = testStringTypes(lxAlias);
 	if (*cTest != (const unsigned char) 0)
 		{
@@ -8936,7 +9564,14 @@ static PyObject *cbwCLOSEDATABASES(PyObject *self, PyObject *args)
 	codeBase.errorCode = 0;
 	gcErrorMessage[0] = (char) 0;
 	gnLastErrorNumber = 0;
-
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't closedatabases() - already closed.");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }
+	    
 	if (gnOpenTempIndexes > 0)
 		{
 		// We'll look for all open temporary index files.
@@ -9002,16 +9637,15 @@ static PyObject *cbwCREATETABLE(PyObject *self, PyObject *args)
 	register long kk;
 	char lcBuff[20];
 	char lcTempName[31];
-	char *lpPtr;
-	long lnFldCnt;
-	DATA4 *lpTable;
-	PyObject *lxFieldSpecs;
-	PyObject *lxFieldItem;
-	PyObject *lxFieldProp;
-	PyObject *pBytes;
-	PyObject *lxTableName;
+	char *lpPtr = NULL;
+	DATA4 *lpTable = NULL;
+	PyObject *lxFieldSpecs = NULL;
+	PyObject *lxFieldItem = NULL;
+	PyObject *lxFieldProp = NULL;
+	PyObject *pBytes = NULL;
+	PyObject *lxTableName = NULL;
 	char lcTableName[400];
-	const unsigned char *cTest;
+	const unsigned char *cTest = NULL;
 
 	if (!PyArg_ParseTuple(args, "OO", &lxTableName, &lxFieldSpecs))
 		{
@@ -9020,7 +9654,14 @@ static PyObject *cbwCREATETABLE(PyObject *self, PyObject *args)
 		PyErr_Format(PyExc_ValueError, gcErrorMessage);
 		return NULL;
 		}
-
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't createtable()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }
+	    
 	codeBase.errorCode = 0;
 	codeBase.safety = 0;
 	gcErrorMessage[0] = (char) 0;
@@ -9114,12 +9755,12 @@ static PyObject *cbwCREATETABLE(PyObject *self, PyObject *args)
 		gaFieldSpecs[jj].type = (short) lcBuff[0];
 		
 		lxFieldProp = PyObject_GetAttrString(lxFieldItem, "nWidth");
-		gaFieldSpecs[jj].len = PyLong_AsLong(lxFieldProp);
+		gaFieldSpecs[jj].len = (int) PyLong_AsLong(lxFieldProp);
 		Py_DECREF(lxFieldProp);
 		lxFieldProp = NULL;
 		
 		lxFieldProp = PyObject_GetAttrString(lxFieldItem, "nDecimals");
-		gaFieldSpecs[jj].dec = PyLong_AsLong(lxFieldProp);
+		gaFieldSpecs[jj].dec = (int) PyLong_AsLong(lxFieldProp);
 		Py_DECREF(lxFieldProp);
 		lxFieldProp = NULL;
 		
@@ -9164,18 +9805,12 @@ long cbxCREATETABLE(char* lpcTableName)
 {
 	long lnReturn = TRUE;
 	long lnResult = 0;
-	long lbFieldOK;
-	long jj;
-	long kk;
-	double ldStart, ldEnd;
 	char lcFullName[410];
-	char lcBuff[20];
-	char lcTempName[20];
 	long lbDupeNameError = FALSE;
-	char *lpPtr;
-	char *lpTemp;
+	char *lpPtr = NULL;
+	char *lpTemp = NULL;
 	long lnFldCnt = -1;
-	DATA4 *lpTable;
+	DATA4 *lpTable = NULL;
 
 	codeBase.errorCode = 0;
 	codeBase.safety = 0;
@@ -9184,6 +9819,7 @@ long cbxCREATETABLE(char* lpcTableName)
 	
 	memset(lcFullName, 0, (size_t) 410 * sizeof(char)); // space for the .dbf
 	strncpy(lcFullName, lpcTableName, 399);
+	lcFullName[399] = (char)0;
 	lpPtr = strstr(lcFullName, ".");
 	if (lpPtr == NULL)
 		{
@@ -9224,7 +9860,7 @@ long cbxParseDateByFormat(char *lpcDateStr, char *lpcPattern, char* lpcDateSep, 
 	char cSchema[6];
 	char cPrevChar = (char) 0;
 	char cTemp;
-	char* pPtr;
+	char* pPtr = NULL;
 	long jj;
 	long lnLen;
 	long lnPos = 0;
@@ -9243,7 +9879,7 @@ long cbxParseDateByFormat(char *lpcDateStr, char *lpcPattern, char* lpcDateSep, 
 	memset(lcDay, 0, (size_t) (10 * sizeof(char)));	
 	memset(cSchema, 0, (size_t) (6 * sizeof(char)));
 	//printf("Parsing by Format: %s ## %s ## %s ## %s \n", lpcDateStr, lpcPattern, lpcDateSep, lpcPattSep);
-	lnLen = strlen(lpcPattern); 
+	lnLen = (long) strlen(lpcPattern); 
 	// First we parse the pattern to get the underlying schema: MDY, DMY or YMD
 	for (jj = 0; jj < lnLen; jj++)
 		{
@@ -9272,7 +9908,7 @@ long cbxParseDateByFormat(char *lpcDateStr, char *lpcPattern, char* lpcDateSep, 
 		{
 		pPtr = strchr(lpcDateStr, ' ');
 		if (pPtr != NULL) *pPtr = (char) 0; // Truncate at the first space character encountered.
-		lnLen = strlen(lpcDateStr);
+		lnLen = (long) strlen(lpcDateStr);
 		// Now we parse this into Year, Month and Day strings...
 		lnPos = 0;
 		memset(lcWork, 0, (size_t) (20 * sizeof(char)));
@@ -9411,7 +10047,6 @@ long cbxParseDate(char* lpcDateStr)
 	char lcDay[10];
 	char lcStdDate[20];
 	char lcWorkDate[120];
-	char lcTest[50]; // Big just in case.
 	
 	memset(lcYear, 0, (size_t) (10 * sizeof(char)));
 	memset(lcMonth, 0, (size_t) (10 * sizeof(char)));
@@ -9419,7 +10054,7 @@ long cbxParseDate(char* lpcDateStr)
 	lcPattSep[0] = lcPattSep[1] = lcSeparator[0] = lcSeparator[1] = (char) 0;
 
 	strcpy(lcWorkDate, MPSSStrTran(lpcDateStr, " ", "", 0)); // Removes spaces throughout the string, as they are meaningless.
-	lnStrLen = strlen(lcWorkDate);
+	lnStrLen = (long) strlen(lcWorkDate);
 
 	lpPtr = strpbrk(lcWorkDate, ".-/");
 	lbPunctuation = (lpPtr != NULL);
@@ -9634,6 +10269,13 @@ static PyObject *cbwAPPENDBLANK(PyObject *self, PyObject *args)
 {
 	long lnReturn = cbxAPPENDBLANK();
 	if (lnReturn == -1) lnReturn = 0;
+	if (codeBase.compatibility != 30)
+        {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't appendblank()");
+    	gnLastErrorNumber = -10000;
+    	PyErr_Format(PyExc_ValueError, gcErrorMessage);
+    	return NULL;
+        }
 	return Py_BuildValue("N", PyBool_FromLong(lnReturn));	
 }
 
@@ -9644,7 +10286,8 @@ static PyObject *cbwAPPENDBLANK(PyObject *self, PyObject *args)
 long cbxSELECT(char* lpcAlias)
 {
 	long lbReturn = TRUE;
-	DATA4 *lpTable;
+	DATA4 *lpTable = NULL;
+
 	codeBase.errorCode = 0;
 	gcErrorMessage[0] = (char) 0;
 	gnLastErrorNumber = 0;
@@ -9671,10 +10314,10 @@ long cbxAppendFromDBF(DATA4* lpTargetTable, char* lpcSource, char* lpcTestExpr)
 {
 	long lnReturn = 0;
 	long lbOK = TRUE;
-	VFPFIELD* lpFld;
-	DATA4* lpSourceTable;
-	FIELD4* lpSrcField;
-	FIELD4* lpTrgField;
+	VFPFIELD* lpFld = NULL;
+	DATA4* lpSourceTable = NULL;
+	FIELD4* lpSrcField = NULL;
+	FIELD4* lpTrgField = NULL;
 	long lnCnt = 0;
 	long lnAppendCount = 0;
 	long jj;
@@ -9682,15 +10325,9 @@ long cbxAppendFromDBF(DATA4* lpTargetTable, char* lpcSource, char* lpcTestExpr)
 	long bNeedTest = FALSE;
 	long kk;
 	long mCnt;
-	long nLen;
 	long nSrcLen;
-	long nTrgLen;
-	long nSrcRecs;
-	double nDbl;
-	char cChar;
 	char lcTargAlias[40];
 	char lcSrcAlias[40];
-	char lcWorkStr[300];
 	FieldPlus fpSrc;
 	FieldPlus fpTrg;
 	
@@ -9970,9 +10607,8 @@ long cbxAppendFromSDF(DATA4* lpTargetTable, char* lpcSource, char* lpcTestExpr)
 	long lnReturn = 0;
 	long lnFromPos = 0;
 	long jj;
-	VFPFIELD* lpFld;
 	char lcTargAlias[30];
-	FILE* pHandle;
+	FILE* pHandle = NULL;
 	char cLineBuff[10000];
 	char cFieldStr[500];
 	char* pPtr = NULL;
@@ -9981,7 +10617,7 @@ long cbxAppendFromSDF(DATA4* lpTargetTable, char* lpcSource, char* lpcTestExpr)
 	char nType;
 	long lnAppendCount = 0;
 	long lnCurrPos = 0;
-	FIELD4* lpTrgField;
+	FIELD4* lpTrgField = NULL;
 	long bGoodLoad = TRUE;
 	
 	strcpy(lcTargAlias, cbxALIAS());
@@ -10021,7 +10657,7 @@ long cbxAppendFromSDF(DATA4* lpTargetTable, char* lpcSource, char* lpcTestExpr)
 				{
 				pPtr = fgets(cLineBuff, 9999, pHandle);
 				if (pPtr == NULL) break;
-				lnLineLen = strlen(cLineBuff);
+				lnLineLen = (long) strlen(cLineBuff);
 				if (lnLineLen > laFldLength[0])  // Has to be at least as much data as in the first field.
 					{
 					cbxSELECT(lcTargAlias);
@@ -10032,7 +10668,7 @@ long cbxAppendFromSDF(DATA4* lpTargetTable, char* lpcSource, char* lpcTestExpr)
 						for (jj = 0; jj < gnTrgCount; jj++)
 							{
 							lpTrgField = gaTrgFields[jj].pCBfield;
-							nType = gaTrgFields[jj].nFldType;
+							nType = (char) gaTrgFields[jj].nFldType;
 							if (lnCurrPos < lnLineLen)
 								{
 								lnTestLen = laFldLength[jj];
@@ -10145,7 +10781,7 @@ long cbxAPPENDFROM(char* lpcAlias, char* lpcSource, char* lpcTestExpr, char* lpc
 	char *lpTest = NULL;
 	long lbByType = FALSE;
 	char lcWorkAlias[50];
-	VFPFIELD* lpFld;
+	VFPFIELD* lpFld = NULL;
 	long lnCnt = 0;
 	long jj;
 
@@ -10263,10 +10899,10 @@ static PyObject *cbwAPPENDFROM(PyObject *self, PyObject *args)
 	char lcSource[255];
 	char lcTestExpr[400];
 	char lcType[6];
-	PyObject *lxAlias;
-	PyObject *lxSource;
-	PyObject *lxTestExpr;
-	PyObject *lxType;
+	PyObject *lxAlias = NULL;
+	PyObject *lxSource = NULL;
+	PyObject *lxTestExpr = NULL;
+	PyObject *lxType = NULL;
 	const unsigned char *cTest;
 
 	if (!PyArg_ParseTuple(args, "OOOO", &lxAlias, &lxSource, &lxTestExpr, &lxType))
@@ -10276,7 +10912,14 @@ static PyObject *cbwAPPENDFROM(PyObject *self, PyObject *args)
 		PyErr_Format(PyExc_ValueError, gcErrorMessage);
 		return NULL;
 		}
-
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't appendfrom()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }
+	    
 	cTest = testStringTypes(lxAlias);
 	if (*cTest != (const unsigned char) 0)
 		{
@@ -10348,9 +10991,9 @@ long cbxCopyToDBF(DATA4* lppSource, char* lpcOutput, char* lpcTestExpr)
 		gaFieldSpecs[kk].name = (char*) calloc((size_t) 22, sizeof(char));
 		strncpy(gaFieldSpecs[kk].name, gaSrcFields[jj].xField.cName, 20);
 		StrToUpper(gaFieldSpecs[kk].name);
-		gaFieldSpecs[kk].type = gaSrcFields[jj].xField.cType[0];
-		gaFieldSpecs[kk].len = gaSrcFields[jj].xField.nWidth;
-		gaFieldSpecs[kk].dec = gaSrcFields[jj].xField.nDecimals;
+		gaFieldSpecs[kk].type = (int) gaSrcFields[jj].xField.cType[0];
+		gaFieldSpecs[kk].len = (int) gaSrcFields[jj].xField.nWidth;
+		gaFieldSpecs[kk].dec = (int) gaSrcFields[jj].xField.nDecimals;
 		if (gaSrcFields[jj].xField.bNulls)
 			{
 			gaFieldSpecs[kk].nulls = r4null;	
@@ -10431,7 +11074,7 @@ char *cbxMakeTextOutputField(VFPFIELD* pStructFld, long lpnOutType, FIELD4* pCon
 			sprintf(cTempNum, "%lf", dValue);
 			if (lpnOutType == 2)
 				{
-				nLen = strlen(cTempNum);
+				nLen = (long) strlen(cTempNum);
 				memset(cWorkBuff, 0, (size_t) (50 * sizeof(char)));
 				if (nLen < 16)
 					{
@@ -10458,7 +11101,7 @@ char *cbxMakeTextOutputField(VFPFIELD* pStructFld, long lpnOutType, FIELD4* pCon
 			strcpy(cTempNum, f4currency(pContentFld, 4));
 			if (lpnOutType == 2)
 				{
-				nLen = strlen(cTempNum);
+				nLen = (long) strlen(cTempNum);
 				memset(cWorkBuff, 0, (size_t) (50 * sizeof(char)));
 				if (nLen < 16)
 					{
@@ -10560,12 +11203,10 @@ long cbxCopyToTextFile(DATA4* lppSource, char* lpcOutput, long lpnOutType, char*
 	long lnResult = 0;
 	long lnTest = 1;
 	long bNeedTest = FALSE;
-	long lnFieldCnt;
 	long lnOutCnt;
 	long lnRowCnt = 0;
 	char lcOutBuff[20000];
-	FILE* pHandle;
-	char* pPtr;
+	FILE* pHandle = NULL;
 	char lcFldBuff[500];
 	char lcWorkFlds[5000];
 	register long jj;
@@ -10721,7 +11362,6 @@ static PyObject *cbwCOPYTO(PyObject *self, PyObject *args)
 {
 	long lnResult = 0;	// Number of records output or -1 on error.
 	DATA4 *lpSourceTable = NULL;
-	char lcWorkName[300];
 	long lnPt = 0;
 	long lnType = -1; // Types 1 = DBF, 2 = SDF or DAT, 3 = CSV, 4 = TAB
 	char *lpChar = NULL;
@@ -10735,7 +11375,7 @@ static PyObject *cbwCOPYTO(PyObject *self, PyObject *args)
 	long lnCnt = 0;
 	long jj;
 	DATA4 *lpOldTable = NULL;
-	const unsigned char *cTest;
+	const unsigned char *cTest = NULL;
 	char lcFldMatch[5000];
 	char lcFldTest[25];
 	long bStripBlanks;
@@ -10747,11 +11387,11 @@ static PyObject *cbwCOPYTO(PyObject *self, PyObject *args)
 	char lcFieldList[3000];
 	char lcTestExpr[500];
 
-	PyObject *lxAlias;
-	PyObject *lxOutput;
-	PyObject *lxType;
-	PyObject *lxFieldList;
-	PyObject *lxTestExpr;
+	PyObject *lxAlias = NULL;
+	PyObject *lxOutput = NULL;
+	PyObject *lxType = NULL;
+	PyObject *lxFieldList = NULL;
+	PyObject *lxTestExpr = NULL;
 	
 	if (!PyArg_ParseTuple(args, "OOOlOOl", &lxAlias, &lxOutput, &lxType, &bHeader, &lxFieldList, &lxTestExpr, &bStripBlanks))
 		{
@@ -10760,7 +11400,14 @@ static PyObject *cbwCOPYTO(PyObject *self, PyObject *args)
 		PyErr_Format(PyExc_ValueError, gcErrorMessage);		
 		return NULL;
 		}
-
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't copyto()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }
+	    
 	cTest = testStringTypes(lxAlias);
 	if (*cTest != (const unsigned char) 0)
 		{
@@ -10993,12 +11640,12 @@ static PyObject *cbwINSERT(PyObject *self, PyObject *args)
 	char lcValues[65000];
 	char lcFldNames[5000];
 	char lcDelimiter[30];
-	DATA4 *lpTable;
-	PyObject *lxAlias;
-	PyObject *lxValues;
-	PyObject *lxFldNames;
-	PyObject *lxDelimiter;	
-	const unsigned char *cTest;
+	DATA4 *lpTable = NULL;
+	PyObject *lxAlias = NULL;
+	PyObject *lxValues = NULL;
+	PyObject *lxFldNames = NULL;
+	PyObject *lxDelimiter = NULL;	
+	const unsigned char *cTest = NULL;
 	
 	codeBase.errorCode = 0;
 	gcErrorMessage[0] = (char) 0;
@@ -11011,7 +11658,14 @@ static PyObject *cbwINSERT(PyObject *self, PyObject *args)
 		PyErr_Format(PyExc_ValueError, gcErrorMessage);		
 		return NULL;
 		}
-
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't insert()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }
+	    
 	cTest = testStringTypes(lxAlias);
 	if (*cTest != (const unsigned char) 0)
 		{
@@ -11153,7 +11807,13 @@ static PyObject *cbwDELETE(PyObject *self, PyObject *args)
 {
 	long lnReturn = TRUE;
 	long lnResult;
-	
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't delete()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }	
 	codeBase.errorCode = 0;
 	gcErrorMessage[0] = (char) 0;
 	gnLastErrorNumber = 0;
@@ -11194,6 +11854,14 @@ static PyObject *cbwLOCK(PyObject *self, PyObject *args)
 	long lnResult;
 	long lnRecord;
 	
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't lock()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }
+	    
 	codeBase.errorCode = 0;
 	gcErrorMessage[0] = (char) 0;
 	gnLastErrorNumber = 0;
@@ -11231,6 +11899,49 @@ static PyObject *cbwLOCK(PyObject *self, PyObject *args)
 }
 
 /* ***************************************************************************** */
+/* Equivalent of RLOCK(0) in VFP, which locks the header of the table during     */
+/* an append action.  This is less intrusive than FLOCK()                        */
+/* Returns TRUE, if successful, or FALSE if there is no current record or other  */
+/* problem.                                                                      */
+static PyObject *cbwAPPENDLOCK(PyObject *self, PyObject *args)
+{
+	long lnReturn = TRUE;
+	long lnResult;
+	
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't appendlock()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }
+	
+	codeBase.errorCode = 0;
+	gcErrorMessage[0] = (char) 0;
+	gnLastErrorNumber = 0;
+	gnProcessTally = 0;
+	
+	if (gpCurrentTable != NULL)
+		{
+		lnResult = d4lockAppend(gpCurrentTable); 
+		if (lnResult != 0)
+			{
+			lnReturn = FALSE;
+			strcpy(gcErrorMessage, "Unable to lock for appending a record");
+			gnLastErrorNumber = -99991;
+			}
+		}
+	else
+		{
+		lnReturn = FALSE;
+		strcpy(gcErrorMessage, "No Table Open in Selected Area");
+		gnLastErrorNumber = -9999;	
+		}
+
+	return(Py_BuildValue("N", PyBool_FromLong(lnReturn)));
+}
+
+/* ***************************************************************************** */
 /* Equivalent of FLOCK in VFP, which locks the entire table, preventing changes  */
 /* by others, but supporting read access without problems.                       */
 /* Returns TRUE, if successful, or FALSE if there is no current record or other  */
@@ -11239,7 +11950,14 @@ static PyObject *cbwFLOCK(PyObject *self, PyObject *args)
 {
 	long lnReturn = TRUE;
 	long lnResult;
-	long lnRecord;
+
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't flock()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }
 	
 	codeBase.errorCode = 0;
 	gcErrorMessage[0] = (char) 0;
@@ -11273,7 +11991,15 @@ static PyObject *cbwUNLOCK(PyObject *self, PyObject *args)
 {
 	long lnReturn = TRUE;
 	long lnResult;
-	
+
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't unlock()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }
+
 	codeBase.errorCode = 0;
 	gcErrorMessage[0] = (char) 0;
 	gnLastErrorNumber = 0;
@@ -11305,6 +12031,15 @@ static PyObject *cbwPACK(PyObject *self, PyObject *args)
 {
 	long lnReturn = TRUE;
 	long lnResult;
+	
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't pack()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }	
+	
 	codeBase.errorCode = 0;
 	gcErrorMessage[0] = (char) 0;
 	gnLastErrorNumber = 0;
@@ -11349,6 +12084,15 @@ static PyObject *cbwREINDEX(PyObject *self, PyObject *args)
 {
 	long lnReturn = TRUE;
 	long lnResult;
+	
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't reindex()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }	
+	
 	codeBase.errorCode = 0;
 	gcErrorMessage[0] = (char) 0;
 	gnLastErrorNumber = 0;
@@ -11379,6 +12123,15 @@ static PyObject *cbwZAP(PyObject *self, PyObject *args)
 {
 	long lnReturn = TRUE;
 	long lnResult;
+	
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't zap()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }	
+	
 	codeBase.errorCode = 0;
 	gcErrorMessage[0] = (char) 0;
 	gnLastErrorNumber = 0;
@@ -11416,8 +12169,8 @@ static PyObject *cbwISREADONLY(PyObject *self, PyObject *args)
 	long lnReturn = TRUE;
 	DATA4 *lpTable = NULL;
 	char lcAlias[MAXALIASNAMESIZE + 1];
-	PyObject *lxAlias;
-	const unsigned char *cTest;
+	PyObject *lxAlias = NULL;
+	const unsigned char *cTest = NULL;
 
 	if (!PyArg_ParseTuple(args, "O", &lxAlias))
 		{
@@ -11426,6 +12179,13 @@ static PyObject *cbwISREADONLY(PyObject *self, PyObject *args)
 		PyErr_Format(PyExc_ValueError, gcErrorMessage);
 		return NULL;
 		}
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't isreadonly()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }
 
 	cTest = testStringTypes(lxAlias);
 	if (*cTest != (const unsigned char) 0)
@@ -11488,11 +12248,11 @@ static PyObject *cbwISREADONLY(PyObject *self, PyObject *args)
 /* if nulls are allowed, a Bool indicating if this a binary field.                       */
 static PyObject *cbwFIELDINFO(PyObject *self, PyObject *args)
 {
-	PyObject *lxTuple;
+	PyObject *lxTuple = NULL;
 	char lcFieldName[MAXALIASNAMESIZE + 30];
-	FIELD4 *lpField;
-	PyObject *lxFieldName;
-	PyObject *lxType;
+	FIELD4 *lpField = NULL;
+	PyObject *lxFieldName = NULL;
+	PyObject *lxType = NULL;
 	const unsigned char *cTest;
 	long nFldLen;
 	long nFldDec;
@@ -11507,7 +12267,14 @@ static PyObject *cbwFIELDINFO(PyObject *self, PyObject *args)
 		PyErr_Format(PyExc_ValueError, gcErrorMessage);
 		return NULL;
 		}
-
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't fieldinfo()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }
+	    
 	cTest = testStringTypes(lxFieldName);
 	if (*cTest != (const unsigned char) 0)
 		{
@@ -11735,9 +12502,9 @@ static PyObject *cbwFIELDINFO(PyObject *self, PyObject *args)
 static PyObject *cbwREPLACE_DATETIMEN(PyObject *self, PyObject *args)
 {
 	char lcFieldName[MAXALIASNAMESIZE + 30];
-	FIELD4 *lpField;
-	PyObject *lxFieldName;
-	const unsigned char *cTest;
+	FIELD4 *lpField = NULL;
+	PyObject *lxFieldName = NULL;
+	const unsigned char *cTest = NULL;
 	long lpnYr;
 	long lpnMo;
 	long lpnDa;
@@ -11754,6 +12521,13 @@ static PyObject *cbwREPLACE_DATETIMEN(PyObject *self, PyObject *args)
 		PyErr_Format(PyExc_ValueError, gcErrorMessage);
 		return NULL;
 		}
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't replace()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }
 
 	cTest = testStringTypes(lxFieldName);
 	if (*cTest != (const unsigned char) 0)
@@ -11849,11 +12623,19 @@ static PyObject *cbwREPLACE_LONG(PyObject *self, PyObject *args)
 {
 	long lnReturn = TRUE;
 	long lnResult = 0;
-	FIELD4 *lpField;
+	FIELD4 *lpField = NULL;
 	char lcFieldName[MAXALIASNAMESIZE + 30];
-	PyObject *lxFieldName;
+	PyObject *lxFieldName = NULL;
 	long lpnValue;
-	const unsigned char *cTest;
+	const unsigned char *cTest = NULL;
+
+	if (codeBase.compatibility != 30)
+	    {
+        strcpy(gcErrorMessage, "CodeBaseTools has been shut down!  Can't replace_long()");
+		gnLastErrorNumber = -10000;
+		PyErr_Format(PyExc_ValueError, gcErrorMessage);
+		return NULL;
+	    }
 		
 	codeBase.errorCode = 0;
 	gcErrorMessage[0] = (char) 0;
@@ -12022,6 +12804,7 @@ static PyMethodDef cbMethods[] =
    { "getcurrentsession", cbwGETSESSIONNUMBER, METH_VARARGS, "Retrieve the Current Data Session Index" },
    { "getlargemode", cbwISLARGEMODE, METH_NOARGS, "Returns Status of Large Table Mode" },
    { "setdeleted", cbwSETDELETED, METH_VARARGS, "Set and Retrieve Deleted Status" },
+   { "setdebugmode", cbwSETDEBUG, METH_VARARGS, "Set and Retrieve Debug Status" },   
    { "use", cbwUSE, METH_VARARGS, "Open/Use a Table" }, 
    { "alias", cbwALIAS, METH_NOARGS, "Retrieve the Alias of the Current Table" },
    { "dbf", cbwDBF, METH_VARARGS, "Retrieve the Full Path Name of the Current Table" },
@@ -12088,7 +12871,8 @@ static PyMethodDef cbMethods[] =
    { "delete", cbwDELETE, METH_NOARGS, "Deletes the current record of the currently selected table"},
    { "rlock", cbwLOCK, METH_NOARGS, "Locks the current record."},
    { "flock", cbwFLOCK, METH_NOARGS, "Locks the current table."}, 
-   { "unlock", cbwUNLOCK, METH_NOARGS, "Unlocks the current record."},
+   { "appendlock", cbwAPPENDLOCK, METH_NOARGS, "Locks the current table for appending records."},
+   { "unlock", cbwUNLOCK, METH_NOARGS, "Unlocks the current record or table."},
    { "pack", cbwPACK, METH_NOARGS, "Packs out deleted records and the memo file"},
    { "reindex", cbwREINDEX, METH_NOARGS, "Reindexes the current table"},
    { "zap", cbwZAP, METH_NOARGS, "Clears all records from the current table"},
@@ -12102,17 +12886,61 @@ static PyMethodDef cbMethods[] =
 };
 
 #ifdef IS_PY2K
-PyMODINIT_FUNC initCodeBasePYWrapper(void)
+PyMODINIT_FUNC initCodeBasePYWrapper27(void)
 {
 #endif
-#ifdef IS_PY3K
-PyMODINIT_FUNC PyInit_CodeBasePYWrapper(void)
+
+#ifdef IS_PY36
+PyMODINIT_FUNC PyInit_CodeBasePYWrapper36(void)
+{
+	PyObject* modReturn; 
+#endif
+    
+#ifdef IS_PY37
+PyMODINIT_FUNC PyInit_CodeBasePYWrapper37(void)
+{
+	PyObject* modReturn; 
+#endif
+    
+#ifdef IS_PY38
+PyMODINIT_FUNC PyInit_CodeBasePYWrapper38(void)
+{
+	PyObject* modReturn; 
+#endif 
+         
+#ifdef IS_PY39
+PyMODINIT_FUNC PyInit_CodeBasePYWrapper39(void)
+{
+	PyObject* modReturn;        
+#endif
+
+#ifdef IS_PY310
+PyMODINIT_FUNC PyInit_CodeBasePYWrapper310(void)
+{
+	PyObject* modReturn;
+#endif    
+
+#ifdef IS_PY311
+PyMODINIT_FUNC PyInit_CodeBasePYWrapper311(void)
 {
 	PyObject* modReturn;
 #endif
+
+#ifdef IS_PY311_64
+PyMODINIT_FUNC PyInit_CodeBasePYWrapper64_311(void)
+{
+	PyObject* modReturn = NULL;
+#endif
+
+#ifdef IS_PY312
+PyMODINIT_FUNC PyInit_CodeBasePYWrapper312(void)
+{
+	PyObject* modReturn;
+#endif
+
 	long kk;
 	long jj;
-	CODEBASESTATUS *pStat;
+	CODEBASESTATUS *pStat = NULL;
 
 	PyDateTime_IMPORT;
 		
@@ -12159,12 +12987,13 @@ PyMODINIT_FUNC PyInit_CodeBasePYWrapper(void)
 	memset(gaFieldSpecs, 0, (size_t) (MAXFIELDCOUNT * sizeof(FIELD4INFO)));
 	//memset(gaAliasTrack, 0, (size_t) (MAXOPENTABLECOUNT * sizeof(AliasTrack)));
 #ifdef IS_PY2K
-   (void) Py_InitModule("CodeBasePYWrapper", cbMethods);
+   (void) Py_InitModule("CodeBasePYWrapper27", cbMethods);
 #endif
 #ifdef IS_PY3K
+    #ifdef IS_PY36
     static struct PyModuleDef moduledef = {
         PyModuleDef_HEAD_INIT,
-        "CodeBasePYWrapper",     /* m_name */
+        "CodeBasePYWrapper36",     /* m_name */
         "Tools for accessing DBF tables using CodeBase functions.",  /* m_doc */
         -1,                  /* m_size */
         cbMethods,           /* m_methods */
@@ -12173,6 +13002,104 @@ PyMODINIT_FUNC PyInit_CodeBasePYWrapper(void)
         NULL,                /* m_clear */
         NULL,                /* m_free */
     };
+    #endif
+    #ifdef IS_PY37
+    static struct PyModuleDef moduledef = {
+        PyModuleDef_HEAD_INIT,
+        "CodeBasePYWrapper37",     /* m_name */
+        "Tools for accessing DBF tables using CodeBase functions.",  /* m_doc */
+        -1,                  /* m_size */
+        cbMethods,           /* m_methods */
+        NULL,                /* m_reload */
+        NULL,                /* m_traverse */
+        NULL,                /* m_clear */
+        NULL,                /* m_free */
+    };
+    #endif    
+    #ifdef IS_PY38
+    static struct PyModuleDef moduledef = {
+        PyModuleDef_HEAD_INIT,
+        "CodeBasePYWrapper38",     /* m_name */
+        "Tools for accessing DBF tables using CodeBase functions.",  /* m_doc */
+        -1,                  /* m_size */
+        cbMethods,           /* m_methods */
+        NULL,                /* m_reload */
+        NULL,                /* m_traverse */
+        NULL,                /* m_clear */
+        NULL,                /* m_free */
+    };
+    #endif  
+    #ifdef IS_PY39
+    static struct PyModuleDef moduledef = {
+        PyModuleDef_HEAD_INIT,
+        "CodeBasePYWrapper39",     /* m_name */
+        "Tools for accessing DBF tables using CodeBase functions.",  /* m_doc */
+        -1,                  /* m_size */
+        cbMethods,           /* m_methods */
+        NULL,                /* m_reload */
+        NULL,                /* m_traverse */
+        NULL,                /* m_clear */
+        NULL,                /* m_free */
+    };
+    #endif 
+    
+    #ifdef IS_PY310
+    static struct PyModuleDef moduledef = {
+        PyModuleDef_HEAD_INIT,
+        "CodeBasePYWrapper310",     /* m_name */
+        "Tools for accessing DBF tables using CodeBase functions.",  /* m_doc */
+        -1,                  /* m_size */
+        cbMethods,           /* m_methods */
+        NULL,                /* m_reload */
+        NULL,                /* m_traverse */
+        NULL,                /* m_clear */
+        NULL,                /* m_free */
+    };
+    #endif
+    
+    #ifdef IS_PY311
+    static struct PyModuleDef moduledef = {
+        PyModuleDef_HEAD_INIT,
+        "CodeBasePYWrapper311",     /* m_name */
+        "Tools for accessing DBF tables using CodeBase functions.",  /* m_doc */
+        -1,                  /* m_size */
+        cbMethods,           /* m_methods */
+        NULL,                /* m_reload */
+        NULL,                /* m_traverse */
+        NULL,                /* m_clear */
+        NULL,                /* m_free */
+    };
+    #endif    
+
+    #ifdef IS_PY311_64
+    static struct PyModuleDef moduledef = {
+        PyModuleDef_HEAD_INIT,
+        "CodeBasePYWrapper64_311",     /* m_name */
+        "Tools for accessing DBF tables using CodeBase functions.",  /* m_doc */
+        -1,                  /* m_size */
+        cbMethods,           /* m_methods */
+        NULL,                /* m_reload */
+        NULL,                /* m_traverse */
+        NULL,                /* m_clear */
+        NULL,                /* m_free */
+    };
+    #endif    
+    
+       
+    #ifdef IS_PY312
+    static struct PyModuleDef moduledef = {
+        PyModuleDef_HEAD_INIT,
+        "CodeBasePYWrapper312",     /* m_name */
+        "Tools for accessing DBF tables using CodeBase functions.",  /* m_doc */
+        -1,                  /* m_size */
+        cbMethods,           /* m_methods */
+        NULL,                /* m_reload */
+        NULL,                /* m_traverse */
+        NULL,                /* m_clear */
+        NULL,                /* m_free */
+    };
+    #endif        
+             
     modReturn = PyModule_Create(&moduledef);
     return(modReturn);
 #endif

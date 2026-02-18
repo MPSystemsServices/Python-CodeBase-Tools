@@ -1,7 +1,7 @@
 # Python-CodeBase-Tools
 Python binding for the CodeBase-for-DBF data table engine, plus tools for spreadsheet access and other functions
 # Software Description
-CodeBase Tools is a Python binding that encapsulates the low-level functioning of the CodeBase(tm) product.  This is a formerly proprietary product released to Open Source as of September, 2018.
+CodeBase Tools is a Python binding that encapsulates the low-level functioning of the CodeBase(tm) product.  This is a formerly proprietary product released to Open Source as of September, 2018 and updated extensively in 2026.
 Python CodeBase Tools provide the following capabilities:
 * Creates, Opens, Reads, Writes and Indexes DBF tables in a format compatible with Visual FoxPro type DBF tables.
 * Supports record, table, and table header locking compatible with that of Visual FoxPro, allowing hundreds of users to access the same tables simultaneously
@@ -26,6 +26,8 @@ Python CodeBase Tools provide the following capabilities:
 * Supports VFP-style CURSORTOXML and XMLTOCURSOR functions for rapid conversion of DBF data to generic XML
 * Copies DBF tables to CSV and System Data (fixed field length) text files as well as importing those formats directly in a DBF table.
 For all functionality see the HTML documentation of this module.
+
+This version of Python-CodeBase-Tools was updated as of mid-2025.
 # Support for Python Versions
 The .PY files in Python-CodeBase-Tools package are designed to be cross platform, functional on all versions of Python from 2.7 and up.  However the compiled library .pyd file is specific to the Python version you are using.  Currently, 32-bit versions of Python 2.7, 3.6, 3.7, 3.8, 3.9, 3.10, 3.11, and 3.12 are supported.  In addition, with this release, the 64-bit version of Python 3.11 is also supported. As of this release, no further support for versions of Python prior to 2.7 will be provided.
 # Python-CodeBase-Tools Licensing
@@ -36,4 +38,4 @@ DBF tables can be opened both by Visual FoxPro applications and Python applicati
 The Python .pyd files which wrap the CodeBase(tm) c4dll.dll module were compiled for Windows.  The 32-bit modules will run properly on either 32-bit or 64-bit Windows version 7 or later.  The 64-bit modules will run only on 64-bit Windows.  The COM functionality in ExcelComTools and DBFXLStools2 is specific to Microsoft Windows. As of October, 2018, the LibXL product, upon which the ExcelTools module is based (also required for the DBFXLStools2 module) is a Windows-specific component.  A 64-bit version of ExcelTools is not provided in this release, but may be added in the future.  
 # Python-CodeBase-Tools Licensing
 This package is copyright M-P Systems Services, Inc., and is released to Open Source under the GNU Lesser GPL V.3.0 license, a copy of which is found in this repository.  The CodeBase-for-DBF module, is covered by this same license.  The CodeBase package, including the core library c4dll.dll is copyright Sequiter, Inc., and is licensed under the GNU Lesser GPL v.3.0.
->>>>>>> 0d83a103a1eff23f1a5cb2c27b2e2aa39b7d0c78
+

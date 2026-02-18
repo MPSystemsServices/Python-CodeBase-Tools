@@ -1,0 +1,639 @@
+:mod:`codebasetools.ExcelTools`
+===============================
+
+.. py:module:: codebasetools.ExcelTools
+
+.. autoapi-nested-parse::
+
+   ------------------------------------------------------------------------
+   ExcelTools Module - High Performance Access to XLS and XLSX Spreadsheets
+   ------------------------------------------------------------------------
+
+   This Module, ExcelTools.py, provides a Python wrapper around the MPSS, Inc., developed LibXLWrapper.DLL, which in turn
+   is a wrapper around the LIBXL.DLL 'C' Library from XLWare at www.LibXL.com.  LIBXL is a powerful alternative to using
+   MS Excel and controlling it with COM.  COM provides full access to all Excel features but at a significant cost in
+   time and licensing.
+
+   LIBXL is a commercial product, but has no run-time distribution fees and is considerably faster for common tasks
+   than Excel 2007 and higher.  It is available for non-Microsoft OS platforms as well.
+
+   Unfortunately for programming convenience LIBXL is highly granular and structured around the internal constructs of
+   the Excel file model.  These wrappers are designed to simplify the access and to allow Python modules to access it
+   without explicit use of ctypes -- although ctypes is the foundation on which this is built.
+
+   A copy of the LIBXL product, libxl.dll is included here.  It is a recent version of the freely downloadable module
+   found at https://www.libxl.com/
+   This will allow you to run the application, however, without a license key the capability is dramatically reduced.
+
+   Once you have a license key, you'll need to edit the file LibXLLicenseInfo.TXT which is part of this package to
+   replace the dummy information with your actual licensed user name and license key.  That is where this module
+   finds the license information which it hands to the libxl.dll module.
+
+   Why use this wrapper:
+   1 - First, the job of setting up ctypes for a large subset of the libxl functions is already done for you.  This has
+   been done in a way that is x-version compatible between Py 2.x and Py 3.x.
+   2 - As with many 'c' DLL modules libxl.dll is very granular, and a large number of function calls may be required
+   to accomplish simple things.  To simplify things, and to make sure that ctypes requirements are fully met, a .DLL
+   wrapper called LibXLWrapper.dll has been developed to cushion the complexities.  The source for LibXLWrapper.c is
+   found on GitHub in the CodeBaseTools repository and is free for download.
+
+   The work is performed by the object class xlWrap which uses ctypes to access the higher level methods in
+   LibXLWrapper.dll.  The methods in this module are documented fully in the docstrings
+   contained in it.  Also the test function at the bottom provides many examples of how to call the methods.
+
+   General Concepts:
+       - This module only allows one XLS or XLSX to be worked on at one time.  If you need to access multiple spreadsheets
+         simultaneously, you'll need to access LIBXL directly as it can handle multiple instances.  HOWEVER, it does
+         allow you to import worksheets from one spreadsheet to another, so this may not be a significan issue for you.
+       - Spreadsheet contents is accessed by addressing the individual worksheets within the workbook.  Every workbook has at
+         minimum one worksheet.  Worksheets are referenced by an integer index.  There is a method that returns the index
+         if you pass the worksheet name.
+       - Cells are accessed within a worksheet by referencing their row and column (0 based) offsets.
+       - Each cell has three components which can be managed separately: Value, Format (including Font), and Formula.
+       - Each cell has three components which can be managed separately: Value, Format (including Font), and Formula.
+       - Formats are applied by first defining the format and adding it to the workbook and saving the format index
+         value returned.  Then formats can be applied to individual cells and/or rows by referring to the worksheet,
+         the rows and columns and the format index value.
+       - The complexities of libxl.dll format management have been wrapped into the XLFORMAT object.  You create
+         instances of this object to control cell formats.  Note that many common formats have already been defined
+         to simplify basic output, but you can customize formats and make them arbitrarily complex.
+       - Either XLS or XLSX formats can be read and written, but this module doesn't allow for conversions since
+         it doesn't permit two or more workbooks to be open at the same time.  You could, however read the contents
+         of one workbook (returned as plain ASCII character strings) save them, then close the first workbook and open
+         the target workbook.  Note that the internal representation of the data (and some of the format defaults)
+         are dependent on XLS versus XLSX, and the file name extension determines how the data is stored internally.
+
+   2012 Jan 13 - Corrected documentation for GetRowValues(). JSH.
+   2012 May 30 JMc more accurate location method to find .dll
+   2013 Jan 04 JSH added ascii value protection with encoding to writecell() and writerow().
+   2018 Sep 28 JSH added xlwSetLicense function to store license for LibXL externally.
+   2018 Sep 29 JSH Implemented cross version features for Python 2.x and 3.x
+   2020 June 23 JSH Removed all dependencies on MPSS modules.  Now part of the CodeBaseTools services.
+
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   codebasetools.ExcelTools.XLFORMAT
+   codebasetools.ExcelTools.xlWrap
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   codebasetools.ExcelTools.isstr
+   codebasetools.ExcelTools.DTOT
+   codebasetools.ExcelTools.xlTest
+
+
+.. data:: _ver3x
+   :annotation: = False
+
+   
+
+.. function:: isstr(cTestStr)
+
+   For Py2.x and Py3.x compatibility
+   :param cTestStr: any value that may or may not be a string
+   :return: True or False
+
+
+.. function:: DTOT(dTheDate)
+
+   Quick conversion utility to convert a Python datetime.date() object to a datetime.datetime() object,
+   like the corresponding VFP DTOT() function.  Returns the datetime value or None on error
+
+
+.. data:: xlColor
+   
+
+   
+
+.. data:: xlNumFormat
+   
+
+   
+
+.. data:: xlAlignH
+   
+
+   
+
+.. data:: xlAlignV
+   
+
+   
+
+.. data:: xlBorder
+   
+
+   
+
+.. data:: xlFill
+   
+
+   
+
+.. data:: xlUnderline
+   
+
+   
+
+.. data:: xlMargins
+   
+
+   
+
+.. data:: xlAspect
+   
+
+   
+
+.. data:: xlPaperSize
+   
+
+   
+
+.. py:class:: XLFORMAT
+
+   Bases: :class:`ctypes.Structure`
+
+   A Data structure using the ctypes Structure construct.  This allows a single function call to pass all format
+   information for one or more cells rather than a separate one for each characteristic.  The default values of -1
+   or "" are ignored when xlWrap sets cell formats.  Only members with other values are considered in format setting,
+   so need only set the member properties that you need.
+
+   .. attribute:: _fields_
+      :annotation: = [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+
+      
+
+
+.. py:class:: xlWrap
+
+   Bases: :class:`object`
+
+   .. method:: makeStringPointer(self, cText)
+
+      Provides conversion from unicode string to byte string if this is running under Python 3.x.  This is
+      required because we cannot pass Python 3.x strings to the C DLL functions.  They first must be converted
+      to a string of simple bytes.  This function uses an encoding of "cp1252" to make the conversion in Py 3.x,
+      as that is the Windows standard for Western European languages.
+
+      :param cText: The unicode string to prepare to pass to the DLL.  The assumption will be that            the string can be converted to CodePage 1252 from Unicode.
+
+      :returns: Pointer for use by the DLL
+
+
+   .. method:: procStringResult(self, cBytes)
+
+      When the DLL returns a string it is in the form of a sequence of bytes.  Python 2.x is OK with that
+      but Python 3.x wants it converted to a representation of text, not bytes.  This function does
+      nothing at all but pass through the value for Python 2.x, but for Python 3.x, it tries a series of
+      decode steps with "strict" turned on.  For each failure it tries another decoding until in desperation
+      it creates the string as ASCII with the "replace" feature turned on.
+
+      :param cBytes: The bytes returned by the DLL which are to be converted to an appropriate string format.
+
+      :returns: A Python string with the appropriate encoding.
+
+
+   .. method:: SetPrintAspect(self, lnSheet, lpcHow='PORTRAIT')
+
+      Sets the output printing format to either "PORTRAIT" or "LANDSCAPE".  Pass the string as the second
+      parameter.  If unrecognized value is passed, defaults to PORTRAIT.  Returns 1 if the lnSheet value is
+      recognized as a valid work sheet index, otherwise returns 0.
+
+
+   .. method:: SetPageMargins(self, lnSheet, lcWhich, lnWidth)
+
+      Defines the printed output page margins for the specified worksheet.  The values to pass in lcWhich
+      are TOP, BOTTOM, LEFT, RIGHT, or ALL.  Width of the margins is affected based on that selection and should
+      be specified in inches as a decimal fraction.  Returns 1 if the lnSheet value is recognized as a valid
+      work sheet index, otherwise returns 0.
+
+
+   .. method:: SetPrintArea(self, lnSheet, lnFromRow, lnToRow, lnFromCol, lnToCol)
+
+      Defines the Excel "print area" or portion of the worksheet that is "printable".  Returns 1 if the lnSheet
+      value is recognized as a valid work sheet index, otherwise returns 0. Note that row and column counters
+      are 0 (zero) based.
+
+
+   .. method:: SplitSheet(self, lnSheet, lnRow, lnCol)
+
+      The LibXL docs aren't very clear on what "Split" does, but it actually locks header rows and or left side
+      label columns into position while the body scrolls.  In Excel-speak, this is "Freeze Panes", not "Split", which
+      is something different.  To lock in place the first 4 rows, pass lnRow as 4 (the 5th physical row) and
+      lnCol as 0.
+
+
+   .. method:: SetPaperSize(self, lnSheet, lpcType)
+
+      Determines the paper size for any printed output.  This overrides the printer setting based on Excel
+      typical operation.  The lpcType value may be one of three text values: LETTER, LEGAL, and A3.  If the text
+      string is unrecognized, the default will be set to LETTER.  Returns 1 if the lnSheet value is recognized as a
+      valid work sheet index, otherwise returns 0.
+
+
+   .. method:: SetPrintPageCountFit(self, lnSheet, lnPageWidth, lnPageHeight)
+
+      In the Excel print preview it is possible to specify that the print area to be output must fit in a
+      specified number of pages wide and pages high.  This function provides that functionality.  Specify the
+      work sheet index number and the number of pages of width for the output followed by the pages of height.
+      The governing dimension is the width, typically set a one page (a value of 1 in the lnPageWidth
+      parameter.  Height may be set to any non-zero value, but may be set to a value greater than the likely
+      actual output height in pages so as to avoid unnecessary compression.  Again, note these values are set
+      in numbers of pages.  Returns 1 if the lnSheet value is recognized as a valid work sheet index, otherwise
+      returns 0.
+
+
+   .. method:: SetRowGroupBottom(self, nSheet, bBottom)
+
+      When Rows are Grouped, typically the extra "Summary" row is assumed to be the one directly below the range
+      of grouped rows.  Call this function with bBottom = True to ensure that.  Call it with False to force
+      the "Summary" row to be the one immediately above the defined Group of Rows.
+
+
+   .. method:: SetColGroupRight(self, nSheet, bRight)
+
+      When Cols are Grouped, typically the extra "Summary" column is assumed to be the one immediately to the right
+      of the specified group of Columns.  Call this function with bRight = True to ensure that.  Call it with False
+      to force the "Summary" column to be the one immediately to the left of the Group of Rows.
+
+
+   .. method:: GroupRows(self, nSheet, nFromRow, nToRow, bCollapse=False)
+
+      Sets up a group of rows to allow them to be opened and closed above or below a summary row.  Pass
+      bCollapse as True to ensure that the Grouped rows are collapsed when the sheet is opened.
+
+
+   .. method:: GroupCols(self, nSheet, nFromCol, nToCol, bCollapse=False)
+
+      Like Group Rows, but does it for Columns.  Once set, there is an expand/collapse button at the top of the
+      spreadsheet for this Group.  Pass bCollapse as True to collapse the group prior to opening it.
+
+
+   .. method:: InsertRows(self, lnSheet, lnFromRow, lnToRow)
+
+      Inserts rows into the specified worksheet.  Indicate the starting row where the insertion begins and
+      the last row to be inserted below that.  Returns 1 on success, 0 on failure.
+
+
+   .. method:: InsertCols(self, lnSheet, lnFromCol, lnToCol)
+
+      Inserts columns into the specified worksheet.  Indicate the starting column (0 based count) where the
+      insertion begins and the last column to the right of that.  Returns 1 on success, 0 on failure.
+
+
+   .. method:: DeleteRows(self, lnSheet, lnFromRow, lnToRow)
+
+      Removes the rows from the lnFromRow row to the lnToRow row.  Row numbers are 0-based.  Returns 1 on
+      success, 0 on failure.
+
+
+   .. method:: DeleteCols(self, lnSheet, lnFromCol, lnToCol)
+
+      Removes the specified columns from the specified worksheet.  Specify the from col and the to col (0-based
+      column counts).  Returns 1 on success, 0 on failure.
+
+
+   .. method:: SetRowFormats(self, lnSheet, lnFromRow, lnToRow, lnFmatIndex)
+
+      An alternative way to apply formats to all cells in one or more rows.  You'll need to test to see if the
+      format characteristics you need are allowed to be set at the Row level.  If not, no error is raised.
+      Returns 1 on success, 0 on failure.  Failure could be caused by not having any open spreadsheet workbooks.
+
+
+   .. method:: SetColWidths(self, lnSheet, lnFromCol, lnToCol, ldWidth)
+
+      Sets the width (in Excel column width units passed as a double) of one or more adjacent columns.
+      Returns 1 on success, 0 on failure.
+
+
+   .. method:: SetRowHeight(self, lnSheet, lnRow, ldHeight)
+
+      Sets the height of one row in pixels.  Returns 1 on success, 0 on failure.
+
+
+   .. method:: AddFormat(self, lxFmat)
+
+      You define a format by creating an instance of the Format structure like:
+      someFormat = XLFORMAT()
+      Then set the properties (members) of the structure that you need to define for one or more cells.
+      This method returns a Format index value that you'll use to refer to this Format.  If it returns
+      -1, something went wrong.
+
+      The first format you define with AddFormat is saved and becomes the Default Format.  This Format
+      is automatically applied to any cells filled with WriteCellValue() or WriteRowValues() after it has
+      been defined.  Defining a Default Format for the workbook prior to extensive writing can save
+      considerable processing time when there are large numbers of identically formatted body cells
+      to be loaded -- in comparison to writing the cell contents and adding the formatting in a second pass.
+
+
+   .. method:: FormatCells(self, lnSheet, lnFromRow, lnToRow, lnFromCol, lnToCol, lnFmatIndex)
+
+      Allows you to apply a previously defined Format to a rectangular collection of cells.  Returns 1
+      on success, 0 on failure.
+
+
+   .. method:: SetCellDelimiter(self, lcDelim)
+
+      Overrides the default value of the delimiter used to separate cell values both in the get and the
+      write of multiple cells.  Should be a string value of up to 10 characters unlikely to be found in
+      any text string cell value.  The default value, if this is not called is tab: ' '.
+
+
+   .. method:: OpenWorkbook(self, lcFileName)
+
+      Initializes a new spreadsheet, starting with an existing spreadsheet file on the disk.  The worksheet
+      is immediately read into memory and information is captured on the number of worksheets it contains.
+      This number is the return value.  If the return value is < 1, something is wrong.
+
+      The Excel version assumed is determined by the file name extension: XLS or XLSX.
+
+      You can access the existing worksheets by using sheet index values from 0 (the first sheet) to
+      one less than the number of worksheets returned by this method.
+
+
+   .. method:: CloseWorkbook(self, lbSave)
+
+      Terminates work with the currently active spreadsheet.  If the spreadsheet has been changed during processing
+      and you pass 1 for lbSave, then the workbook will be saved prior to the shutdown.  Once this method
+      has executed, you can open or create another workbook (spreadsheet).
+
+
+   .. method:: CreateWorkbook(self, lcFileName, lcFirstSheetName='', bNoSheet=False)
+
+      Initializes a new spreadsheet -- creating a new, empty one in memory.  The lcFileName parameter MUST
+      be passed.  It must have an extension of XLS or XLSX, which tells the module what version of Excel to
+      use.
+
+      A Worksheet is immediately added to the workbook.  This worksheet will have the name as given in the
+      second parameter lcFirstSheetName.  If you don't supply lcFirstSheetName, the sheet will be named
+      "Sheet1".  Returns the sheet index value for that newly created sheet.
+
+      01/19/2013 - Added bNoSheet parm.  If you set this to True, then no initial sheet will be added
+      to the workbook, so you will need to start off by creating sheets with the AddSheet() or the
+      ImportSheetFrom() methods.  Trying to save the Workbook without adding sheets will likely trigger
+      an error.
+
+
+   .. method:: ImportSheetFrom(self, cFile, cSheet)
+
+      Adds a copy of the sheet cSheet in XLS/XLSX file cFile as the next sheet in the current worksheet.
+      You can create a workbook without sheets using CreateWorkbook() and specifying bNoSheet=True.
+      Added 01/19/2013. JSH.
+      Returns the index of the new sheet or -1 on failure.
+
+
+   .. method:: AddSheet(self, lcSheetName)
+
+      Adds a new worksheet at the end of the set of worksheets.  The name lcSheetName is required.
+
+      Returns the worksheet index value of the sheet you added.  This index will be required for all
+      manipulation of that sheet.
+
+
+   .. method:: GetCellValue(self, lnSheet, lnRow, lnCol)
+
+      Pass this method a sheet index number and a row/column pair.  It will return the cell value as a tuple:
+      The first element of the tuple will be a string representation of the value.  The second element of
+      the tuple will be a string value indicating the type of the cell value.  Cell value types are:
+      - "S" - character string
+      - "N" - number (always a double)
+      - "D" - date (including date, datetime, and time)
+      - "L" - boolean or logical
+      - "B" - Blank
+      - "E" - Empty
+      - "X" - Error
+      Date values are returned in the form YYYYMMDDHHMMSSnnn where the year is YYYY, month MM, day DD, hour HH,
+      minute MM, seconds SS, and milliseconds nnn.  Time values will have all 0 (zeros) in the date portion of the
+      string.  Date values will have all 0 (zeros) in the time portion of the string.
+
+      Boolean values are returned as "TRUE" or "FALSE".
+
+      Returns None if there is no current spreadsheet.
+
+
+   .. method:: GetErrorMessage(self)
+
+      Returns the text string explaining the most recent error condition.
+
+
+   .. method:: GetErrorNumber(self)
+
+      Returns the last error number.
+
+
+   .. method:: __getattr__(self, cAttr)
+
+
+   .. method:: GetSheetStats(self, lnSheet)
+
+      Returns a tuple with 5 pieces of information about the worksheet specified in the lnSheet parameter:
+      - Sheet Name
+      - Topmost row with contents
+      - Bottommost row with contents
+      - Leftmost column with contents
+      - Rightmost column with contents
+
+      Returns an empty string for the Sheet Name if the Sheet Index is invalid or if there is no active workbook.
+
+
+   .. method:: GetSheetFromName(self, lcName)
+
+      Returns the worksheet index value for the worksheet with the name passed to the function.  Returns
+      -1 on error (no such sheet or no active workbook).
+
+
+   .. method:: WriteCellValue(self, lnSheet, lnRow, lnCol, lcStrValue, lcCellType)
+
+      Places a value or a formula into a specified cell.  There are five required parameters:
+      - Worksheet index
+      - Row number (0 based)
+      - Column number (0 based)
+      - Value represented as a text string.  See GetCellValue() for formatting date and logical values.
+      - Desired cell type: "S", "N", "D", "L", "B", or "F".
+
+      In the case of cell type "B" pass an empty string as the value (blank).
+
+      In the case of "F" the string should contain a formula in the "letter number" type notation of cell
+      reference.  In other words you might pass "=A1+B1" as the formula.
+
+      Returns 1 on success, 0 on failure.
+      Changed handling of unicode conversions to ascii for greater reliability.  Also added code to convert
+      right and left quote signs to simple ascii quotes. jsh. 03/07/2013.
+
+
+   .. method:: WriteRowValues(self, lnSheet, lnRow, lnColFrom, lnColTo, lcStrValues, lcCellTypes)
+
+      Exactly like WriteCellValue() except that the lcStrValues parameter must be a TAB
+      delimited string containing one value for each cell you specify to be filled.  The
+      parameter lcCellTypes is a string with one character for each cell to be filled, containing
+      the corresponding data type to be stored.  See WriteCellValue() for valid types.
+      Changed handling of unicode conversions to ascii for greater reliability. JSH. 03/07/2013.
+
+
+   .. method:: ReadRowValues(self, lnSheet, lnRow, lnColFrom, lnColTo)
+
+      Like GetRowValues except returns a simple list of values (or None on error) containing
+      the values of each cell specified in native Python format.  Not for use in high performance situations.
+
+
+   .. method:: TransformExcelValue(self, lpxVal, lpcType)
+
+      Takes the raw value from a cell plus the type lpcType and returns the native Python value which
+      these represent. Allowed lpcType values:
+
+          - "S" = character string - returns a string
+          - "N" = number (always a double) - returns a double
+          - "D" = date (including date, datetime, and time) - returns a datetime.            If the date value in Excel is empty or invalid, (year 0), returns None.
+          - "L" = boolean or logical - returns a logical
+          - "B" = Blank returns ""
+          - "E" = Empty returns ""
+          - "X" = Error returns "ERROR"
+
+
+   .. method:: GetRowValues(self, lnSheet, lnRow, lnColFrom, lnColTo)
+
+      Gets the values from a portion of a row from lnColFrom to lnColTo.  Exactly like GetCellValue()
+      except that the tuple contains a TAB-delimited string of values and a value type string
+      with one character per cell indicating the type found in the cell.
+
+      On error returns an empty string as the first element of the tuple.
+      CORRECTION: On error returns None as the first element of the tuple. Jan 13, 2012. JSH.
+
+
+   .. method:: MergeCells(self, lnSheet, lnFromRow, lnToRow, lnFromCol, lnToCol)
+
+      Applies the Excel 'Cell Merge' feature to the specified cells.
+
+
+   .. method:: SetColorByName(self, lnSheet, lnFromRow, lnToRow, lnFromCol, lnToCol, lcColor)
+
+      Pass the name in the xlColor dict() rather than the number.
+
+
+   .. method:: SetCellColor(self, lnSheet, lnFromRow, lnToRow, lnFromCol, lnToCol, lnColor)
+
+      Applies the specified cell background color to the indicated range of cells.
+
+
+   .. method:: IsRowHidden(self, lnSheet, lnRow)
+
+      Tests to see if the specified row in the specified sheet is hidden.
+      Returns True if hidden, False otherwise.  Note that a False may also be returned
+      if an error was encountered.  If you get False and were expecting True, then
+      call the GetErrorMessage() method or GetErrorNumber() method to see if an
+      error was reported.
+
+
+   .. method:: IsColHidden(self, lnSheet, lnCol)
+
+      Tests to see if the specified column in the specified sheet is hidden.
+      Returns True if hidden, False otherwise.  Note that a False may also be returned
+      if an error was encountered.  If you get False and were expecting True, then
+      call the GetErrorMessage() method or GetErrorNumber() method to see if an
+      error was reported.
+
+
+   .. method:: SetRowHidden(self, lnSheet, lnRow, lbHide)
+
+      Sets the specified row in the specified sheet to hidden or NOT hidden,
+      based on the True/False status of lbHide.  Returns 1 on success, 0 on failure.
+      If 0 is returned, call GetErrorMessage() or GetErrorNumber() to determine the
+      reason for the problem.  Does not report an error if the specified row's
+      hidden status is already set to the value of lbHide.
+
+
+   .. method:: SetColHidden(self, lnSheet, lnCol, lbHide)
+
+      Sets the specified column in the specified sheet to hidden or NOT hidden,
+      based on the True/False status of lbHide.  Returns 1 on success, 0 on failure.
+      If 0 is returned, call GetErrorMessage() or GetErrorNumber() to determine the
+      reason for the problem.  Does not report an error if the specified column's
+      hidden status is already set to the value of lbHide.
+
+
+   .. method:: makeHeaderFormat(self)
+
+
+   .. method:: makeTitleFormat(self)
+
+
+   .. method:: makeBodyFormat(self)
+
+
+   .. method:: makeBodyHiddenFormat(self)
+
+
+   .. method:: makeTitleCenterFormat(self)
+
+
+   .. method:: makeMainTitleFormat(self)
+
+
+   .. method:: makeBodyBoldFormat(self)
+
+
+   .. method:: makeBodyBoldDateFormat(self)
+
+
+   .. method:: makeBodyNoWrapFormat(self)
+
+
+   .. method:: makeBodyDateFormat(self)
+
+
+   .. method:: makeBodyAccountsFormat(self)
+
+
+   .. method:: makeBodyMoneyFormat(self)
+
+
+   .. method:: makeBodyPercentFormat(self)
+
+
+   .. method:: makeBodyNumberFormat(self)
+
+
+   .. method:: makeBodyNumber2DFormat(self)
+
+
+   .. method:: setStandardFormat(self)
+
+
+   .. method:: applyStandardFormat(self, lnSheet, lnFromRow, lnToRow, lnFromCol, lnToCol, lcType)
+
+
+   .. method:: makeCustomFormat(self, lcBaseFormat, lcNewName, lcNewBackColor='', lcNewAlignH='', lcNewFont='', lnNewPointSize=-1, lcNewFontColor='')
+
+
+   .. method:: prepDateTime(self, tDateTimeVal)
+
+
+   .. method:: prepDate(self, dDateVal)
+
+
+   .. method:: prepLogical(self, bVal)
+
+
+
+.. function:: xlTest()
+
+
+.. data:: lbResult
+   
+
+   
+

@@ -1,0 +1,539 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>codebasetools.DBFXLStools2 &mdash; CodeBaseTools 2.06 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../CodeBaseToolsIndex.html" class="icon icon-home"> CodeBaseTools
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#"><code class="xref py py-mod docutils literal notranslate"><span class="pre">codebasetools.DBFXLStools2</span></code></a><ul>
+<li><a class="reference internal" href="#dbfxlstools2-module-convert-dbf-to-excel-and-excel-to-dbf-tables">The power and convenience of accessing, manipulating and assembling data using CodeBaseTools is combined here
+with the convenience and universal acceptance of the .XLSX Excel spreadsheet format for sharing and displaying data.</a></li>
+<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#classes">Classes</a></li>
+<li><a class="reference internal" href="#functions">Functions</a><ul>
+<li><a class="reference internal" href="#codebasetools.DBFXLStools2.__author__">__author__</a></li>
+<li><a class="reference internal" href="#codebasetools.DBFXLStools2.d2xConvertFrom">d2xConvertFrom</a></li>
+<li><a class="reference internal" href="#codebasetools.DBFXLStools2.d2xConvertTo">d2xConvertTo</a></li>
+<li><a class="reference internal" href="#codebasetools.DBFXLStools2.x2dConvert">x2dConvert</a></li>
+<li><a class="reference internal" href="#codebasetools.DBFXLStools2.cErrorMessage">cErrorMessage</a></li>
+<li><a class="reference internal" href="#codebasetools.DBFXLStools2._ver3x">_ver3x</a></li>
+<li><a class="reference internal" href="#codebasetools.DBFXLStools2.addExt">addExt</a></li>
+<li><a class="reference internal" href="#codebasetools.DBFXLStools2.DbfXlsEngine">DbfXlsEngine</a><ul>
+<li><a class="reference internal" href="#codebasetools.DBFXLStools2.DbfXlsEngine.__enter__">__enter__</a></li>
+<li><a class="reference internal" href="#codebasetools.DBFXLStools2.DbfXlsEngine.makeHeaderFormat">makeHeaderFormat</a></li>
+<li><a class="reference internal" href="#codebasetools.DBFXLStools2.DbfXlsEngine.makeHeaderFormatXLSX">makeHeaderFormatXLSX</a></li>
+<li><a class="reference internal" href="#codebasetools.DBFXLStools2.DbfXlsEngine.makeBodyHiddenFormat">makeBodyHiddenFormat</a></li>
+<li><a class="reference internal" href="#codebasetools.DBFXLStools2.DbfXlsEngine.makeTitleFormat">makeTitleFormat</a></li>
+<li><a class="reference internal" href="#codebasetools.DBFXLStools2.DbfXlsEngine.makeBodyFormat">makeBodyFormat</a></li>
+<li><a class="reference internal" href="#codebasetools.DBFXLStools2.DbfXlsEngine.makeBodyDecimalFormat">makeBodyDecimalFormat</a></li>
+<li><a class="reference internal" href="#codebasetools.DBFXLStools2.DbfXlsEngine.makeBodyFormatXLSX">makeBodyFormatXLSX</a></li>
+<li><a class="reference internal" href="#codebasetools.DBFXLStools2.DbfXlsEngine.makeBodyDecimalFormatXLSX">makeBodyDecimalFormatXLSX</a></li>
+<li><a class="reference internal" href="#codebasetools.DBFXLStools2.DbfXlsEngine.calcColumnWidth">calcColumnWidth</a></li>
+<li><a class="reference internal" href="#codebasetools.DBFXLStools2.DbfXlsEngine.bizobj2excel">bizobj2excel</a></li>
+<li><a class="reference internal" href="#codebasetools.DBFXLStools2.DbfXlsEngine.dbf2excel">dbf2excel</a></li>
+<li><a class="reference internal" href="#codebasetools.DBFXLStools2.DbfXlsEngine.setdbfstru">setdbfstru</a></li>
+<li><a class="reference internal" href="#codebasetools.DBFXLStools2.DbfXlsEngine.excel2dbf">excel2dbf</a></li>
+<li><a class="reference internal" href="#codebasetools.DBFXLStools2.DbfXlsEngine.__exit__">__exit__</a></li>
+<li><a class="reference internal" href="#codebasetools.DBFXLStools2.DbfXlsEngine.__del__">__del__</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#codebasetools.DBFXLStools2.quickExcel2DBF">quickExcel2DBF</a></li>
+<li><a class="reference internal" href="#codebasetools.DBFXLStools2._dtTest">_dtTest</a></li>
+<li><a class="reference internal" href="#codebasetools.DBFXLStools2.bResult">bResult</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../CodeBaseToolsIndex.html">CodeBaseTools</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../CodeBaseToolsIndex.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li><code class="xref py py-mod docutils literal notranslate"><span class="pre">codebasetools.DBFXLStools2</span></code></li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../../../_sources/autoapi/codebasetools/DBFXLStools2/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-codebasetools.DBFXLStools2">
+<span id="codebasetools-dbfxlstools2"></span><h1><a class="reference internal" href="#module-codebasetools.DBFXLStools2" title="codebasetools.DBFXLStools2"><code class="xref py py-mod docutils literal notranslate"><span class="pre">codebasetools.DBFXLStools2</span></code></a><a class="headerlink" href="#module-codebasetools.DBFXLStools2" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="dbfxlstools2-module-convert-dbf-to-excel-and-excel-to-dbf-tables">
+<p>The power and convenience of accessing, manipulating and assembling data using CodeBaseTools is combined here
+with the convenience and universal acceptance of the .XLSX Excel spreadsheet format for sharing and displaying data.</p>
+</div>
+<div class="section" id="module-contents">
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#codebasetools.DBFXLStools2.DbfXlsEngine" title="codebasetools.DBFXLStools2.DbfXlsEngine"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DbfXlsEngine</span></code></a></p></td>
+<td><p>DbfXlsEngine provides a suite of methods to copy data from DBF tables to Excel files and the reverse.  It requires</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#codebasetools.DBFXLStools2.addExt" title="codebasetools.DBFXLStools2.addExt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">addExt</span></code></a>(name, ext='dbf')</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#codebasetools.DBFXLStools2.quickExcel2DBF" title="codebasetools.DBFXLStools2.quickExcel2DBF"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quickExcel2DBF</span></code></a>(cSourceXLS='', cDestDBF='')</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#codebasetools.DBFXLStools2._dtTest" title="codebasetools.DBFXLStools2._dtTest"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_dtTest</span></code></a>()</p></td>
+<td><p>For internal testing ONLY</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py data">
+<dt id="codebasetools.DBFXLStools2.__author__">
+<code class="sig-prename descclassname">codebasetools.DBFXLStools2.</code><code class="sig-name descname">__author__</code><em class="property"> = J. S. Heuer</em><a class="headerlink" href="#codebasetools.DBFXLStools2.__author__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt id="codebasetools.DBFXLStools2.d2xConvertFrom">
+<code class="sig-prename descclassname">codebasetools.DBFXLStools2.</code><code class="sig-name descname">d2xConvertFrom</code><em class="property"> = NYCDTILMBFGZW</em><a class="headerlink" href="#codebasetools.DBFXLStools2.d2xConvertFrom" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt id="codebasetools.DBFXLStools2.d2xConvertTo">
+<code class="sig-prename descclassname">codebasetools.DBFXLStools2.</code><code class="sig-name descname">d2xConvertTo</code><em class="property"> = NNSDDNLSNNXSX</em><a class="headerlink" href="#codebasetools.DBFXLStools2.d2xConvertTo" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt id="codebasetools.DBFXLStools2.x2dConvert">
+<code class="sig-prename descclassname">codebasetools.DBFXLStools2.</code><code class="sig-name descname">x2dConvert</code><a class="headerlink" href="#codebasetools.DBFXLStools2.x2dConvert" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt id="codebasetools.DBFXLStools2.cErrorMessage">
+<code class="sig-prename descclassname">codebasetools.DBFXLStools2.</code><code class="sig-name descname">cErrorMessage</code><em class="property"> =</em><a class="headerlink" href="#codebasetools.DBFXLStools2.cErrorMessage" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py data">
+<dt id="codebasetools.DBFXLStools2._ver3x">
+<code class="sig-prename descclassname">codebasetools.DBFXLStools2.</code><code class="sig-name descname">_ver3x</code><em class="property"> = False</em><a class="headerlink" href="#codebasetools.DBFXLStools2._ver3x" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="codebasetools.DBFXLStools2.addExt">
+<code class="sig-prename descclassname">codebasetools.DBFXLStools2.</code><code class="sig-name descname">addExt</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">ext</span><span class="o">=</span><span class="default_value">'dbf'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.DBFXLStools2.addExt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py class">
+<dt id="codebasetools.DBFXLStools2.DbfXlsEngine">
+<em class="property">class </em><code class="sig-prename descclassname">codebasetools.DBFXLStools2.</code><code class="sig-name descname">DbfXlsEngine</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">oVFP</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.DBFXLStools2.DbfXlsEngine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>DbfXlsEngine provides a suite of methods to copy data from DBF tables to Excel files and the reverse.  It requires
+the installation of the ExcelTools module and the CodeBaseTools module.  Note that the ExcelTools module requires
+a licensed version of LibXL and the LibXLWrapper.dll.  LibXLWrapper.dll is an open source module that is part
+of the ExcelTools distribution, but LibXL is a commercial product requiring a user name and license code to
+be stored in a libXLLicenseInfo.txt file.  See the documentation for ExcelTools for more details.</p>
+<p>The normal usage for this object is to pass it an object reference to an instance of cbTools() from the
+CodeBaseTools module:</p>
+<blockquote>
+<div><p>oEngine = DbfXlsEngine(cbTools())</p>
+</div></blockquote>
+<p>But, if no cbTools instance is supplied, one will be created if possible, providing this is invoked via the
+“with” mechanism.  See the dtTest() function for an example of this usage.</p>
+<dl class="py method">
+<dt id="codebasetools.DBFXLStools2.DbfXlsEngine.__enter__">
+<code class="sig-name descname">__enter__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.DBFXLStools2.DbfXlsEngine.__enter__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.DBFXLStools2.DbfXlsEngine.makeHeaderFormat">
+<code class="sig-name descname">makeHeaderFormat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.DBFXLStools2.DbfXlsEngine.makeHeaderFormat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Format creator for the column header cells containing the field names.
+:return: Format Object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.DBFXLStools2.DbfXlsEngine.makeHeaderFormatXLSX">
+<code class="sig-name descname">makeHeaderFormatXLSX</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.DBFXLStools2.DbfXlsEngine.makeHeaderFormatXLSX" title="Permalink to this definition">¶</a></dt>
+<dd><p>Format creator for the column header cells containing the field names.  Uses default fonts from
+XLSX type files.
+:return: Format Object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.DBFXLStools2.DbfXlsEngine.makeBodyHiddenFormat">
+<code class="sig-name descname">makeBodyHiddenFormat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.DBFXLStools2.DbfXlsEngine.makeBodyHiddenFormat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Format creator for the cells in a hidden row.  The hidden row option allows the raw DBF field names to
+be included in the XLS file without actually displaying them – the column headings can then display
+human readable names.
+:return: Format Object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.DBFXLStools2.DbfXlsEngine.makeTitleFormat">
+<code class="sig-name descname">makeTitleFormat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.DBFXLStools2.DbfXlsEngine.makeTitleFormat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Format creator for the top-of-the-page title if one is to be displayed.
+:return: Format Object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.DBFXLStools2.DbfXlsEngine.makeBodyFormat">
+<code class="sig-name descname">makeBodyFormat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.DBFXLStools2.DbfXlsEngine.makeBodyFormat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Format creator for the standard body cells containing data displayed in text format (including dates)
+:return: Format Object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.DBFXLStools2.DbfXlsEngine.makeBodyDecimalFormat">
+<code class="sig-name descname">makeBodyDecimalFormat</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.DBFXLStools2.DbfXlsEngine.makeBodyDecimalFormat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Format creator for the standard body cells containing data in numeric format.  Defaults to 2 decimal places
+and the standard thousands separator character.
+:return: Format Object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.DBFXLStools2.DbfXlsEngine.makeBodyFormatXLSX">
+<code class="sig-name descname">makeBodyFormatXLSX</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.DBFXLStools2.DbfXlsEngine.makeBodyFormatXLSX" title="Permalink to this definition">¶</a></dt>
+<dd><p>Format creator for the standard body cells containing data displayed in text format (including dates).
+This version uses font types standard for XLSX files.
+:return: Format Object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.DBFXLStools2.DbfXlsEngine.makeBodyDecimalFormatXLSX">
+<code class="sig-name descname">makeBodyDecimalFormatXLSX</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.DBFXLStools2.DbfXlsEngine.makeBodyDecimalFormatXLSX" title="Permalink to this definition">¶</a></dt>
+<dd><p>Format creator for the standard body cells containing data in numeric format.  Defaults to 2 decimal places
+and the standard thousands separator character.  This version uses font types standard for XLSX files.
+:return: Format Object</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.DBFXLStools2.DbfXlsEngine.calcColumnWidth">
+<code class="sig-name descname">calcColumnWidth</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">lcType</span></em>, <em class="sig-param"><span class="n">lnWidth</span></em>, <em class="sig-param"><span class="n">lnOverride</span><span class="o">=</span><span class="default_value">0.0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.DBFXLStools2.DbfXlsEngine.calcColumnWidth" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.DBFXLStools2.DbfXlsEngine.bizobj2excel">
+<code class="sig-name descname">bizobj2excel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">oBiz</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cExcelName</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">xHeaderList</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cTitleOne</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">cTitleTwo</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">bHiddenNames</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">bNoClose</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">cFieldList</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">cForExpr</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">cSortOrder</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.DBFXLStools2.DbfXlsEngine.bizobj2excel" title="Permalink to this definition">¶</a></dt>
+<dd><p>NOTE: This method is intended to work with MPSS, Inc., standard business object class wrapper for data
+tables (either .DBF or MongoDB).  The MPSS business object class is NOT provided as part of the CodeBaseTools
+module.  Contact MPSS, Inc., for more information.</p>
+<p>Similar to dbf2excel except that takes as input a fully configured biz object with a table attached.  This
+can be a Biz Object for either a DBF or a MongoDB table.  This pulls all the data out with a copytoarray()
+call, then stringifies the data for storing into the cells and outputs the specified Excel.  Outputs ONLY
+.XLSX files, although that may be slower than .XLS.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>oBiz</strong> – Object reference to the MPSS BizObject which will be the source of the records</p></li>
+<li><p><strong>cExcelName</strong> – Fully qualified path name for the Excel output file.  Will be forced to ext of .XLSX</p></li>
+<li><p><strong>xHeaderList</strong> – List() object with one text string for each column of output</p></li>
+<li><p><strong>cTitleOne</strong> – Optional title for first row</p></li>
+<li><p><strong>cTitleTwo</strong> – Optional title for second row</p></li>
+<li><p><strong>bHiddenNames</strong> – If True, then we’ll output a hidden row with the field names directly after the title row.</p></li>
+<li><p><strong>bNoClose</strong> – Ignored</p></li>
+<li><p><strong>cFieldList</strong> – Comma separated list of field names that will be output and in the order listed.</p></li>
+<li><p><strong>cForExpr</strong> – If not all records are to be output, specify a legal “for” expression here.  This will be            passed to the Biz Object to restrict the list of records in the copytoarray() call</p></li>
+<li><p><strong>cSortOrder</strong> – Pass the name of a DBF index TAG or the name of a MongoDB field to control the sort order.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True on Success, otherwise False, and set the error message.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.DBFXLStools2.DbfXlsEngine.dbf2excel">
+<code class="sig-name descname">dbf2excel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">lcDbfName</span></em>, <em class="sig-param"><span class="n">lcExcelName</span></em>, <em class="sig-param"><span class="n">headerlist</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">titleone</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">titletwo</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">rawcopy</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">hiddenNames</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">noclose</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">fieldList</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.DBFXLStools2.DbfXlsEngine.dbf2excel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copies the contents of the specific DBF file into the spreadsheet named lcExcelName.
+If the spreadsheet already exists, it is overwritten.  Otherwise it is created.  There
+will be a header row containing field names and one row following that for each table
+record (row).</p>
+<p>If headerlist is of type list(), it should contain one text value for each column in the table/sheet.
+These text values will replace the field names in the top row. (In that case, the output can’t be used
+for import back into dbf via excel2dbf().</p>
+<p>If titleone and/or titletwo are non-empty strings, they will be placed in A1 and A2 respectively
+in 12 point Bold, and all content will be moved down accordingly.</p>
+<p>Data table fields will be properly converted to Excel value types.</p>
+<p>Fields such as General will not be converted.  Memo will be included.</p>
+<p>If you are confident you know that all fields in the table are convertable to Excel types (for example
+that there are no “General” or “Memo-Binary” fields in the table), then you can use the rawcopy option
+which does no type or content checking other than the standard conversions from VFP to Excel formats
+for dates, etc.  Pass the optional parameter rawcopy=True in that case.</p>
+<p>Table ordering is by record.</p>
+<p>If hiddenNames == True, then inserts a row directly below the title row (either containing the
+field names or the values in headerlist) which will be filled with the field names AND be set to
+hidden.</p>
+<p>Returns True on success.  False on Failure.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.DBFXLStools2.DbfXlsEngine.setdbfstru">
+<code class="sig-name descname">setdbfstru</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">lcFieldVals</span></em>, <em class="sig-param"><span class="n">lcFieldTypes</span></em>, <em class="sig-param"><span class="n">lxDbfTypes</span></em>, <em class="sig-param"><span class="n">lxDbfWidths</span></em>, <em class="sig-param"><span class="n">lxDbfDecimals</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.DBFXLStools2.DbfXlsEngine.setdbfstru" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.DBFXLStools2.DbfXlsEngine.excel2dbf">
+<code class="sig-name descname">excel2dbf</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">lcExcelName</span></em>, <em class="sig-param"><span class="n">lcDbfName</span></em>, <em class="sig-param"><span class="n">sheetname</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">appendflag</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">templatedbf</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">fieldlist</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">columnsonly</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">showErrors</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.DBFXLStools2.DbfXlsEngine.excel2dbf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes the contents of the specified Excel file (xls or xlsx) into the target DBF type table.  The existence of the
+lcDbfName table and the appendflag value determine the action taken:</p>
+<dl class="simple">
+<dt>lcDbfName exists, appendflag = False:</dt><dd><ul class="simple">
+<li><p>lcDbfName records are removed (zapped), all records are replaced with newly imported records.  Any value in templatedbf
+is ingnored.</p></li>
+</ul>
+</dd>
+<dt>lcDbfName exists, appendflag = True:</dt><dd><ul class="simple">
+<li><p>Records from the spreadsheet are appended into the table after the existing records.  Any value in templatedbf
+is ignored.</p></li>
+</ul>
+</dd>
+<dt>lcDbfName doesn’t exist – appendflag has no meaning:</dt><dd><p>If templatedbf contains the name of a valid DBF table, then uses the structure of that table to create a new table
+and imports data into it.
+If templatedbf == “” or None, then inspects the contents of the spreadsheet and creates a table the best way it can
+from the cell information.</p>
+</dd>
+</dl>
+<p>Takes the data from the first worksheet in the workbook.  You can pass a worksheet name to use instead in the
+sheetname optional parameter.  Note that in Excel, worksheet names are case sensitive.</p>
+<p>If the templatedbf parameter contains the name of an existing DBF type table, then appendflag is ignored and
+a new table is created (overwriting any existing one by that name) using the identical structure of the template
+DBF table.</p>
+<p>You can supply a list() of field names to include in the output DBF table.  In that case, the fields in the output
+table consist of those that are BOTH in the spreadsheet AND in the fieldlist.  If appendflag == True, the fieldlist
+will be respected – records will be appended to the lcDbfName table, but only the fields specified will be populated.</p>
+<p>The first row of the spreadsheet must contain text values that are valid field names.  No more than 255 are permitted.
+Field names may be upper or lower case but MUST start with a letter or underscore.  They may be no longer than 10 characters
+and may NOT include blanks.  No two field names may be the same.  Any violation of these rules will result in an error flag
+being returned.</p>
+<p>Returns the number of records stored or appended.  Returns -1 on error, however if 0 is returned, you likely should investigate
+the source of the problem.</p>
+<p>NOTE: The CodeBase utilities are fairly slow in creating new DBF tables.  Not sure why.  At least the first one they create
+seems to take around 0.45 seconds on a very fast machine.  The second and third are faster, however.  So… for simple things
+just let this method write into an existing table, for much better performance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.DBFXLStools2.DbfXlsEngine.__exit__">
+<code class="sig-name descname">__exit__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">lcClass</span></em>, <em class="sig-param"><span class="n">lcType</span></em>, <em class="sig-param"><span class="n">lcTrace</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.DBFXLStools2.DbfXlsEngine.__exit__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="codebasetools.DBFXLStools2.DbfXlsEngine.__del__">
+<code class="sig-name descname">__del__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.DBFXLStools2.DbfXlsEngine.__del__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="codebasetools.DBFXLStools2.quickExcel2DBF">
+<code class="sig-prename descclassname">codebasetools.DBFXLStools2.</code><code class="sig-name descname">quickExcel2DBF</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cSourceXLS</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">cDestDBF</span><span class="o">=</span><span class="default_value">''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.DBFXLStools2.quickExcel2DBF" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="codebasetools.DBFXLStools2._dtTest">
+<code class="sig-prename descclassname">codebasetools.DBFXLStools2.</code><code class="sig-name descname">_dtTest</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#codebasetools.DBFXLStools2._dtTest" title="Permalink to this definition">¶</a></dt>
+<dd><p>For internal testing ONLY
+:return:</p>
+</dd></dl>
+
+<dl class="py data">
+<dt id="codebasetools.DBFXLStools2.bResult">
+<code class="sig-prename descclassname">codebasetools.DBFXLStools2.</code><code class="sig-name descname">bResult</code><a class="headerlink" href="#codebasetools.DBFXLStools2.bResult" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright M-P Systems Services, Inc..
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

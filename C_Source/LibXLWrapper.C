@@ -1,5 +1,8 @@
 /*---------------- Created November 12, 2008 - 12:40pm -----------------
- * C language program for new modules for LoadOpt accessed from Python.
+ * C language program for accessing the LibXL low-level library for reading
+ * writing, and modifying Excel XLS and XLSX files.  Note that a legal
+ * licensed copy of libxl.dll must be available and a license key be readable
+ * by this module before it will work for production purposes.
  * ---------------------------------------------------------------------*/
 /* *****************************************************************************
 Copyright (C) 2008-2018 by M-P Systems Services, Inc.,

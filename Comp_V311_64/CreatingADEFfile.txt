@@ -1,0 +1,9 @@
+Creating a .DEF file
+The only time you can use a .DEF file to create an import library from a .DLL for which you do not have the source code or object modules is if the .DLL exports functions via a C interface. Specifically, the functions need to have been declared to use the C calling convention. This is specified by the _cdecl attribute, normally used in the prototype for the function. Note that if no attribute is specified, _cdecl is the default when /Gz (_stdcall is the default) or /Gr (_fastcall is the default) is not specified on the CL command line. The reason for this limitation is based on an assumption made by the LIB utility that all names are automatically exported without a leading underscore. This is only true for _cdecl function names.
+
+Given a .DLL with functions exported via a C interface, you can create an import library by following these steps:
+
+   1. Use DUMPBIN /EXPORTS <.DLL file name> to obtain the list of exported symbols for the .DLL in question. The symbols appear in the "name" column of the table whose headings are "ordinal hint name."
+   2. Create a .DEF file that contains an EXPORTS section with the names of the functions listed in the "name" column of the DUMPBIN output.
+   3. For _cdecl functions, the symbol appears just as it would when used in the calling program. Just place this symbol in the EXPORTS section of the .DEF file.
+   4. Use LIB /DEF:<.DEF file name> to generate the import library and exports file. The base name of the import library will be the base name of the .DEF file. Use /OUT: to control the output library name. 
