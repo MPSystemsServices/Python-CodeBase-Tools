@@ -1,0 +1,7 @@
+﻿  CodeBasePYWrapper.C
+     Creating library E:\GIT_Repositories\Python-CodeBase-Tools\Comp_V311_64\CodeBasePYWrapper64\x64\Release\CodeBasePYWrapper64.lib and object E:\GIT_Repositories\Python-CodeBase-Tools\Comp_V311_64\CodeBasePYWrapper64\x64\Release\CodeBasePYWrapper64.exp
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+  All 157 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  CodeBasePYWrapper64.vcxproj -> E:\GIT_Repositories\Python-CodeBase-Tools\Comp_V311_64\CodeBasePYWrapper64\x64\Release\CodeBasePYWrapper64.dll

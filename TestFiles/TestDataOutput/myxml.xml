@@ -1,0 +1,55 @@
+<?xml version = "1.0" encoding="UTF-8" standalone="yes"?>
+<VFPData xml:space="preserve">
+	<tiunsbne>
+		<firstname>George                   </firstname>
+		<lastname>Weibladson               </lastname>
+		<city>Chicago                            </city>
+		<state>IL</state>
+		<zipcode>60607     </zipcode>
+		<hire_date>2009-06-12</hire_date>
+		<login_date>2011-01-24T09:30:00</login_date>
+		<num_kids>2</num_kids>
+		<salary>35535.5</salary>
+		<wageperhr>23.4500</wageperhr>
+		<ssn>123456789 </ssn>
+		<married>true</married>
+		<dob>1955-10-03</dob>
+		<comments><![CDATA[hello to all]]></comments>
+		<coverage>2345.19003</coverage>
+	</tiunsbne>
+	<tiunsbne>
+		<firstname>Charles                  </firstname>
+		<lastname>Smith                    </lastname>
+		<city>Boston                             </city>
+		<state>MA</state>
+		<zipcode>03493     </zipcode>
+		<hire_date>1998-02-24</hire_date>
+		<login_date>2011-01-03T14:02:03</login_date>
+		<num_kids>2</num_kids>
+		<salary>66039.39</salary>
+		<wageperhr>37.5000</wageperhr>
+		<ssn>987734959 </ssn>
+		<married>true</married>
+		<dob>1945-06-13</dob>
+		<comments><![CDATA[Testing Again]]></comments>
+		<coverage>0.5343</coverage>
+	</tiunsbne>
+	<tiunsbne>
+		<firstname>William                  </firstname>
+		<lastname>Jones                    </lastname>
+		<city>Los Angeles                        </city>
+		<state>CA</state>
+		<zipcode>90272     </zipcode>
+		<hire_date>2005-07-29</hire_date>
+		<login_date>2011-02-12T14:34:21</login_date>
+		<num_kids>2</num_kids>
+		<salary>42000.0</salary>
+		<wageperhr>22.3500</wageperhr>
+		<ssn>292929292 </ssn>
+		<married>false</married>
+		<dob>    -  -  </dob>
+		<comments><![CDATA[asdfwe kkkkkkkkkkkkkkkkkk     iiiiiiiiiiiiiiio 
+ iiiiiiiiiiiii]]></comments>
+		<coverage>0.35239</coverage>
+	</tiunsbne>
+</VFPData>

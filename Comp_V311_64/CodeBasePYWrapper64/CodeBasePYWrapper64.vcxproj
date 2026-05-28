@@ -158,6 +158,7 @@
   <ItemGroup>
     <Library Include="..\C4dll64.lib" />
     <Library Include="..\python311.lib" />
+    <Library Include="..\python312.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

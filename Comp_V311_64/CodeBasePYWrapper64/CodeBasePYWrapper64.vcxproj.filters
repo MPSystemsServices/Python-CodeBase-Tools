@@ -34,5 +34,8 @@
     <Library Include="..\C4dll64.lib">
       <Filter>Source Files</Filter>
     </Library>
+    <Library Include="..\python312.lib">
+      <Filter>Source Files</Filter>
+    </Library>
   </ItemGroup>
 </Project>

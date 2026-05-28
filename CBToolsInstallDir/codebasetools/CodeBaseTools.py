@@ -30,17 +30,18 @@ As of this release, this version is compatible and has been tested ONLY with 32-
 due to the fact that the 64-bit version of CodeBase is still being tested and has not yet been released to Open
 Source.
 
-This module has been developed and tested with 2.7.17, 3.6, 3.7, 3.8, and 3.9.1.
+This module has been developed and tested with 2.7.17, 3.6, 3.7, 3.8, 3.9, 3.10, 3.11, 3.12, 3.13.
 
 Versions prior to 2.7 may or may not work and are not supported.  Note that some sub-versions of Python 3.8 have
-problems in the implementation of the C API which may result in unstable behavior.  Version 3.9.1 is recommended.
+problems in the implementation of the C API which may result in unstable behavior.  Version 3.9.1, or later is
+recommended.
 
 Since each version of Python has its own version of the API, there is a separate, but functionally identical
 version of CodeBasePYWrapperXX.pyd for each Python version supported.  This module imports the version
 appropriate to the Python version running.  All versions of this .pyd file are installed with this module and the
 CodeBaseTools module imports the correct one based on the version of Python you are running.
 
-Currently, this module supports Python versions: 2.7, 3.6, 3.7, 3.8, and 3.9.
+Currently, this module supports Python versions: 2.7, 3.6, 3.7, 3.8, 3.9, 3.10, 3.11, 3.12, and 3.13.
 
 String handling for Python 2/3 compatibility
 .............................................
@@ -288,47 +289,146 @@ import glob
 import collections
 from xml.dom import minidom
 
-# from sqlalchemy import False_
-
-# from MPSSCommon import MPSSBaseTools as mTools
-
 nPyVer = sys.version_info.major
 nPySubVer = sys.version_info.minor
 cVersion = sys.version
+gcSystemModule = "NONE"  # Will hold a name of the PYD module loaded for the operations.
+bImportOK = False
+bImportError = False
+try:
+    if nPyVer == 2 and nPySubVer == 7 and "32 bit" in cVersion:  # 64-bit not supported for 2.7
+        import CodeBasePYWrapper27 as cbp
+        bImportOK = True
+except ImportError as eErr:
+    bImportError = True
 
-if nPyVer == 2 and nPySubVer == 7:
-    import CodeBasePYWrapper27 as cbp
-elif nPyVer == 3 and nPySubVer == 6:
-    import CodeBasePYWrapper36 as cbp
-elif nPyVer == 3 and nPySubVer == 7:
-    import CodeBasePYWrapper37 as cbp
-elif nPyVer == 3 and nPySubVer == 8:
-    import CodeBasePYWrapper38 as cbp
-elif nPyVer == 3 and nPySubVer == 9:
-    import CodeBasePYWrapper39 as cbp
-elif nPyVer == 3 and nPySubVer == 10:
-    import CodeBasePYWrapper310 as cbp
-elif nPyVer == 3 and nPySubVer == 11 and "32 bit" in cVersion:
-    import CodeBasePYWrapper311 as cbp
-elif nPyVer == 3 and nPySubVer == 11 and "64 bit" in cVersion:
-    import CodeBasePYWrapper64_311 as cbp
-elif nPyVer == 3 and nPySubVer == 12 and "32 bit" in cVersion:
-    import CodeBasePYWrapper312 as cbp
-else:
-    raise ValueError("Not a supported version of Python")
+if bImportError:
+    print("Failed attempting to import CodeBasePyWrapper27 for Python 2.7")
+    print("Terminating")
+    sys.exit(0)
 
+if "32 bit" in cVersion:
+    try:
+        if nPyVer == 3 and nPySubVer == 6:
+            import CodeBasePYWrapper36 as cbp
+            bImportOK = True
+            gcSystemModule = "PYWrapper36"
+
+        elif nPyVer == 3 and nPySubVer == 7:
+            import CodeBasePYWrapper37 as cbp
+            bImportOK = True
+            gcSystemModule = "PYWrapper37"
+
+        elif nPyVer == 3 and nPySubVer == 8:
+            import CodeBasePYWrapper38 as cbp
+            bImportOK = True
+            gcSystemModule = "PYWrapper38"
+
+    except ImportError as eErr:
+        bImportError = True
+        print("Failed attempting to import CodeBasePYWrapper3%s for Python 3.%s" % str(nPySubVer), str(nPySubVer))
+        print("Terminating")
+        sys.exit(0)
+
+    if not bImportError:
+        try:
+            if nPyVer == 3 and nPySubVer >= 9:  # Try importing the limited library universal version
+                import CodeBasePYWrapper3X as cbp
+                bImportOK = True
+                gcSystemModule = "PYWrapper3X"
+
+        except ImportError as eErr:
+            bImportError = True
+            xErrs = sys.exc_info()
+            print("3X ERRORS:", xErrs)
+
+        except:
+            bImportError = True
+
+        if not bImportOK:
+            bImportError = False
+            try:
+                if nPyVer == 3 and nPySubVer == 9:
+                    import CodeBasePYWrapper39 as cbp
+                    bImportOK = True
+                    gcSystemModule = "PYWrapper39"
+
+                elif nPyVer == 3 and nPySubVer == 10:
+                    import CodeBasePYWrapper310 as cbp
+                    bImportOK = True
+                    gcSystemModule = "PYWrapper310"
+
+                elif nPyVer == 3 and nPySubVer == 11 and "32 bit" in cVersion:
+                    import CodeBasePYWrapper311 as cbp
+                    bImportOK = True
+                    gcSystemModule = "PYWrapper311"
+
+                elif nPyVer == 3 and nPySubVer == 12 and "32 bit" in cVersion:
+                    import CodeBasePYWrapper312 as cbp
+                    bImportOK = True
+                    gcSystemModule = "PYWrapper312"
+
+                elif nPyVer == 3 and nPySubVer == 13 and "32 bit" in cVersion:
+                    import CodeBasePyWrapper313 as cbp
+                    bImportOK = True
+                    gcSystemModule = "PYWrapper313"
+
+            except ImportError as eErr:
+                bImportError = True
+
+    if bImportError or not bImportOK:
+        print(bImportError, bImportOK)
+        print("Failed attempting to import 32-bit CodeBasePyWrapper3X for Python 3.%s" % str(nPySubVer))
+        print("Terminating")
+        sys.exit(0)
+
+if "64 bit" in cVersion:
+    # print("LOADING 64 bit module")
+    try:
+        if nPyVer == 3 and nPySubVer >= 9:
+            # print("Version", nPyVer, nPySubVer, cVersion)
+            import CodeBasePYWrapper3X64 as cbp
+            bImportOK = True
+    except ImportError as eErr:
+        bImportError = True
+        print("Sub 11", sys.exc_info())
+    if bImportOK:
+        gcSystemModule = "PYWrapper3X_64"
+
+    if bImportError or not bImportOK:
+        try:
+            if nPyVer == 3 and nPySubVer >= 11:  # The only version specific 64-bit module
+                import CodeBaseWrapper64_311 as cbp
+                bImportOK = True
+        except ImportError as eErr:
+            bImportError = True
+        if bImportOK:
+            gcSystemModule = "PYWrapper311_64"
+
+    if bImportError or not bImportOK:
+        print("Failed attempting to import 64-bit CodeBasePYWrapper3X64 for Python 3.%s" % str(nPySubVer))
+        print("Terminating")
+        if bImportError:
+            print("ERROR", sys.exc_info())
+        sys.exit(0)
+
+if not bImportOK:
+     print("No available CodeBasePyWrappers available for your Python version.")
+     print("Terminating")
+     sys.exit(0)
+# print("AFTER IMPORT:")
 # Note test below for Python version: 2.x vs 3.x and higher.
 if sys.version_info[0] <= 2:
     _ver3x = False
-    xLongType = long
+    xLongType = long  # type only valid for version 2.x
 else:
     _ver3x = True
     xLongType = int
 
 __author__ = "Jim Heuer"
-__version__ = "2.02"
-__copyright__ = "M-P System Services, Inc., Portland, OR, 2008-2020"
-__versiondate__ = "September 3, 2020"
+__version__ = "2.03"
+__copyright__ = "M-P System Services, Inc., Portland, OR, 2008-2026"
+__versiondate__ = "April 8, 2026"
 __license__ = """Provided to all users on an as-is basis.  No warranties, express or implied are
 made for this code.  Users are asked to supply information on required changes, perceived bugs,
 and other comments about the code to the author.  This license and author information must be included
@@ -740,6 +840,9 @@ class _cbTools(object):
             # print "Closed Datasession", self.nDataSession
         self.nDataSession = -1
         self.cbt = None
+
+    def getSystemModuleName(self):
+        return gcSystemModule
 
     def cb_shutdown(self):
         """
@@ -3988,13 +4091,16 @@ class _cbTools(object):
         If lbToText is True, then returns the string on Success and an empty string on failure.
         """
         lxFlds = self.afields()
+        print(len(lxFlds))
         if lxFlds is None:
             return False if not lbToText else ""
         lnCnt = len(lxFlds)
         if lnCnt == 0:
             return False if not lbToText else ""
         lcDBF = self.dbf()
+        print(lcDBF)
         lnReccount = self.reccount()
+        print(lnReccount)
         chgTime = os.stat(lcDBF)
         chgTimex = localtime(chgTime.st_mtime)
         lcChgTime = strftime("%Y-%m-%d %H:%M:%S", chgTimex)
@@ -6115,495 +6221,9 @@ def copydatatable(cTableName="", cSourceDir="", cTargetDir="", bByZap=False, oCB
 def getlasterrormessage():
     return gcLastErrorMessage
 
-
-def cbtWork():
-    from MPSSCommon.MPSSBaseTools import findrepopath
-    gcRepoPath = findrepopath()
-    tmpdir = gcRepoPath + '\\TestDataOutput'
-    if not os.path.exists(tmpdir):
-        tmpdir = ''
-    # Create Table Example #1
-    xFlds = list()
-    print("starting cbtWork")
-    xFlds.append("firstname,C,25,0,FALSE")
-    xFlds.append("lastname,C,25,0,FALSE")
-    xFlds.append("city,C,35,0,FALSE")
-    xFlds.append("state,C,2,0,FALSE")
-    xFlds.append("zipcode,C,10,0,FALSE")
-    xFlds.append("hire_date,D,8,0,FALSE")
-    xFlds.append("login_date,T,8,0,TRUE")
-    xFlds.append("num_kids,I,4,0,FALSE")
-    xFlds.append("salary,N,10,2,FALSE")     # Note Number type.  Exact decimals in the table but will be
-    #  converted in Python to a double.
-    xFlds.append("wageperhr,Y,10,3,FALSE")  # Note currency type with exact decimals
-    xFlds.append("ssn,C,10,0,FALSE")
-    xFlds.append("married,L,1,0,FALSE")
-    xFlds.append("dob,D,8,0,TRUE")
-    xFlds.append("comments,M,10,0,FALSE")
-    xFlds.append("coverage,B,12,4,FALSE")  # This is a DOUBLE field, which functions as a floating point
-    lcFld = "\n".join(xFlds)
-    # The init() of the cbTools class initializes the engine for you.
-    vfp = cbTools()
-    lnStart = time()
-
-    testname = os.path.join(tmpdir, "employee1.dbf")
-    DELETEFILE(testname)
-    print(testname)
-    bResult = vfp.createtable(testname, lcFld)
-    lnEnd = time()
-    print("Create Time: %d" % (lnEnd - lnStart))
-    print("Create Work Result: %s" % str(bResult))
-    print("ERR: ", vfp.cErrorMessage)
-    cAlias = vfp.alias()
-    print("Alias>%s" % cAlias)
-    xFlds = vfp.afields()
-    print("Fields>%s" % str(xFlds))
-    if not bResult:
-        print("ERROR", vfp.cErrorMessage)
-        exit(1)
-    print("Alias Name: %s" % vfp.alias())
-    print(vfp.refreshbuffers(), "buffers refreshed")
-    vfp.closetable("employee1")
-    bexcl = vfp.use(testname, alias="EMPLOYEE1", exclusive=True)
-    print("bxl", bexcl)
-    # Index new table
-    lnStart = time()
-    bResult = vfp.indexon("fullname", "UPPER(lastname+firstname)")
-    bResult = vfp.indexon("geo", "state+city")
-    print("index result", bResult)
-    print("indx err:", vfp.cErrorMessage)
-    lnEnd = time()
-    print("Index time: ", lnEnd - lnStart)
-
-    # Append record from two lists (Value and Field Name)
-    xVal = list()
-    xFld = list()
-    xFld.append("firstname")  # Note that field names may be specified in lower case, but will be UPPER in table.
-    xVal.append("George")
-    xFld.append("lastname")
-    xVal.append("Weibladson")
-    xFld.append("city")
-    xVal.append("Chicago")
-    xFld.append("state")
-    xVal.append("IL")
-    xFld.append("zipcode")
-    xVal.append("60607")
-    xFld.append("hire_date")
-    xVal.append(date(2009, 6, 12))
-    xFld.append("login_date")
-    xVal.append(datetime(2011, 1, 24, 9, 30, 00))
-    xFld.append("salary")
-    xVal.append(decimal.Decimal("35535.50"))
-    xFld.append("num_kids")
-    xVal.append(2)
-    xFld.append("wageperhr")
-    xVal.append(23.45)
-    xFld.append("ssn")
-    xVal.append("123456789")
-    xFld.append("married")
-    xVal.append(True)
-    xFld.append("dob")
-    xVal.append(date(1955, 10, 3))
-    xFld.append("comments")
-    xVal.append("hello to all")
-    xFld.append("coverage")
-    xVal.append(2345.19003)
-
-    lnStart = time()
-    bResult = vfp.appendblank()
-    print("Append Result: ", bResult)
-    print("append err ", vfp.cErrorMessage)
-    bResult = vfp.gatherfromarray(xVal, xFld)
-    print("Gather Result: ", bResult)
-    lnEnd = time()
-    print("Tot Append Time: ", lnEnd - lnStart)
-    print("Gather Error: ", vfp.cErrorMessage)
-
-    # Append record from string of values (all fields updated) -- 10X faster
-    lnStart = time()
-    bResult = vfp.appendblank()
-    lcVals = "Pete<~!~>Smith<~!~>Boston<~!~>MA<~!~>03493<~!~>19980224<~!~>20110103140203<~!~>2<~!~>66039.39<~!~>45.37<~!~>987734959<~!~>FALSE<~!~>19591203<~!~>Testing Again<~!~>0.5343"
-    bResult = vfp.gatherfromarray(lcVals, None, "<~!~>")
-    lnEnd = time()
-    print("String Gather Time: ", lnEnd - lnStart)
-    print("Gather From String Result: ", bResult)
-    # Append record from a dictionary
-    lxD = dict()
-    lnStart = time()
-    lxD["firstname"] = "William"
-    lxD["lastname"] = "Jones"
-    lxD["city"] = "Los Angeles"
-    lxD["state"] = "CA"
-    lxD["zipcode"] = "90272"
-    lxD["hire_date"] = date(2005, 7, 29)
-    lxD["login_date"] = datetime(2011, 2, 12, 14, 34, 21)
-    lxD["salary"] = 42000.00
-    lxD["num_kids"] = 2
-    lxD["wageperhr"] = 22.35
-    lxD["ssn"] = "292929292"
-    lxD["married"] = False
-    lxD["dob"] = None
-    lxD["comments"] = "asdfwe kkkkkkkkkkkkkkkkkk     iiiiiiiiiiiiiiio \n iiiiiiiiiiiii"
-    lxD["coverage"] = 0.35239
-    # bResult = vfp.appendblank()
-    # bResult = vfp.gatherfromarray(lxD)
-    bResult = vfp.insertdict(lxD)
-    lnEnd = time()
-    print("gather from dict result: ", bResult)
-    print("gather from dict time: ", lnEnd - lnStart)
-
-    # Go back to record 1 and get several field values
-    bResult = vfp.goto("RECORD", 1)
-    print("record 1?", vfp.recno(), "count", vfp.reccount())
-    lxDict = vfp.scatter()
-    if lxDict is None:
-        print(vfp.cErrorMessage, 1)
-    print(lxDict["FIRSTNAME"])  # Note upper case field names are REQUIRED.
-    print(lxDict["LASTNAME"])
-    print(lxDict["LOGIN_DATE"])  # Note conversion to Python datetime value
-    print(lxDict["SALARY"])  # Converted to a double
-    print(lxDict["WAGEPERHR"])  # Converted to currency value with exact decimals
-    print("NAME", vfp.curvalstr("EMPLOYEE1.FIRSTNAME"), "ENDNAME")
-    print("NUMKIDS", vfp.curvallong("EMPLOYEE1.NUM_KIDS"))
-    #
-    bResult = vfp.goto("RECORD", 2)
-    vfp.replace("employee1.firstname", "Charles")
-    vfp.replace("employee1.wageperhr", 37.50)
-    vfp.replace("employee1.dob", date(1945, 6, 13))
-    vfp.replace("employee1.married", True)
-    lxDict = vfp.scatter()
-    if lxDict is None:
-        print(vfp.cErrorMessage, 2)
-    print(lxDict["FIRSTNAME"])
-    print(lxDict["DOB"])
-    print(lxDict["MARRIED"])
-    print("READY TO SCAtteR")
-    bResult = vfp.goto("RECORD", 1)
-    print("lbResult", bResult)
-    lxDict = vfp.scatter(converttypes=False, fieldList="firstname,LASTNAME,SALARY")
-    print(lxDict)
-    print("that was dict")
-    print("READY TO SCATTER RECORD")
-    lxRec = vfp.scattertorecord()
-    print(lxRec)
-    print("FIRSTNAME:", lxRec.FIRSTNAME)
-    print("LASTNAME:", lxRec.LASTNAME)
-    cXML = vfp.cursortoxml(cFileName="c:\\temp\\myxml.xml")
-    print(vfp.dbf())
-    vfp.select("employee1")
-    vfp.xmltocursor(cFileName="c:\\temp\\myxml.xml")
-    xArray = vfp.copytoarray()
-    for xA in xArray:
-        print(xA)
-    vfp.closedatabases()
-    return True
-
-
-def cbt_test():
-    from MPSSCommon.MPSSBaseTools import findrepopath
-    gcRepoPath = findrepopath()
-    cDest = r"c:\temp\smsrc5.dbf"
-    vfp = cbTools()
-    vfp.use("e:\\loadbuilder2\\appdbfs\\73rdstrt\\shipmstr.dbf", alias="SHIPMSTR")
-    nStart = time()
-    nResult = vfp.copyto(cAlias="SHIPMSTR", cOutput=cDest, cType="DBF", cTestExpr='', bHeader=True, bStripBlanks=False)
-    nEnd = time()
-    vfp.closetable("SHIPMSTR")
-    print("ELAPSED TIME: ", (nEnd - nStart))
-    if nResult < 0:
-        print("THE ERROR:", vfp.cErrorMessage)
-        print("THE ERR NUMBER:", vfp.nErrorNumber)
-    print("NRESULT: ", nResult)
-    # return True
-    tmpdir = gcRepoPath + '\\TestDataOutput'
-    cDataPath = "e:\\loadbuilder2\\appdbfs"
-    nNewKey = vfp.getNewKey(cDataPath, filename="CLIENTS", readOnly=False)
-    print("THE NEW KEY WAS:", nNewKey)
-    if not os.path.exists(tmpdir):
-        tmpdir = ''
-    #  Create Table Example #1
-    lcFld = "firstname,C,25,0,FALSE\n"
-    lcFld += "lastname,C,25,0,FALSE\n"
-    lcFld += "city,C,35,0,FALSE\n"
-    lcFld += "state,C,2,0,FALSE\n"
-    lcFld += "zipcode,C,10,0,FALSE\n"
-    lcFld += "hire_date,D,8,0,FALSE\n"
-    lcFld += "login_date,T,8,0,TRUE\n"
-    lcFld += "num_kids,I,4,0,FALSE\n"
-    lcFld += "salary,N,10,2,FALSE\n"   # Note Number type.  Exact decimals in the table but will be
-    # converted in Python to a double.
-    lcFld += "wageperhr,Y,10,3,FALSE\n"  # Note currency type with exact decimals
-    lcFld += "ssn,C,10,0,FALSE\n"
-    lcFld += "married,L,1,0,FALSE\n"
-    lcFld += "dob,D,8,0,TRUE\n"
-    lcFld += "comments,M,10,0,FALSE\n"
-    lcFld += "coverage,B,12,4,FALSE\n"  # This is a DOUBLE field, which functions a floating point
-    # The init() of the cbTools class initializes the engine for you.
-    vfp = cbTools()
-    lnStart = time()
-    testname = os.path.join(tmpdir, "employee1.dbf")
-    print(testname)
-    bResult = vfp.createtable(testname, lcFld)
-    lnEnd = time()
-    print("Create Time: ", lnEnd - lnStart)
-    print("Create Result: ", bResult)
-    if not bResult:
-        print("ERROR", vfp.cErrorMessage)
-        exit(1)
-    print("Alias Name X: ", vfp.alias())
-    zFlds = vfp.afields()
-    print("zFlds below")
-    print(zFlds)
-    print("zFlds above")
-    for zFld in zFlds:
-        print(str(zFld))
-    print("zFlds List Done")
-    vfp.closetable("employee1")
-    print("REOPENING:", vfp.use(testname, alias="employee1"))
-    print("GOTO BOTTOM:", vfp.goto("BOTTOM"))
-    # Append record from a dictionary
-    lxD = dict()
-    lnStart = time()
-    lxD["firstname"] = "William"
-    lxD["lastname"] = "Jones"
-    lxD["city"] = "Los Angeles"
-    lxD["state"] = "CA"
-    lxD["zipcode"] = "90272"
-    lxD["hire_date"] = date(2005, 7, 29)
-    lxD["login_date"] = datetime(2011, 2, 12, 14, 34, 21)
-    lxD["salary"] = 42000.00
-    lxD["num_kids"] = 2
-    lxD["wageperhr"] = 22.35
-    lxD["ssn"] = "292929292"
-    lxD["married"] = False
-    lxD["dob"] = None
-    lxD["comments"] = "This is a test of the memo field, this is only a test.  The lazy fox, etc."
-    lxD["coverage"] = 0.35239
-    # bResult = vfp.appendblank()
-    # bResult = vfp.gatherfromarray(lxD)
-    print("INSERTION", vfp.insertdict(lxD))
-    print("INSERTION ERROR", vfp.cErrorMessage)
-    xRec = vfp.scatter()
-    print("RECORD\n", xRec)
-    print(vfp.cErrorMessage)
-    lnEnd = time()
-    print("gather from dict result: ", bResult)
-    print("gather from dict time: ", lnEnd - lnStart)
-    vfp.closetable(vfp.alias())
-    vfp = None
-#
-#     ## Go back to record 1 and get several field values
-#     lbResult = vfp.goto("RECORD", 1)
-#     lxDict = vfp.scatter()
-#     print lxDict["FIRSTNAME"] ## Note upper case field names are REQUIRED.
-#     print lxDict["LASTNAME"]
-#     print lxDict["LOGIN_DATE"] ## Note conversion to Python datetime value
-#     print lxDict["SALARY"] ## Converted to a double
-#     print lxDict["WAGEPERHR"] ## Converted to currency value with exact decimals
-#     print "NAME", vfp.curvalstr("EMPLOYEE1.FIRSTNAME"), "ENDNAME"
-#     print "NUMKIDS", vfp.curvallong("EMPLOYEE1.NUM_KIDS")
-#
-#     lbResult = vfp.goto("RECORD", 2)
-#     vfp.replace("employee1.firstname", "Charles")
-#     vfp.replace("employee1.wageperhr", 37.50)
-#     vfp.replace("employee1.dob", date(1945, 6, 13))
-#     vfp.replace("employee1.married", True)
-#     lxDict = vfp.scatter()
-#     print lxDict["FIRSTNAME"]
-#     print lxDict["DOB"]
-#     print lxDict["MARRIED"]
-#
-#     lxaData = vfp.copytoarray(fieldtomatch="dob", matchvalue=None, matchtype="<>")
-#     print lxaData[0]["FIRSTNAME"], lxaData[0]["LASTNAME"]
-#     print lxaData[1]["FIRSTNAME"], lxaData[1]["LASTNAME"]
-#
-#     lcTableName = vfp.dbf()
-#     print "Table Name: ", lcTableName
-#     lcTableName = vfp.dbf("NOSUCHTABL")
-#     print "Bad Table Name: >" + lcTableName + "<"
-#     print "Error Message: " + vfp.cErrorMessage
-#     print "Error Number: ", vfp.nErrorNumber
-#
-#     ## Create a new table as a copy of another by capturing a list of the first
-#     ## table's fields and then pass that list to the createtable function.
-#     vfp.closedatabases()
-#     lnStart = time()
-#     lbResult = vfp.use(testname, "emp1")
-#     lxTempList, lxTempFields = vfp.fielddicttolist(lxDict, "emp1")
-#     print lxTempList
-#     print lxTempFields
-#     for jj in range(0, 20):
-#         vfp.insertintotable(lxTempList, lxTempFields, lcAlias="emp1")
-#     print vfp.alias(), vfp.dbf()
-#     print vfp.reccount()
-#
-#     vfp.goto("RECORD", 19)
-#     vfp.delete()
-#     vfp.pack()
-#     print "After pack: ", vfp.reccount()
-#     lnCnt = 0
-#     lxFlds = vfp.afields()
-#
-#     vfp.closedatabases()
-#     lnStartC = time()
-#     assert True == vfp.createtable(os.path.join(tmpdir,"employee2.dbf"), lxFlds)
-#     print "### test TableObj iterator ###"
-#     cnt=0
-#     for this in vfp['employee2']:
-#         cnt += 1
-#     assert 0 == cnt , "Iterator not working"
-#     assert True == vfp.appendblank()
-#     cnt=0
-#     for this in vfp['employee2']:
-#         cnt += 1
-#     assert 1 == cnt , "Iterator not working"
-#     assert True == vfp.closetable("employee2")
-#     assert True == vfp.use(os.path.join(tmpdir,"employee2.dbf"))
-#     xflds = vfp.scatter(converttypes=False)
-#     print xflds
-#     lnEndC = time()
-#     print "Create Time 2: ", lnEndC - lnStartC
-#     vfp.dispstru()
-#     lnEnd = time()
-#     print "Open and Copy Time: ", lnEnd - lnStart
-#     if (lbResult == False):
-#         print vfp.cErrorMessage, vfp.nErrorNumber
-#
-#     vfp.zap()
-#
-# #    print "testing zippairs"
-# #    lbResult = vfp.use("e:\\loadbuilder2\\appdbfs\\geo.dbf", "geo")
-# #    print "use", lbResult
-# #    lbResult = vfp.setdeleted(True)
-# #    lbFound = vfp.seek("62305", "geo", "postalcode")
-# #    print vfp.cErrorMessage
-# #    print lbFound
-# #    lbResult = vfp.select("geo")
-# #    print lbResult
-# #    lbResult = vfp.recno()
-# #    print lbResult, lbFound
-#
-#     ## test table from TableObj
-#     print 'TableObj from vfp',
-#     table = vfp.TableObj( testname)
-#     if not table.open: print 'Open error:',table.errormessage
-#     print table.name
-#     print 'Fields: ',table._fields
-#     del table
-#     print 'TableObj direct',
-#     table = TableObj( vfp, testname)
-#     print 'kids =',table.num_kids,  # test getattr
-#     print ', salary =',table['salary'],  # test getitem
-#     table.num_kids = 1  # test setattr
-#     table['salary'] = 20000.5  # test setitem
-#     print
-#     fields = 'firstname hire_date married num_kids salary login_date coverage wageperhr'.split()
-#     fsize = 10
-#     ff = '%%-%ss' % fsize
-#     print '  ',
-#     for n in fields:
-#         print ff%n,
-#     print
-#     while not vfp.eof():
-#         print;print '%2d' % vfp.recno(),
-#         for n in fields:
-#             print ff % str(table[n])[:fsize],
-#         table.next()
-#     print
-#     lastAlias = vfp.alias()
-#     print 'open file=',vfp.alias()
-#
-#     ## test getNewKey()
-#     print 'testing getNewKey()'
-#     testLocation = 'e:/loadbuilder2/appdbfs'
-#     assert vfp.getNewKey(testLocation,'bob',readOnly=True) == 11000  # new file
-#     assert vfp.alias() == lastAlias  #doesn't change current file
-#     vfp.getNewKey('c:/','xyz', readOnly=True)
-#     assert (vfp.cErrorMessage[:14] == "Unable to open"), "ErrorMessage = '%s'. curFile = '%s'" % (
-#         vfp.cErrorMessage, vfp.alias()
-#         )
-#     assert vfp.alias() == lastAlias  #doesn't change current file on error either
-#     if vfp.getNewKey(testLocation,'bob',readOnly=True, stayOpen=True) != 11000:
-#         # delete item 'bob'
-#         vfp.select('NextKey')
-#         x = vfp.curval('table_name',True) == 'BOB' and vfp.delete()
-#     assert vfp.getNewKey(testLocation,readOnly=True) == 11000  # `testname` is new file also
-#     assert vfp.getNewKey(testLocation,'SHIPMSTR',readOnly=True) > int(1e8)  # bigger than 100 million
-#     assert vfp.alias() == lastAlias  # make sure we haven't changed the active file
-#     assert vfp.getNewKey(testLocation,'bob', stayOpen=True) == 11000  # new file
-#     assert vfp.getNewKey(testLocation,'bob', stayOpen=True) == 11001  # added one
-#     assert vfp.getNewKey(testLocation,'bob', stayOpen=True) == 11002  # added one
-#     assert vfp.select('NextKey') is True
-#     assert vfp.curval('table_name',True) == 'BOB' and vfp.delete()
-#     assert vfp.getNewKey(testLocation,'bob',readOnly=True) == 11000  # new file
-#     assert vfp.getNewKey(testLocation,'bob',readOnly=True) == 11000  # still new file
-#     # test rlock() changes
-#     vfp.select(lastAlias)
-#     assert vfp.rlock(1) is True
-#     assert vfp.unlock() is True
-#
-#     vfp.closedatabases()
-#     lnTest = vfp.use(r"e:\loadbuilder2\appdbfs\geo.dbf", "GEO")
-#     print "GEO: ", lnTest
-#     print vfp.alias()
-#     lbFound = vfp.locate("ST_PROV = 'OR' .AND. UPPER(CITY) = 'PORTLAND'")
-#     print lbFound
-#     print vfp.cErrorMessage
-#     lcTest = vfp.curval("POSTALCODE")
-#     print lcTest
-#     lbFound = vfp.locatecontinue()
-#     print lbFound
-#     lcTest = vfp.curval("POSTALCODE")
-#     print lcTest
-#     vfp.locateclear()
-#
-#     vfp.setorderto("POSTALCODE")
-#     print "IN CHICAGO"
-#     lbFound = vfp.locate("ST_PROV = 'IL' .AND. CITY = 'CHICAGO'")
-#     while lbFound:
-#         print vfp.curvalstr("POSTALCODE")
-#         lbFound = vfp.locatecontinue()
-#     vfp.locateclear()
-#
-#     ## Shut down the DBF engine.
-#     vfp.closedatabases()
-#     vfp.cb_shutdown()
-#     return lbResult
-
-def TestCopyTables() -> bool:
-    from MPSSCommon import LOConfigurator
-    oCfg = LOConfigurator.LOConfig()
-    bTest = oCfg.init("live")
-    if not bTest:
-        print("INIT: ", bTest, oCfg.cErrorMessage)
-    else:
-        cSourcePath = oCfg.cDataDirectory
-        cSourceTable = "DOMAINS.DBF"
-        cTargetPath = "e:\\temp"
-        oVFP = oCfg.VFP
-        bTest = copydatatable(cTableName=cSourceTable, cSourceDir=cSourcePath, cTargetDir=cTargetPath, oCBT=None,
-                              bByZap=True)
-        print("Result:", bTest)
-        print("Error?:", getlasterrormessage())
-    oCfg.shutdown()
-    return bTest
-
 __all__ = ["_cbTools", "cbTools", "cbToolsX", "TableObj", "copydatatable", "VFPFIELD"]
 
 if __name__ == "__main__":
-    print("***** Testing CodeBaseTools.py components")
-    cbt_test() # Extensive Tests
-    print("************ cbt test done **************")
-    lbResult = TestCopyTables()
-    # lbResult = cbtWork() # More Extensive Tests
-    print(lbResult)
-    print("***** Testing Complete")
-    if 'stop' in sys.argv:
-        # if not _ver3x:
-        #     raw_input('press <enter>')
-        # else:
+    print("SEE CodeBaseToolsTest.py for a testing suite.  In TestFiles subdirectory.")
 
-        input('press <enter>')
-    else:
-        print("DONE")
 

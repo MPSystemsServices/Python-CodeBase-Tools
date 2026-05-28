@@ -1,0 +1,8 @@
+﻿D:\VisualStudio2022\Msbuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(538,5): warning MSB8028: The intermediate directory (CodeBase.0853343a\x64\Release\) contains files shared from another project (CodeBasePYWrapper64.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+  CodeBasePYWrapper3X.C
+     Creating library E:\GIT_Repositories\Python-CodeBase-Tools\Comp_V3X_64\CodeBasePYWrapper64_3X\x64\Release\CodeBasePYWrapper64_3X.lib and object E:\GIT_Repositories\Python-CodeBase-Tools\Comp_V3X_64\CodeBasePYWrapper64_3X\x64\Release\CodeBasePYWrapper64_3X.exp
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+  All 172 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  CodeBasePYWrapper64_3X.vcxproj -> E:\GIT_Repositories\Python-CodeBase-Tools\Comp_V3X_64\CodeBasePYWrapper64_3X\x64\Release\CodeBasePYWrapper64_3X.dll
