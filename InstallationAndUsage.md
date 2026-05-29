@@ -10,11 +10,14 @@ Follow these steps:
 
 # Usage in your applications
 To create an instance of the Code Base Tools, you simply import the module and create an instance of the module object.  For example:
-'''from CodeBaseTools import cbTools'''
-'''cbt = cbTools()'''
+
+`from CodeBaseTools import cbTools`
+
+`cbt = cbTools()`
 
 To test that you have a working version of the module, type:
-'''cbt.getSystemModuleName()'''
+
+`cbt.getSystemModuleName()`
 
 That should respond with the name of the PYD file being used to access CodeBase(tm).
 
