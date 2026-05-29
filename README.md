@@ -44,7 +44,7 @@ The Python .pyd files which wrap the CodeBase(tm) c4dll.dll and c4dll64.dll modu
 # Python-CodeBase-Tools Licensing
 This package is copyright M-P Systems Services, Inc., and is released to Open Source under the GNU Lesser GPL V.3.0 license, a copy of which is found in this repository.  The CodeBase-for-DBF module, is covered by this same license.  The CodeBase package, including the core library c4dll.dll is copyright Sequiter, Inc., and is licensed under the GNU Lesser GPL v.3.0.
 # Installation and Usage
-For details see the [Installation Instructions](InstallationAndUsage.MD) information.
+For details see the [Installation Instructions](InstallationAndUsage.md) information.
 # Other Optional components
 The .PYD files (like CodeBasePYWrapper3X.pyd) provide native Python API access directly to the functions in c4dll.dll or c4dll64.dll without need for ctypes to access the raw .DLL C functions.  There is a significant speed and simplicity benefit from moving more program functionality directly into a compiled C program using the Python C API library, enabling direct access to the contained functions from the Python interpreter.  However, before we had developed the .PYD file(s) we developed "wrapper" DLLs that could be accessed directly by Python using ctypes.  We have not obsoleted these components, and they are found in the Comp_Wrappers and the Comp_Wrappers64 directories.  Full documentation is not provided for these components as we don't really see a need for them, but if you wish to make use of them, send us a GitHub message for more information.
 
