@@ -21,5 +21,5 @@ To test that you have a working version of the module, type:
 
 That should respond with the name of the PYD file being used to access CodeBase(tm).
 
-Extensive documentation is built into the system .py modules, which you can access by the pydoc Python module.  Alternatively there is a suite of HTML help files that provide detailed instructions for all system functions and features.  See the [`MPSSCommon Module Docs.html`] ("Documentation\MPSSCommon Module Docs.html") file in the Documentation subdirectory.
+Extensive documentation is built into the system .py modules, which you can access by the pydoc Python module.  Alternatively there is a suite of HTML help files that provide detailed instructions for all system functions and features.  See the [`MPSSCommon Module Docs.html`] ("https://github.com/MPSystemsServices/Python-CodeBase-Tools/tree/master/Documentation\MPSSCommon Module Docs.html") file in the Documentation subdirectory.
 
