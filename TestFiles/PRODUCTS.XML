@@ -1,0 +1,38 @@
+<?xml version = "1.0" encoding="UTF-8" standalone="yes"?>
+<VFPData xml:space="preserve">
+	<ujohyool>
+		<prod_key>11000</prod_key>
+		<prod_code>ABDCode1            </prod_code>
+		<prod_name>Test Hardware Product                             </prod_name>
+		<prod_catg>HAR</prod_catg>
+		<prod_count>100.0</prod_count>
+	</ujohyool>
+	<ujohyool>
+		<prod_key>11001</prod_key>
+		<prod_code>DFG_CODE            </prod_code>
+		<prod_name>Test Garden Product                               </prod_name>
+		<prod_catg>GAR</prod_catg>
+		<prod_count>50.0</prod_count>
+	</ujohyool>
+	<ujohyool>
+		<prod_key>11002</prod_key>
+		<prod_code>HOMEAPP1            </prod_code>
+		<prod_name>Test Home Appliance - Refrigerator                </prod_name>
+		<prod_catg>HOM</prod_catg>
+		<prod_count>3.0</prod_count>
+	</ujohyool>
+	<ujohyool>
+		<prod_key>11003</prod_key>
+		<prod_code>DFG_THING           </prod_code>
+		<prod_name>Another Garden Product                            </prod_name>
+		<prod_catg>GAR</prod_catg>
+		<prod_count>30.0</prod_count>
+	</ujohyool>
+	<ujohyool>
+		<prod_key>11004</prod_key>
+		<prod_code>DFG_PLANTER         </prod_code>
+		<prod_name>Garden Planter                                    </prod_name>
+		<prod_catg>GAR</prod_catg>
+		<prod_count>5.0</prod_count>
+	</ujohyool>
+</VFPData>

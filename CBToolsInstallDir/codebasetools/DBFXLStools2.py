@@ -34,10 +34,11 @@ import copy
 from time import time
 import os
 import tempfile
-from MPSSCommon import MPSSBaseTools as mTools
+import random
 from CodeBaseTools import VFPFIELD, cbTools, isstr, FORCEEXT, JUSTSTEM
 from ExcelTools import *
-
+allChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+passChars = "ABCDEFHJKLMNPQRSTUVWXYZ23456789"
 
 __author__ = "J. S. Heuer"
 
@@ -48,6 +49,7 @@ cErrorMessage = ""  # Keeping some old code happy.
 
 cMonths = "JAN,FEB,MAR,APR,MAY,JUN,JUL,AUG,SEP,OCT,NOV,DEC"
 gxMonthList = cMonths.split(",")
+gbIsRandomized = False
 
 if sys.version_info[0] <= 2:
     _ver3x = False
@@ -1239,7 +1241,7 @@ class DbfXlsEngine(object):
                 lxNameTest[lx.cName.upper()] = 1
         else:  # Just open the table
             nOpen1 = time()
-            lcWorkAlias = "XX" + mTools.strRand(8)
+            lcWorkAlias = "XX" + strRand(8)
             lbResult = self.dbfmgr.use(lcWorkTable, alias=lcWorkAlias)
             nOpen1a = time()
             if lbResult:
@@ -1603,6 +1605,35 @@ def CTOD(cDateString, cPattern="mm/dd/yy", bNoDelimiters=False):
         dNewDate = None
     return dNewDate
 
+def getrandomseed(nSize=4):
+    """
+    Returns a seed that can be used by any randomizer, which is not dependant on the system clock.  Use
+    if you think your processes may run concurrently and get the same seed for random() from the clock.
+    """
+    cRandStr = os.urandom(nSize)
+    cRandStr = str(cRandStr)
+    nSeed = 0
+    for j in range(0, nSize):
+        nVal = ord(cRandStr[j])
+        if nVal > 1:
+            nVal -= 1
+        nSeed += (255**j) * nVal
+    return nSeed
+
+
+def strRand(StrLength, isPassword=0):
+    """ This returns a string of random characters being either uppercase alpha letters
+        or numbers.  If isPassword is FALSE or unassigned, then selects from all 36 possible values,
+        otherwise omits 1,I,O,0 to avoid password confusion. """
+    global gbIsRandomized
+    if not gbIsRandomized:
+        random.seed(getrandomseed())  # Ensures independence from the clock.
+        gbIsRandomized = True
+    lcResult = ""
+    baseList = (allChars if isPassword == 0 else passChars)
+    for i in range(0, StrLength):
+        lcResult = lcResult + lcResult.join(random.choice(baseList))
+    return lcResult
 
 def RIGHT(cStr, nLen):
     """

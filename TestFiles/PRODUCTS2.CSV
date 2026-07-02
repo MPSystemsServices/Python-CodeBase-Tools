@@ -1,0 +1,6 @@
+PROD_KEY,PROD_CODE,PROD_NAME,PROD_CATG,PROD_COUNT
+11000,"ABDCode1            ","Test Hardware Product                             ","HAR",100
+11001,"DFG_CODE            ","Test Garden Product                               ","GAR",50
+11002,"HOMEAPP1            ","Test Home Appliance - Refrigerator                ","HOM",3
+11003,"DFG_THING           ","Another Garden Product                            ","GAR",30
+11004,"DFG_PLANTER         ","Garden Planter                                    ","GAR",5
