@@ -19,29 +19,27 @@ NOTE FOR THIS VERSION 2.05 -- December, 2020:
 This version is a wrapper for a compiled core python module named CodeBasePYWrapperXX.pyd which is a revised and
 improved version of the original CodeBaseWrapper.dll.  The core module is now built with the Python C-API which
 allows much faster transfer of data from disk to memory.  The original dll was accessed using the cTypes modules
-and the Win32 extensions.  cTypes is not required for this enhanced version.  Each version of Python requires
-its own unique compilation of the underlying c API code.  These are identified by the last two digits of the file
-name.  The Python source in this file detects the currently running version of Python and loads the appropriate
-version of the .pyd file.
+and the Win32 extensions.  cTypes is not required for this enhanced version.  See the Python Version Information
+below for how .PYD files were customized for Python versions 2.7 and 3.9 and lower.  Universal 32-bit and 64-bit
+PYD files are available to support Python versions 3.10 and up.
 
 Python Version information:
 ---------------------------
-As of this release, this version is compatible and has been tested ONLY with 32-bit versions of Python.  This is
-due to the fact that the 64-bit version of CodeBase is still being tested and has not yet been released to Open
-Source.
+As of this release, this version is compatible and has been tested with 32-bit and 64-bit versions of Python.
 
-This module has been developed and tested with 2.7.17, 3.6, 3.7, 3.8, 3.9, 3.10, 3.11, 3.12, 3.13.
+This module has been developed and tested with 2.7.17, 3.6, 3.7, 3.8, 3.9, 3.10, 3.11, 3.12, 3.13. and 3.14.
 
 Versions prior to 2.7 may or may not work and are not supported.  Note that some sub-versions of Python 3.8 have
 problems in the implementation of the C API which may result in unstable behavior.  Version 3.9.1, or later is
 recommended.
 
-Since each version of Python has its own version of the API, there is a separate, but functionally identical
-version of CodeBasePYWrapperXX.pyd for each Python version supported.  This module imports the version
-appropriate to the Python version running.  All versions of this .pyd file are installed with this module and the
-CodeBaseTools module imports the correct one based on the version of Python you are running.
+Prior to version 3.10 each version of Python had its own version of the API, there is a separate, but functionally
+identical version of CodeBasePYWrapperXX.pyd for each Python version supported.  Starting in 2026, universal
+CodeBasePYWrapper3X.pyd and CodeBaseWrapper3X64.pyd compiled files were produced using the "Limited API" Python
+tools, which allow one version of the PYD to be used by all python versions 3.10 and above.
 
-Currently, this module supports Python versions: 2.7, 3.6, 3.7, 3.8, 3.9, 3.10, 3.11, 3.12, and 3.13.
+Currently, this module supports Python versions: 2.7, 3.6, 3.7, 3.8, 3.9, 3.10, 3.11, 3.12, 3.13., and 3.14.  A
+64-bit version is compatible with Python 3.12 and above.
 
 String handling for Python 2/3 compatibility
 .............................................
@@ -2412,6 +2410,23 @@ class _cbTools(object):
             self.cErrorMessage = self.cbt.geterrormessage()
             self.nErrorNumber = self.cbt.geterrornumber()
         return lnReturn
+
+    def bof(self):
+        """
+        Interrogates the record pointer status of the currently selected table.
+        Returns True if the record pointer is at the BOF position or on error. Otherwise
+        returns False. If False, the record pointer is not at the top of the file. Otherwise BOF or
+        an error has occurred and you should take further action.
+        Made a stand-alone function out of this to expose cbt.bof(), June 16, 2026. J. Heuer
+        """
+        self.cErrorMessage = ""
+        self.nErrorNumber = 0
+        lbReturn = self.cbt.bof()
+        if lbReturn is None:
+            self.cErrorMessage = self.cbt.geterrormessage()
+            self.nErrorNumber = self.cbt.geterrornumber()
+            lbReturn = True  # Perversely.  If there's an error we can't iterate, so we have to say "Yes, BOF is True".
+        return lbReturn
 
     def eof(self):
         """
