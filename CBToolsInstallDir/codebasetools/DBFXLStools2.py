@@ -33,9 +33,12 @@ import datetime
 import copy
 from time import time
 import os
+import sys
 import tempfile
 import random
 from CodeBaseTools import VFPFIELD, cbTools, isstr, FORCEEXT, JUSTSTEM
+if "64 bit" in sys.version:
+    raise ImportError("CodeBase XLSX services are NOT IMPLEMENTED in 64-bit Python!")
 from ExcelTools import *
 allChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 passChars = "ABCDEFHJKLMNPQRSTUVWXYZ23456789"
@@ -121,6 +124,7 @@ class DbfXlsEngine(object):
         self.cLastExcelName = ""
         self.bXLSXmode = False  # XLS files are faster to output.
         self.name = "DBF to XLS Engine"
+
 
     def __enter__(self):
         if self.dbfmgr is None:
