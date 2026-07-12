@@ -1,5 +1,12 @@
 # Python-CodeBase-Tools
 Python binding for the CodeBase-for-DBF data table engine, plus tools for spreadsheet access and other functions
+# Accessing by PyPI and pip
+As of July, 2026, users of Windows versions of Python 3.6 through 3.14, 32-bit, and users of Windows versions of Python 3.10 through 3.14, 64-bit, can load this module directly onto their machines using pip:
+
+`pip install Code-Base-tools`
+
+For more on the PyPI module access and documentation see https://pypi.org/project/Code-Base-Tools/
+
 # Software Description
 CodeBase Tools is a Python binding that encapsulates the very low-level functioning of the CodeBase(tm) product with simple powerful functions, making DBF format data table access convenient to use for Python programmers using all recent versions of Python.  CodeBase(tm) is a formerly proprietary product released to Open Source as of September, 2018 and updated extensively in 2026.  The resulting DBF table access is dramatically faster than previously available DBF table access modules for Python and capable of sophisticated data access and handling features normally available only to advanced SQL database tools like SQL-Server.
 Python CodeBase Tools provide the following capabilities:
