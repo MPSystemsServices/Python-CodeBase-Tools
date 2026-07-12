@@ -3,7 +3,7 @@ Python binding for the CodeBase-for-DBF data table engine, plus tools for spread
 # Accessing by PyPI and pip
 As of July, 2026, users of Windows versions of Python 3.6 through 3.14, 32-bit, and users of Windows versions of Python 3.10 through 3.14, 64-bit, can load this module directly onto their machines using pip:
 
-`pip install Code-Base-tools`
+`pip install Code-Base-Tools`
 
 For more on the PyPI module access and documentation see https://pypi.org/project/Code-Base-Tools/
 
